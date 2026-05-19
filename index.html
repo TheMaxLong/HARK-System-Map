@@ -183,9 +183,10 @@ select.mi { background:#0c1018; cursor:pointer; }
   <div style="display:flex;gap:5px;align-items:center;flex-shrink:0">
     <button class="tb-btn" id="btn-edit" onclick="toggleEdit()">✏ Edit</button>
     <button class="tb-btn" id="btn-add" style="display:none" onclick="openModal()">+ Node</button>
-    <button class="tb-btn" onclick="doExport()">↓ Save</button>
-    <label class="tb-btn" style="cursor:pointer">↑ Import<input type="file" accept=".json" style="display:none" onchange="doImport(event)"></label>
-    <span id="save-indicator">● saved</span>
+    <button class="tb-btn" onclick="doExport()">↑↓ Sync</button>
+    <button class="tb-btn" onclick="setupSync()">⚙</button>
+    <label class="tb-btn" style="cursor:pointer" title="Import JSON file">↑ Import<input type="file" accept=".json" style="display:none" onchange="doImport(event)"></label>
+    <span id="save-indicator">● synced</span>
   </div>
   <div id="stats">
     <div class="stat"><div class="stat-n" id="stat-n">25</div><div class="stat-l">Nodes</div></div>
@@ -386,16 +387,34 @@ const DRAG_T=5;
 let mouse={x:0,y:0}, tick=0;
 
 // ── PERSISTENCE ──
-function initData(){
-  const s=localStorage.getItem(SKEY);
-  if(s){
-    try{
-      const d=JSON.parse(s);
-      nodes=d.nodes.map(n=>({...n,vx:(Math.random()-.5)*.2,vy:(Math.random()-.5)*.2,pulse:Math.random()*Math.PI*2,pinned:n.pinned||false,notes:n.notes||'',status:n.status||'live'}));
-      edges=d.edges;
-    }catch{loadDef();}
-  }else{loadDef();}
+async function initData(){
+  // 1. Try GitHub (source of truth)
+  let loaded=false;
+  try{
+    const r=await fetch(GH_RAW+'?t='+Date.now());
+    if(r.ok){
+      const d=await r.json();
+      applyData(d);
+      // cache SHA in background
+      const token=getToken();
+      if(token) ghLoadSha(token);
+      loaded=true;
+    }
+  }catch{}
+  // 2. Fall back to localStorage (offline)
+  if(!loaded){
+    const s=localStorage.getItem(SKEY);
+    if(s){try{applyData(JSON.parse(s));loaded=true;}catch{}}
+  }
+  // 3. Fall back to defaults
+  if(!loaded) loadDef();
   buildMaps(); updateCount();
+}
+
+function applyData(d){
+  nodes=d.nodes.map(n=>({...n,vx:(Math.random()-.5)*.2,vy:(Math.random()-.5)*.2,
+    pulse:Math.random()*Math.PI*2,pinned:n.pinned||false,notes:n.notes||'',status:n.status||'live'}));
+  edges=d.edges;
 }
 
 function loadDef(){
@@ -424,104 +443,114 @@ function save(){
   autoSave();
 }
 
-// ── FILE SYSTEM ACCESS (persistent save to disk) ──
-let _fileHandle = null;
-let _autoSaveTimer = null;
-const _IDB = 'hark-map-fsa';
+// ── GITHUB SYNC ──────────────────────────────────────────────────────────────
+const GH_REPO = 'TheMaxLong/HARK-System-Map';
+const GH_FILE = 'map-state.json';
+const GH_RAW  = `https://raw.githubusercontent.com/${GH_REPO}/main/${GH_FILE}`;
+const GH_API  = `https://api.github.com/repos/${GH_REPO}/contents/${GH_FILE}`;
+let _ghSha = null;
+let _syncTimer = null;
+let _syncing = false;
 
-async function _getDB(){
-  return new Promise((res,rej)=>{
-    const r=indexedDB.open(_IDB,1);
-    r.onupgradeneeded=e=>e.target.result.createObjectStore('h');
-    r.onsuccess=e=>res(e.target.result);
-    r.onerror=rej;
-  });
-}
-async function _loadHandle(){
-  try{
-    const db=await _getDB();
-    return new Promise(res=>{
-      const tx=db.transaction('h','readonly');
-      const r=tx.objectStore('h').get('f');
-      r.onsuccess=e=>res(e.target.result||null);
-      r.onerror=()=>res(null);
-    });
-  }catch{return null;}
-}
-async function _storeHandle(h){
-  try{
-    const db=await _getDB();
-    const tx=db.transaction('h','readwrite');
-    tx.objectStore('h').put(h,'f');
-  }catch{}
+function getToken(){ return localStorage.getItem('hark-gh-token')||null; }
+
+function promptToken(){
+  const t = prompt(
+    'GitHub Personal Access Token\n\n' +
+    'Create one at github.com/settings/tokens → Fine-grained → Contents: Read & Write\n' +
+    'Stored only in this browser, never sent anywhere except GitHub API:'
+  );
+  if(t&&t.trim()){localStorage.setItem('hark-gh-token',t.trim()); return t.trim();}
+  return null;
 }
 
 function buildExportData(){
-  const ns=nodes.map(n=>({id:n.id,label:n.label,cat:n.cat,sz:n.sz,x:n.x,y:n.y,type:n.type,status:n.status||'live',desc:n.desc,tech:n.tech,notes:n.notes||''}));
+  const ns=nodes.map(n=>({id:n.id,label:n.label,cat:n.cat,sz:n.sz,x:n.x,y:n.y,
+    type:n.type,status:n.status||'live',desc:n.desc,tech:n.tech,notes:n.notes||''}));
   return {nodes:ns,edges,_saved:new Date().toISOString()};
 }
 
-function flashSaved(){
+function flashSaved(msg='● synced'){
   const el=document.getElementById('save-indicator');
+  el.textContent=msg; el.style.color='rgba(104,211,145,0.75)';
   el.classList.add('show');
   clearTimeout(el._t);
-  el._t=setTimeout(()=>el.classList.remove('show'),2200);
+  el._t=setTimeout(()=>el.classList.remove('show'),2500);
+}
+
+function flashError(msg){
+  const el=document.getElementById('save-indicator');
+  el.textContent=msg; el.style.color='rgba(252,129,129,0.75)';
+  el.classList.add('show');
+  clearTimeout(el._t);
+  el._t=setTimeout(()=>el.classList.remove('show'),4000);
+}
+
+async function ghLoadSha(token){
+  try{
+    const r=await fetch(GH_API,{headers:{Authorization:`token ${token}`}});
+    if(r.ok){const d=await r.json(); _ghSha=d.sha;}
+  }catch{}
+}
+
+async function ghCommit(){
+  if(_syncing)return;
+  let token=getToken();
+  if(!token)return; // silent — only syncs if token is set
+  _syncing=true;
+  try{
+    if(!_ghSha) await ghLoadSha(token);
+    const json=JSON.stringify(buildExportData(),null,2);
+    const content=btoa(unescape(encodeURIComponent(json)));
+    const body={message:`map update ${new Date().toISOString().slice(0,16)}`,content};
+    if(_ghSha) body.sha=_ghSha;
+    const r=await fetch(GH_API,{
+      method:'PUT',
+      headers:{Authorization:`token ${token}`,'Content-Type':'application/json'},
+      body:JSON.stringify(body)
+    });
+    if(r.ok){
+      const d=await r.json();
+      _ghSha=d.content.sha;
+      flashSaved();
+    }else if(r.status===401||r.status===403){
+      flashError('⚠ token invalid — click ⚙');
+    }else if(r.status===409){
+      // conflict — refresh SHA and retry once
+      await ghLoadSha(token);
+      _syncing=false;
+      await ghCommit();
+      return;
+    }else{
+      flashError('⚠ sync failed');
+    }
+  }catch{flashError('⚠ offline');}
+  _syncing=false;
+}
+
+function autoSave(){
+  clearTimeout(_syncTimer);
+  _syncTimer=setTimeout(ghCommit,3000);
 }
 
 async function doExport(){
-  const json=JSON.stringify(buildExportData(),null,2);
-  if(!('showSaveFilePicker' in window)){_fallbackDL(json);return;}
-  try{
-    // Restore saved handle if we have one
-    if(!_fileHandle) _fileHandle=await _loadHandle();
-    let needPicker=!_fileHandle;
-    if(_fileHandle&&!needPicker){
-      try{
-        const p=await _fileHandle.queryPermission({mode:'readwrite'});
-        if(p!=='granted'){
-          const r=await _fileHandle.requestPermission({mode:'readwrite'});
-          if(r!=='granted')needPicker=true;
-        }
-      }catch{needPicker=true;}
-    }
-    if(needPicker){
-      _fileHandle=await window.showSaveFilePicker({
-        suggestedName:'map-state.json',
-        startIn:'documents',
-        types:[{description:'HARK Map JSON',accept:{'application/json':['.json']}}]
-      });
-      await _storeHandle(_fileHandle);
-    }
-    const w=await _fileHandle.createWritable();
-    await w.write(json); await w.close();
-    flashSaved();
-  }catch(e){
-    if(e.name!=='AbortError')_fallbackDL(json);
+  // Manual "sync now" — also prompts for token if missing
+  let token=getToken();
+  if(!token) token=promptToken();
+  if(!token) return;
+  await ghCommit();
+}
+
+function setupSync(){
+  let token=getToken();
+  if(token){
+    const clear=confirm('Token is already set.\n\nOK = clear it and enter a new one\nCancel = keep existing');
+    if(!clear)return;
+    localStorage.removeItem('hark-gh-token');
+    _ghSha=null;
   }
-}
-
-async function autoSave(){
-  clearTimeout(_autoSaveTimer);
-  _autoSaveTimer=setTimeout(async()=>{
-    if(!_fileHandle){
-      _fileHandle=await _loadHandle();
-    }
-    if(!_fileHandle)return;
-    try{
-      const p=await _fileHandle.queryPermission({mode:'readwrite'});
-      if(p!=='granted')return;
-      const json=JSON.stringify(buildExportData(),null,2);
-      const w=await _fileHandle.createWritable();
-      await w.write(json); await w.close();
-      flashSaved();
-    }catch{}
-  },1500);
-}
-
-function _fallbackDL(json){
-  const a=document.createElement('a');
-  a.href=URL.createObjectURL(new Blob([json],{type:'application/json'}));
-  a.download='map-state.json'; a.click();
+  token=promptToken();
+  if(token) ghCommit();
 }
 
 function doImport(ev){
@@ -944,9 +973,9 @@ function draw(){
   requestAnimationFrame(draw);
 }
 
-initData();
 mouse={x:canvas.width/2,y:canvas.height/2};
 requestAnimationFrame(draw);
+initData();
 </script>
 </body>
 </html>
