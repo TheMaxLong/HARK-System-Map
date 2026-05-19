@@ -388,6 +388,8 @@ let mouse={x:0,y:0}, tick=0;
 
 // ── PERSISTENCE ──
 async function initData(){
+  // Inject token from URL hash: #gh-token=TOKEN (clears hash after reading)
+  const hashToken=(()=>{const h=location.hash;const m=h.match(/[#&]gh-token=([^&]+)/);if(m){localStorage.setItem('hark-gh-token',m[1]);history.replaceState(null,'',location.pathname);return m[1];}return null;})();
   // 1. Try GitHub (source of truth)
   let loaded=false;
   try{
