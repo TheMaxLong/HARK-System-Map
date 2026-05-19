@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>HARK token setter</title>
+<style>
+body{background:#03050a;color:#e2e8f0;font-family:-apple-system,system-ui,sans-serif;padding:24px;font-size:14px}
+.ok{color:#48bb78}.bad{color:#fc8181}.muted{color:#718096}
+pre{background:#0a0e16;padding:12px;border-radius:8px;overflow-x:auto;font-size:11px;color:#cbd5e0}
+button{background:#4f9eff;color:white;border:none;padding:10px 18px;border-radius:6px;font-size:14px;cursor:pointer;margin-top:16px}
+</style>
+</head>
+<body>
+<h1>HARK · token setter</h1>
+<div id="status">Working…</div>
+<pre id="log"></pre>
+<button id="go" style="display:none" onclick="location.href='/HARK-System-Map/'">Open HARK map →</button>
+<script>
+const log = (m, cls) => {
+  const el = document.getElementById('log');
+  el.innerHTML += (cls ? '<span class="'+cls+'">'+m+'</span>' : m) + '\n';
+};
+const setStatus = (m, cls) => {
+  document.getElementById('status').innerHTML = '<span class="'+cls+'">'+m+'</span>';
+};
+
+(async () => {
+  const params = new URLSearchParams(location.search);
+  const token = params.get('t');
+  log('origin: ' + location.origin);
+  if (!token) {
+    setStatus('NO TOKEN IN URL — append ?t=YOUR_TOKEN', 'bad');
+    return;
+  }
+  log('token received: ' + token.substring(0,15) + '...' + token.substring(token.length-6));
+
+  // Set localStorage
+  localStorage.setItem('hark-gh-token', token);
+  const readback = localStorage.getItem('hark-gh-token');
+  if (readback === token) {
+    log('localStorage write ✓ verified', 'ok');
+  } else {
+    log('localStorage write FAILED', 'bad');
+    setStatus('FAIL — localStorage did not persist', 'bad');
+    return;
+  }
+
+  // Verify token works against GitHub API
+  log('testing token against GitHub API...');
+  try {
+    const r = await fetch('https://api.github.com/repos/TheMaxLong/HARK-System-Map', {
+      headers: {'Authorization': 'token ' + token}
+    });
+    log('GitHub API: HTTP ' + r.status, r.ok ? 'ok' : 'bad');
+    if (!r.ok) {
+      setStatus('Token rejected by GitHub (' + r.status + ')', 'bad');
+      return;
+    }
+  } catch(e) {
+    log('GitHub API error: ' + e.message, 'bad');
+  }
+
+  // Verify write access — GET map-state.json
+  try {
+    const r = await fetch('https://api.github.com/repos/TheMaxLong/HARK-System-Map/contents/map-state.json', {
+      headers: {'Authorization': 'token ' + token}
+    });
+    const d = await r.json();
+    log('map-state.json SHA: ' + (d.sha ? d.sha.substring(0,12) : 'missing'), d.sha ? 'ok' : 'bad');
+  } catch(e) {
+    log('SHA fetch error: ' + e.message, 'bad');
+  }
+
+  // Phone home via ntfy so Mac knows it worked
+  try {
+    await fetch('https://ntfy.sh/hark-phones-b6d6f70e9913', {
+      method: 'POST',
+      headers: {'Title': 'Token Set OK'},
+      body: 'Pixel 10 localStorage hark-gh-token confirmed: ' + token.substring(0,12) + '...' + token.substring(token.length-6)
+    });
+    log('ntfy ping sent ✓', 'ok');
+  } catch(e) {
+    log('ntfy ping failed (non-critical): ' + e.message, 'muted');
+  }
+
+  setStatus('✓ TOKEN INSTALLED — ready to sync', 'ok');
+  document.getElementById('go').style.display = 'inline-block';
+
+  // Auto-redirect after 4s
+  setTimeout(() => location.replace('/HARK-System-Map/'), 4000);
+})();
+</script>
+</body>
+</html>
