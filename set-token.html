@@ -71,16 +71,30 @@ const setStatus = (m, cls) => {
     log('SHA fetch error: ' + e.message, 'bad');
   }
 
-  // Phone home via ntfy so Mac knows it worked
+  // PROOF the page ran: write a tiny ack file to the repo via GitHub API.
+  // Mac polls /tokens-ack.txt — when its content updates, Pixel 10 confirmed.
   try {
-    await fetch('https://ntfy.sh/hark-phones-b6d6f70e9913', {
-      method: 'POST',
-      headers: {'Title': 'Token Set OK'},
-      body: 'Pixel 10 localStorage hark-gh-token confirmed: ' + token.substring(0,12) + '...' + token.substring(token.length-6)
+    const ackPath = 'tokens-ack.txt';
+    const ackBody = 'Pixel 10 set token at ' + new Date().toISOString() + ' :: ' + token.substring(0,12) + '...' + token.substring(token.length-6);
+    const contentB64 = btoa(ackBody);
+    // Get existing SHA if any
+    let sha = null;
+    const head = await fetch('https://api.github.com/repos/TheMaxLong/HARK-System-Map/contents/' + ackPath, {
+      headers: {'Authorization': 'token ' + token}
     });
-    log('ntfy ping sent ✓', 'ok');
+    if (head.ok) sha = (await head.json()).sha;
+    const put = await fetch('https://api.github.com/repos/TheMaxLong/HARK-System-Map/contents/' + ackPath, {
+      method: 'PUT',
+      headers: {'Authorization': 'token ' + token, 'Content-Type': 'application/json'},
+      body: JSON.stringify({
+        message: 'device ack: token installed',
+        content: contentB64,
+        ...(sha ? {sha} : {})
+      })
+    });
+    log('ack commit: HTTP ' + put.status, put.ok ? 'ok' : 'bad');
   } catch(e) {
-    log('ntfy ping failed (non-critical): ' + e.message, 'muted');
+    log('ack commit failed: ' + e.message, 'bad');
   }
 
   setStatus('✓ TOKEN INSTALLED — ready to sync', 'ok');
