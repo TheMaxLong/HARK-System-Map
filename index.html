@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>HARK — Portfolio Graph</title>
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+html, body { width:100%; height:100%; background:#030508; overflow:hidden; font-family:system-ui,-apple-system,sans-serif; }
+canvas { position:absolute; top:0; left:0; }
+
+#header {
+  position:absolute; top:0; left:0; right:0;
+  padding:14px 20px 12px;
+  background:linear-gradient(180deg,rgba(3,5,8,0.98) 70%,rgba(3,5,8,0));
+  z-index:10; pointer-events:none;
+  display:flex; align-items:flex-end; gap:20px;
+}
+#brand { font-size:11px; letter-spacing:0.3em; font-weight:800; color:white; text-transform:uppercase; line-height:1; }
+#tagline { font-size:11px; color:rgba(255,255,255,0.35); max-width:480px; line-height:1.5; }
+#stats { margin-left:auto; display:flex; gap:16px; }
+.stat { text-align:right; }
+.stat-n { font-size:18px; font-weight:700; color:white; line-height:1; }
+.stat-l { font-size:9px; text-transform:uppercase; letter-spacing:0.12em; color:rgba(255,255,255,0.3); }
+
+#legend {
+  position:absolute; bottom:16px; left:16px; z-index:10;
+  display:flex; flex-direction:column; gap:5px;
+}
+.leg { display:flex; align-items:center; gap:7px; font-size:10px; color:rgba(255,255,255,0.4); }
+.leg-dot { width:9px; height:9px; border-radius:50%; flex-shrink:0; }
+
+#tooltip {
+  position:absolute; z-index:20; pointer-events:none;
+  background:rgba(8,12,18,0.96); border:1px solid rgba(255,255,255,0.1);
+  border-radius:10px; padding:14px 16px; max-width:260px;
+  display:none; backdrop-filter:blur(12px);
+}
+#tt-type { font-size:9px; letter-spacing:0.15em; text-transform:uppercase; color:rgba(255,255,255,0.35); margin-bottom:5px; }
+#tt-name { font-size:15px; font-weight:700; color:white; margin-bottom:6px; line-height:1.2; }
+#tt-desc { font-size:11px; color:rgba(255,255,255,0.5); line-height:1.5; margin-bottom:8px; }
+#tt-tech { font-size:10px; color:rgba(79,158,255,0.8); font-style:italic; line-height:1.4; }
+
+#zero-note {
+  position:absolute; bottom:16px; right:16px; z-index:10;
+  background:rgba(8,12,18,0.9); border:1px solid rgba(252,129,129,0.2);
+  border-left:3px solid #fc8181; border-radius:0 8px 8px 0;
+  padding:10px 14px; max-width:260px; font-size:10px; line-height:1.5;
+  color:rgba(255,255,255,0.45);
+}
+#zero-note strong { color:#fc8181; display:block; margin-bottom:4px; font-size:10px; letter-spacing:0.1em; text-transform:uppercase; }
+</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+
+<div id="header">
+  <div>
+    <div id="brand">HARK · Portfolio</div>
+  </div>
+  <div id="tagline">A night operator built a cultivation OS from zero in 8 weeks to hold $6M in live inventory together, alone. Every node is a tool running on-shift, every edge is real data moving through real hardware.</div>
+  <div id="stats">
+    <div class="stat"><div class="stat-n">11</div><div class="stat-l">Projects</div></div>
+    <div class="stat"><div class="stat-n">8w</div><div class="stat-l">Built In</div></div>
+    <div class="stat"><div class="stat-n">$6M</div><div class="stat-l">Live Inventory</div></div>
+  </div>
+</div>
+
+<div id="legend">
+  <div class="leg"><div class="leg-dot" style="background:#ff9f43"></div>Flagship</div>
+  <div class="leg"><div class="leg-dot" style="background:#4f9eff"></div>Application</div>
+  <div class="leg"><div class="leg-dot" style="background:#68d391"></div>Data Pipeline</div>
+  <div class="leg"><div class="leg-dot" style="background:#63b3ed"></div>Display / Mobile</div>
+  <div class="leg"><div class="leg-dot" style="background:#a78bfa"></div>Infrastructure</div>
+  <div class="leg"><div class="leg-dot" style="background:#f6ad55"></div>Hardware</div>
+  <div class="leg"><div class="leg-dot" style="background:#fc8181"></div>External / Retiring</div>
+  <div class="leg"><div class="leg-dot" style="background:#b794f4"></div>Future Platform</div>
+  <div class="leg"><div class="leg-dot" style="background:#718096"></div>Origin</div>
+</div>
+
+<div id="tooltip">
+  <div id="tt-type"></div>
+  <div id="tt-name"></div>
+  <div id="tt-desc"></div>
+  <div id="tt-tech"></div>
+</div>
+
+<div id="zero-note">
+  <strong>Zero's Risk Flag</strong>
+  Anderson controller dedup is broken — zone|timestamp key format mismatch (space vs T). Silent data loss on re-import. Fix before FactotumClient ships.
+</div>
+
+<script>
+const canvas = document.getElementById('c');
+const ctx = canvas.getContext('2d');
+const tt = document.getElementById('tooltip');
+
+function resize() { canvas.width = innerWidth; canvas.height = innerHeight; }
+resize(); addEventListener('resize', resize);
+
+const CATS = {
+  flagship: { color:'#ff9f43', rgb:[255,159,67] },
+  app:      { color:'#4f9eff', rgb:[79,158,255] },
+  data:     { color:'#68d391', rgb:[104,211,145] },
+  display:  { color:'#63b3ed', rgb:[99,179,237] },
+  infra:    { color:'#a78bfa', rgb:[167,139,250] },
+  hardware: { color:'#f6ad55', rgb:[246,173,85] },
+  external: { color:'#fc8181', rgb:[252,129,129] },
+  future:   { color:'#b794f4', rgb:[183,148,244] },
+  origin:   { color:'#718096', rgb:[113,128,150] },
+};
+
+// All 25 nodes with initial positions (fraction of viewport)
+const nodes = [
+  // ─── Flagship ───────────────────────────────────────────────────────────────
+  { id:'cannamax',          label:'CannaMax\n/ HARK',    cat:'flagship', sz:26, x:.54, y:.50,
+    type:'Flagship Product',
+    desc:'The cultivation OS. Drift detection, change feed, real-time pH/EC/flow per zone. Everything else feeds into this.',
+    tech:'TypeScript · Express 5 · Drizzle · Zod · Alexandria adapters · SQLite' },
+
+  // ─── Applications ───────────────────────────────────────────────────────────
+  { id:'facility-tracker',  label:'Facility\nTracker',   cat:'app',      sz:21, x:.56, y:.33,
+    type:'Application',
+    desc:'Room state dashboard. OCR parsing, env monitoring, runoff chemistry, change events feed. Pi-hosted.',
+    tech:'React 18 · Express 5 · PostgreSQL · Claude Vision · pnpm monorepo' },
+  { id:'recipe-book',       label:'Recipe\nBook',        cat:'app',      sz:18, x:.44, y:.62,
+    type:'Application',
+    desc:'Grow recipe hub. Cycle tracking, arc charts, drift detection, field notes. Scrapes live controller data.',
+    tech:'Python · Flask · SQLite · WebSocket · OpenAI (optional)' },
+  { id:'trellis',           label:'Trellis',             cat:'app',      sz:17, x:.68, y:.38,
+    type:'Application · hark.equipment',
+    desc:'Room builder. Runoff monitoring dashboard. OpenAPI-first codegen. Proprietary + Themes Pack tier.',
+    tech:'React 19 · Express 5 · PostgreSQL · Drizzle · Orval codegen · pnpm monorepo' },
+  { id:'hark-site',         label:'hark.equipment',      cat:'app',      sz:13, x:.80, y:.22,
+    type:'Product Site',
+    desc:'Public marketing site. Gumroad shop live. Grow Journal $18. SSL on Vercel.',
+    tech:'Vercel · SSL · Gumroad' },
+
+  // ─── Data Pipelines ─────────────────────────────────────────────────────────
+  { id:'fluxuum',           label:'Fluxuum\nLogger',     cat:'data',     sz:22, x:.40, y:.38,
+    type:'Data Pipeline',
+    desc:'Irrigation telemetry. pH/EC/flow/gal per zone, 136 reads/hr. Anomaly alerts via Resend email.',
+    tech:'TypeScript · Express 5 · PostgreSQL · React · Resend · OpenAI · pnpm monorepo' },
+  { id:'alexandria',        label:'Alexandria',          cat:'data',     sz:17, x:.38, y:.68,
+    type:'Adapter Library',
+    desc:'Controller adapter abstraction. ObservationOnlyMarker enforces read-only. Supports Anderson, Infinium, TrolMaster, Argus, and more.',
+    tech:'TypeScript ESM · Zero runtime deps · pnpm monorepo · 5 packages' },
+
+  // ─── Display / Mobile ───────────────────────────────────────────────────────
+  { id:'flower-room',       label:'Flower Room\nDisplay',cat:'display',  sz:15, x:.68, y:.57,
+    type:'Display App',
+    desc:'Runoff log OCR. Claude Vision parses handwritten log sheets into structured data.',
+    tech:'React 19 · Express 5 · PostgreSQL · Claude Vision · Anthropic SDK' },
+  { id:'flux-widget',       label:'Flux\nWidget',        cat:'display',  sz:13, x:.82, y:.52,
+    type:'Android Widget',
+    desc:'Home screen widget. Live pH/EC/flow per building. 5-second polling, staleness detection.',
+    tech:'Flutter · Dart · Kotlin · Jetpack Glance · Tailscale' },
+  { id:'incident-log',      label:'Incident\nLog',       cat:'display',  sz:12, x:.76, y:.68,
+    type:'Shift Tool · GitHub Pages',
+    desc:'Phone-first incident logger. Used every night shift. jsPDF reports. Pulls Fluxuum sensor context.',
+    tech:'React 18 · Vite · jsPDF · html2canvas · GitHub Pages' },
+
+  // ─── Future Platform ────────────────────────────────────────────────────────
+  { id:'lorax',             label:'Project\nLoRax',      cat:'future',   sz:18, x:.72, y:.20,
+    type:'Future Platform',
+    desc:'Multi-site cultivation OS. Tailscale primary + LoRa mesh fallback. Consumes Alexandria adapters. 9 packages, 95 tests.',
+    tech:'TypeScript · SQLite · Meshtastic · RAKwireless · Tailscale · Alexandria' },
+
+  // ─── Origin ─────────────────────────────────────────────────────────────────
+  { id:'panopticon',        label:'Project\nPanopticon', cat:'origin',   sz:13, x:.24, y:.76,
+    type:'Origin Project',
+    desc:'Where it started. First Pi monitor. Flask + SQLite + WebSocket. Proved the concept. Everything grew from here.',
+    tech:'Python · Flask · SQLite · Chart.js · systemd · Raspberry Pi 5' },
+
+  // ─── Infrastructure ─────────────────────────────────────────────────────────
+  { id:'pi',                label:'Raspberry Pi',        cat:'infra',    sz:23, x:.30, y:.50,
+    type:'Edge Compute',
+    desc:'The hub. Hosts Fluxuum:3001, Facility-Tracker:8080, recipe-book:5050. Always-on. Always-watching.',
+    tech:'Pi 5 · 8GB · Pi OS 64-bit · systemd · Tailscale Serve' },
+  { id:'tailscale',         label:'Tailscale\nMesh',     cat:'infra',    sz:18, x:.26, y:.30,
+    type:'Infrastructure · Mesh VPN',
+    desc:'Private encrypted mesh. Mac + Pi + Pixel 10. No open ports, no firewall rules. Just works.',
+    tech:'WireGuard · Tailscale Serve · MagicDNS · anderson-hub.tailf0f27a.ts.net' },
+  { id:'postgres',          label:'PostgreSQL',          cat:'infra',    sz:16, x:.34, y:.28,
+    type:'Database',
+    desc:'Used by Trellis, Fluxuum, Facility-Tracker, Flower-Room-Display. The heavy-duty store.',
+    tech:'PostgreSQL 16 · Drizzle ORM · drizzle-kit migrations' },
+  { id:'sqlite',            label:'SQLite',              cat:'infra',    sz:13, x:.34, y:.70,
+    type:'Database',
+    desc:'Used by CannaMax, recipe-book, Panopticon, LoRax. File-based, Pi-friendly, zero config.',
+    tech:'SQLite 3 · better-sqlite3 · Drizzle (CannaMax)' },
+  { id:'dead-man',          label:'Dead-man\nSwitch',    cat:'infra',    sz:10, x:.18, y:.80,
+    type:'Watchdog',
+    desc:'Mac→Pi health monitor. Polls every 5 minutes. Fires ntfy push to phone if Pi goes dark.',
+    tech:'~/bin/anderson-hub-watcher · launchd · ntfy.sh' },
+
+  // ─── Hardware ───────────────────────────────────────────────────────────────
+  { id:'anderson',          label:'Anderson\nControllers',cat:'hardware', sz:20, x:.12, y:.43,
+    type:'Hardware · 3 Buildings',
+    desc:'AB (10.10.9.254), EF (10.10.13.50), GH (10.10.13.251). WebSocket stream. pH/EC/flow/gal per zone. Source of truth for irrigation.',
+    tech:'HE Anderson · WebSocket ws:// · HTTP login · 24 flower rooms' },
+  { id:'infinium',          label:'Infinium\n(Unitronics)',cat:'hardware', sz:15, x:.12, y:.62,
+    type:'Hardware · Env Authority',
+    desc:'Lights authority. Temp/RH/CO2/VPD. Trip at 90°F kills lights. Reference only for env — HydroX is ground truth.',
+    tech:'Unitronics PLC · HTTP port 80 · Infinium bridge daemon · launchd' },
+  { id:'sensorex',          label:'Sensorex\nTX100 pH',  cat:'hardware', sz:10, x:.06, y:.52,
+    type:'Hardware · Dual pH Probes',
+    desc:'Two redundant TX100 probes per irrigation line. Divergence = sensor flag, never averaged.',
+    tech:'Sensorex TX100 · 2 probes per zone · divergence detection' },
+
+  // ─── External / Retiring ────────────────────────────────────────────────────
+  { id:'claude-api',        label:'Claude API\n(Vision)',  cat:'external', sz:15, x:.62, y:.76,
+    type:'External API · Anthropic',
+    desc:'OCR for runoff sheets, Infinium screens, shift briefings. Used by Facility-Tracker, Flower-Room-Display, CannaMax.',
+    tech:'claude-opus-4-7 · claude-sonnet-4-6 · @anthropic-ai/sdk' },
+  { id:'resend',            label:'Resend',               cat:'external', sz:10, x:.18, y:.38,
+    type:'External API',
+    desc:'Email anomaly alerts from Fluxuum. 30-minute dedup window per zone bucket.',
+    tech:'Resend API · RESEND_API_KEY · 30min dedup' },
+  { id:'fluxuum-cloud',     label:'Fluxuum\nCloud ☠',    cat:'external', sz:10, x:.22, y:.88,
+    type:'External · Retiring',
+    desc:'fluxuum.replit.app — the old cloud host. Pi mirror is live. Being retired. Kept warm as rollback.',
+    tech:'Replit · retiring → Pi takes over' },
+];
+
+const edges = [
+  // Hardware → Pipelines
+  { s:'anderson',       t:'fluxuum',          label:'pH/EC/flow',   pulse:true },
+  { s:'anderson',       t:'recipe-book',       label:'live state',   pulse:true },
+  { s:'anderson',       t:'cannamax',          label:'via alexandria',pulse:true },
+  { s:'anderson',       t:'panopticon',        label:'origin feed',  pulse:false, dash:true },
+  { s:'sensorex',       t:'anderson',          label:'pH probes',    pulse:false },
+  { s:'infinium',       t:'facility-tracker',  label:'env data',     pulse:true },
+  { s:'infinium',       t:'cannamax',          label:'env data',     pulse:true },
+
+  // Pipeline → Apps
+  { s:'fluxuum',        t:'cannamax',          label:'irrigation',   pulse:true },
+  { s:'fluxuum',        t:'flux-widget',       label:'latest reads', pulse:true },
+  { s:'fluxuum',        t:'incident-log',      label:'sensor ctx',   pulse:false },
+  { s:'recipe-book',    t:'facility-tracker',  label:'harvest/load', pulse:true },
+  { s:'recipe-book',    t:'cannamax',          label:'recipe drift', pulse:true },
+  { s:'facility-tracker',t:'cannamax',         label:'change events',pulse:true },
+  { s:'flower-room',    t:'facility-tracker',  label:'runoff data',  pulse:true },
+  { s:'trellis',        t:'flower-room',       label:'shared arc',   pulse:false },
+
+  // Library → Apps
+  { s:'alexandria',     t:'cannamax',          label:'adapters',     pulse:false },
+  { s:'alexandria',     t:'lorax',             label:'adapters',     pulse:false },
+  { s:'alexandria',     t:'fluxuum',           label:'adapters',     pulse:false },
+
+  // Infra → Apps
+  { s:'pi',             t:'fluxuum',           label:'hosts :3001',  pulse:false },
+  { s:'pi',             t:'facility-tracker',  label:'hosts :8080',  pulse:false },
+  { s:'pi',             t:'cannamax',          label:'target :3031', pulse:false },
+  { s:'pi',             t:'recipe-book',       label:'hosts :5050',  pulse:false },
+  { s:'pi',             t:'panopticon',        label:'hosts :5001',  pulse:false },
+  { s:'tailscale',      t:'pi',                label:'mesh node',    pulse:false },
+  { s:'tailscale',      t:'flux-widget',       label:'remote access',pulse:false },
+  { s:'tailscale',      t:'facility-tracker',  label:'Serve HTTPS',  pulse:false },
+  { s:'postgres',       t:'trellis',           label:'DB',           pulse:false },
+  { s:'postgres',       t:'fluxuum',           label:'DB',           pulse:false },
+  { s:'postgres',       t:'facility-tracker',  label:'DB',           pulse:false },
+  { s:'postgres',       t:'flower-room',       label:'DB',           pulse:false },
+  { s:'sqlite',         t:'cannamax',          label:'DB',           pulse:false },
+  { s:'sqlite',         t:'recipe-book',       label:'DB',           pulse:false },
+  { s:'sqlite',         t:'panopticon',        label:'DB',           pulse:false },
+  { s:'sqlite',         t:'lorax',             label:'DB',           pulse:false },
+
+  // External
+  { s:'claude-api',     t:'facility-tracker',  label:'OCR',          pulse:true },
+  { s:'claude-api',     t:'flower-room',       label:'runoff OCR',   pulse:true },
+  { s:'claude-api',     t:'cannamax',          label:'vision',       pulse:true },
+  { s:'resend',         t:'fluxuum',           label:'alerts',       pulse:false },
+  { s:'fluxuum-cloud',  t:'fluxuum',           label:'retiring',     pulse:false, dash:true },
+  { s:'dead-man',       t:'pi',                label:'watchdog',     pulse:false },
+
+  // Future
+  { s:'lorax',          t:'cannamax',          label:'drift engine', pulse:false },
+  { s:'lorax',          t:'facility-tracker',  label:'UI consumer',  pulse:false },
+
+  // Panopticon lineage
+  { s:'panopticon',     t:'fluxuum',           label:'evolved into', pulse:false, dash:true },
+
+  // Product
+  { s:'hark-site',      t:'trellis',           label:'product',      pulse:false },
+  { s:'hark-site',      t:'cannamax',          label:'product',      pulse:false },
+];
+
+// Build index
+const nodeMap = {};
+nodes.forEach(n => {
+  n.vx = (Math.random()-.5)*.4;
+  n.vy = (Math.random()-.5)*.4;
+  n.pulse = Math.random()*Math.PI*2;
+  nodeMap[n.id] = n;
+});
+
+function w() { return canvas.width; }
+function h() { return canvas.height; }
+const PAD_TOP = 58, PAD_BOT = 0;
+
+function px(n) { return n.x * w(); }
+function py(n) { return PAD_TOP + n.y * (h() - PAD_TOP - PAD_BOT); }
+
+// Mouse
+let mouse = { x: w()/2, y: h()/2 };
+let hoveredNode = null;
+canvas.addEventListener('mousemove', e => {
+  mouse.x = e.clientX; mouse.y = e.clientY;
+  let closest = null, minD = 40;
+  nodes.forEach(n => {
+    const d = Math.hypot(px(n)-e.clientX, py(n)-e.clientY);
+    if (d < minD) { minD = d; closest = n; }
+  });
+  hoveredNode = closest;
+  if (closest) {
+    tt.style.display = 'block';
+    let tx = e.clientX + 18, ty = e.clientY - 10;
+    if (tx + 270 > innerWidth) tx = e.clientX - 278;
+    if (ty + 160 > innerHeight) ty = e.clientY - 150;
+    tt.style.left = tx + 'px'; tt.style.top = ty + 'px';
+    document.getElementById('tt-type').textContent = closest.type || closest.cat;
+    document.getElementById('tt-name').textContent = closest.label.replace('\n',' ');
+    document.getElementById('tt-desc').textContent = closest.desc || '';
+    document.getElementById('tt-tech').textContent = closest.tech || '';
+  } else {
+    tt.style.display = 'none';
+  }
+});
+
+function hexToRgb(hex) {
+  const r=parseInt(hex.slice(1,3),16), g=parseInt(hex.slice(3,5),16), b=parseInt(hex.slice(5,7),16);
+  return [r,g,b];
+}
+
+let t = 0;
+function draw() {
+  t++;
+  ctx.clearRect(0,0,w(),h());
+
+  // Subtle vignette
+  const vig = ctx.createRadialGradient(w()*.5,h()*.5,h()*.2,w()*.5,h()*.5,h()*.9);
+  vig.addColorStop(0,'rgba(0,0,0,0)'); vig.addColorStop(1,'rgba(0,0,0,0.5)');
+  ctx.fillStyle=vig; ctx.fillRect(0,0,w(),h());
+
+  // Physics
+  nodes.forEach(n => {
+    // Repulsion
+    nodes.forEach(m => {
+      if (m===n) return;
+      const dx=px(n)-px(m), dy=py(n)-py(m);
+      const dist=Math.hypot(dx,dy)+1;
+      const force=2200/(dist*dist);
+      n.vx += (dx/dist)*force/w()*.012;
+      n.vy += (dy/dist)*force/(h()-PAD_TOP)*.012;
+    });
+
+    // Spring to connected nodes
+    edges.forEach(e => {
+      if (e.s!==n.id && e.t!==n.id) return;
+      const other = nodeMap[e.s===n.id ? e.t : e.s];
+      if (!other) return;
+      const dx=px(other)-px(n), dy=py(other)-py(n);
+      const dist=Math.hypot(dx,dy)+1;
+      const rest=w()*0.14;
+      const k=(dist-rest)/dist*0.006;
+      n.vx += dx*k/w()*12;
+      n.vy += dy*k/(h()-PAD_TOP)*12;
+    });
+
+    // Center pull
+    n.vx += (.5 - n.x)*.0006;
+    n.vy += (.5 - n.y)*.0006;
+
+    // Mouse repel
+    const mdx=(n.x-mouse.x/w()), mdy=(n.y-(mouse.y-PAD_TOP)/(h()-PAD_TOP));
+    const md=Math.hypot(mdx,mdy)+.01;
+    if (md<.12) { n.vx+=mdx/md*.003; n.vy+=mdy/md*.003; }
+
+    n.vx*=.88; n.vy*=.88;
+    n.x+=n.vx*.0012; n.y+=n.vy*.0012;
+    n.x=Math.max(.04,Math.min(.96,n.x));
+    n.y=Math.max(.03,Math.min(.97,n.y));
+    n.pulse+=.02;
+  });
+
+  // Draw edges
+  edges.forEach(e => {
+    const na=nodeMap[e.s], nb=nodeMap[e.t];
+    if (!na||!nb) return;
+    const ax=px(na),ay=py(na),bx=px(nb),by=py(nb);
+    const dx=bx-ax, dy=by-ay;
+    const dist=Math.hypot(dx,dy);
+    if (dist<1) return;
+
+    const angle=Math.atan2(dy,dx);
+    const cat=CATS[na.cat]||CATS.infra;
+    const [r,g,b]=cat.rgb;
+    const isHovered=hoveredNode&&(hoveredNode.id===na.id||hoveredNode.id===nb.id);
+    const alpha=isHovered?0.45:Math.max(0.04, 0.18-dist/w()*0.3);
+
+    ctx.beginPath();
+    if (e.dash) ctx.setLineDash([5,8]); else ctx.setLineDash([]);
+    ctx.moveTo(ax,ay);
+    ctx.lineTo(bx,by);
+    ctx.strokeStyle=`rgba(${r},${g},${b},${alpha})`;
+    ctx.lineWidth=isHovered?1.5:.7;
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    // Arrowhead at target
+    const tgtR=(nb.sz||12)+3;
+    const ex=bx-Math.cos(angle)*tgtR, ey=by-Math.sin(angle)*tgtR;
+    const hl=6;
+    ctx.beginPath();
+    ctx.moveTo(ex,ey);
+    ctx.lineTo(ex-hl*Math.cos(angle-Math.PI/6),ey-hl*Math.sin(angle-Math.PI/6));
+    ctx.lineTo(ex-hl*Math.cos(angle+Math.PI/6),ey-hl*Math.sin(angle+Math.PI/6));
+    ctx.closePath();
+    ctx.fillStyle=`rgba(${r},${g},${b},${alpha*1.5})`;
+    ctx.fill();
+
+    // Animated pulse dot
+    if (e.pulse && isHovered) {
+      const phase=((t*.012)+e.s.length*.17)%1;
+      const px2=ax+dx*phase, py2=ay+dy*phase;
+      ctx.beginPath(); ctx.arc(px2,py2,2.5,0,Math.PI*2);
+      ctx.fillStyle=`rgba(${r},${g},${b},0.9)`; ctx.fill();
+    } else if (e.pulse) {
+      const phase=((t*.006)+e.s.length*.17)%1;
+      const px2=ax+dx*phase, py2=ay+dy*phase;
+      ctx.beginPath(); ctx.arc(px2,py2,1.5,0,Math.PI*2);
+      ctx.fillStyle=`rgba(${r},${g},${b},0.4)`; ctx.fill();
+    }
+
+    // Edge label on hover
+    if (isHovered && e.label) {
+      const mx=(ax+bx)/2, my=(ay+by)/2;
+      ctx.font='9px system-ui'; ctx.textAlign='center';
+      ctx.fillStyle=`rgba(255,255,255,0.4)`;
+      ctx.fillText(e.label,mx,my-5);
+    }
+  });
+
+  // Draw nodes
+  nodes.forEach(n => {
+    const x=px(n), y=py(n);
+    const cat=CATS[n.cat]||CATS.infra;
+    const [r,g,b]=cat.rgb;
+    const isH=hoveredNode&&hoveredNode.id===n.id;
+    const pulse=Math.sin(n.pulse)*1.5;
+    const radius=(n.sz||12)+(isH?3:0)+pulse;
+
+    // Outer glow
+    const glow=ctx.createRadialGradient(x,y,0,x,y,radius*4);
+    glow.addColorStop(0,`rgba(${r},${g},${b},${isH?.25:.08})`);
+    glow.addColorStop(1,`rgba(${r},${g},${b},0)`);
+    ctx.beginPath(); ctx.arc(x,y,radius*4,0,Math.PI*2);
+    ctx.fillStyle=glow; ctx.fill();
+
+    // Node body
+    ctx.beginPath(); ctx.arc(x,y,radius,0,Math.PI*2);
+    if (isH) {
+      ctx.fillStyle=cat.color;
+    } else {
+      const grad=ctx.createRadialGradient(x-radius*.3,y-radius*.3,0,x,y,radius);
+      grad.addColorStop(0,cat.color+'ee');
+      grad.addColorStop(1,cat.color+'99');
+      ctx.fillStyle=grad;
+    }
+    ctx.fill();
+
+    // Ring for flagship
+    if (n.cat==='flagship'||n.cat==='future') {
+      ctx.beginPath(); ctx.arc(x,y,radius+3+pulse*.5,0,Math.PI*2);
+      ctx.strokeStyle=`${cat.color}55`; ctx.lineWidth=1.5; ctx.stroke();
+    }
+
+    // Label
+    const lines=n.label.split('\n');
+    const fsize=isH?12:Math.max(9,Math.min(11,n.sz*.55));
+    ctx.font=`${isH?700:500} ${fsize}px system-ui`;
+    ctx.textAlign='center';
+    const labelY=y+radius+fsize+3;
+    lines.forEach((line,i) => {
+      const ly=labelY+i*fsize*1.2;
+      ctx.fillStyle=`rgba(0,0,0,0.6)`;
+      ctx.fillText(line,x+1,ly+1);
+      ctx.fillStyle=isH?'rgba(255,255,255,0.95)':`rgba(255,255,255,${n.cat==='origin'?.45:.7})`;
+      ctx.fillText(line,x,ly);
+    });
+  });
+
+  requestAnimationFrame(draw);
+}
+requestAnimationFrame(draw);
+</script>
+</body>
+</html>
