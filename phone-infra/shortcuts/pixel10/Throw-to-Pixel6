@@ -1,0 +1,18 @@
+#!/data/data/com.termux/files/usr/bin/bash
+# Throw-to-Pixel6 — Capture a message and have Pixel 6 (home hub) speak it aloud.
+# Great for talking to the dog while away, or shouting a reminder to your room.
+
+TARGET=pixel6
+
+MSG=$(termux-speech-to-text 2>/dev/null)
+if [ -z "$MSG" ] || [ "$MSG" = "}" ]; then
+  MSG=$(termux-dialog text -t "Throw to Pixel 6" -i "What should Pixel 6 say?" 2>/dev/null | python3 -c "import sys,json;print(json.load(sys.stdin).get('text',''))" 2>/dev/null)
+fi
+[ -z "$MSG" ] && { termux-tts-speak "Nothing to throw."; exit 1; }
+
+if ssh -o ConnectTimeout=6 "$TARGET" "termux-tts-speak \"$(echo "$MSG" | sed 's/"/\\"/g')\""; then
+  termux-vibrate -d 200
+  termux-tts-speak "Thrown to home hub."
+else
+  termux-tts-speak "Could not reach home hub."
+fi

@@ -1,0 +1,7 @@
+#!/data/data/com.termux/files/usr/bin/bash
+# Wake-Claude — Trigger a Claude Code session on Mac via ntfy
+TOPIC="hark-wake-mac-b6d6f70e9913"
+DEVICE=$(getprop ro.product.model 2>/dev/null || echo "phone")
+curl -s -X POST -H "Title: Wake Claude" -d "wake from $DEVICE" "https://ntfy.sh/$TOPIC" > /dev/null
+termux-vibrate -d 200
+termux-tts-speak "Claude session waking on Mac."

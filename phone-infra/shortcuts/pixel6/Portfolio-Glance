@@ -1,0 +1,32 @@
+#!/data/data/com.termux/files/usr/bin/bash
+# Portfolio-Glance — Last 3 commits across Max's GitHub repos, spoken aloud.
+
+# Read GitHub PAT (used for HARK map sync, has read scope to all repos)
+PAT=$(curl -s "https://raw.githubusercontent.com/TheMaxLong/HARK-System-Map/main/map-state.json" 2>/dev/null > /dev/null && echo "pat-not-needed" || echo "")
+# Use unauthenticated GitHub API for public events (lower rate limit but works)
+
+RESULT=$(curl -s --max-time 6 "https://api.github.com/users/TheMaxLong/events/public?per_page=10" 2>/dev/null | python3 - <<'PYEOF'
+import sys, json
+try:
+    events = json.load(sys.stdin)
+    commits = []
+    for e in events:
+        if e.get('type') == 'PushEvent':
+            repo = e.get('repo',{}).get('name','?').split('/')[-1]
+            payload = e.get('payload',{})
+            for c in payload.get('commits',[])[:1]:
+                msg = c.get('message','').split('\n')[0][:60]
+                commits.append((repo, msg))
+                if len(commits) >= 3: break
+        if len(commits) >= 3: break
+    if not commits:
+        print("No recent commits found.")
+    else:
+        for r,m in commits:
+            print(f"In {r}: {m}.")
+except Exception as e:
+    print("Could not read GitHub activity.")
+PYEOF
+)
+
+termux-tts-speak "$RESULT"

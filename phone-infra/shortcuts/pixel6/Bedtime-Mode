@@ -1,0 +1,37 @@
+#!/data/data/com.termux/files/usr/bin/bash
+# Bedtime-Mode — Govee lights off + media-volume down + announce.
+
+GOVEE_API_KEY="${GOVEE_API_KEY:-4b4e5e16-233f-49bc-806a-89ccdc6de731}"
+
+# Govee turn-off — fetch devices then send "turn off" to each light
+curl -s --max-time 5 \
+  -H "Govee-API-Key: $GOVEE_API_KEY" \
+  "https://openapi.api.govee.com/router/api/v1/user/devices" 2>/dev/null \
+  | python3 - <<PYEOF
+import sys, json, urllib.request
+
+try:
+    d = json.load(sys.stdin)
+    devs = [x for x in d.get('data',[]) if x.get('type','').lower() == 'devices.types.light']
+    for dev in devs:
+        body = {
+            "requestId": "bedtime",
+            "payload": {
+                "sku": dev.get('sku'),
+                "device": dev.get('device'),
+                "capability": {"type":"devices.capabilities.on_off","instance":"powerSwitch","value":0}
+            }
+        }
+        req = urllib.request.Request(
+            "https://openapi.api.govee.com/router/api/v1/device/control",
+            headers={"Govee-API-Key": "$GOVEE_API_KEY", "Content-Type":"application/json"},
+            data=json.dumps(body).encode())
+        try: urllib.request.urlopen(req, timeout=4)
+        except: pass
+except: pass
+PYEOF
+
+# Media volume → 1 (low, not zero, so I can still announce)
+termux-volume music 1
+
+termux-tts-speak "Bedtime mode set. Lights off. Goodnight."

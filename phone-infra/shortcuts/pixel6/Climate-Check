@@ -1,0 +1,43 @@
+#!/data/data/com.termux/files/usr/bin/bash
+# Climate-Check — Reports current temp/humidity from Govee sensors in the condo.
+# Falls back to phone sensor if Govee unreachable.
+
+GOVEE_API_KEY="${GOVEE_API_KEY:-4b4e5e16-233f-49bc-806a-89ccdc6de731}"
+
+DATA=$(curl -s --max-time 6 \
+  -H "Govee-API-Key: $GOVEE_API_KEY" \
+  "https://openapi.api.govee.com/router/api/v1/user/devices" 2>/dev/null)
+
+if echo "$DATA" | python3 -c "import sys,json;json.load(sys.stdin)" 2>/dev/null; then
+  SUMMARY=$(echo "$DATA" | python3 - <<'PYEOF'
+import sys, json
+try:
+    d = json.load(sys.stdin)
+    devs = d.get('data', [])
+    sensors = [x for x in devs if 'sensor' in (x.get('type','').lower()) or 'H51' in (x.get('sku','') or '')]
+    if not sensors:
+        print(f"{len(devs)} Govee devices online but no temp sensor.")
+    else:
+        print(f"{len(sensors)} sensors online.")
+except Exception:
+    print("Govee data unreadable.")
+PYEOF
+)
+  termux-tts-speak "$SUMMARY"
+else
+  # Phone-side fallback — read ambient temp sensor if available
+  PHONE_TEMP=$(termux-sensor -s "AMBIENT_TEMPERATURE" -n 1 2>/dev/null | python3 -c "
+import sys, json
+try:
+    d = json.load(sys.stdin)
+    for k,v in d.items():
+        vals = v.get('values', [])
+        if vals: print(f'{vals[0]:.1f}')
+except: pass
+" 2>/dev/null)
+  if [ -n "$PHONE_TEMP" ]; then
+    termux-tts-speak "Govee unreachable. Phone sensor reads ${PHONE_TEMP} Celsius."
+  else
+    termux-tts-speak "No climate data available."
+  fi
+fi

@@ -1,0 +1,15 @@
+#!/data/data/com.termux/files/usr/bin/bash
+# Dead-Man-Bypass — Manually fire the safety alert ntfy to confirm the channel
+# is intact end-to-end. Real dead-man-switch runs from Mac launchd, polling Pi.
+
+TOPIC="hark-phones-b6d6f70e9913"
+
+curl -s -X POST \
+  -H "Title: DEAD-MAN-BYPASS test" \
+  -H "Priority: high" \
+  -H "Tags: warning" \
+  -d "Manual test — if you got this, the alert channel works. $(date '+%H:%M')" \
+  "https://ntfy.sh/$TOPIC" > /dev/null
+
+termux-vibrate -d 500
+termux-tts-speak "Dead man bypass fired. Check ntfy for the alert."

@@ -1,0 +1,18 @@
+#!/data/data/com.termux/files/usr/bin/bash
+# Throw-to-Pixel10 — Capture a message and have Pixel 10 (carry phone) speak it.
+# Useful for reminding yourself in the field.
+
+TARGET=pixel10
+
+MSG=$(termux-speech-to-text 2>/dev/null)
+if [ -z "$MSG" ] || [ "$MSG" = "}" ]; then
+  MSG=$(termux-dialog text -t "Throw to Pixel 10" -i "What should Pixel 10 say?" 2>/dev/null | python3 -c "import sys,json;print(json.load(sys.stdin).get('text',''))" 2>/dev/null)
+fi
+[ -z "$MSG" ] && { termux-tts-speak "Nothing to throw."; exit 1; }
+
+if ssh -o ConnectTimeout=6 "$TARGET" "termux-tts-speak \"$(echo "$MSG" | sed 's/"/\\"/g')\""; then
+  termux-vibrate -d 200
+  termux-tts-speak "Thrown to Pixel 10."
+else
+  termux-tts-speak "Could not reach carry phone."
+fi

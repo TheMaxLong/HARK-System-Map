@@ -1,0 +1,47 @@
+#!/data/data/com.termux/files/usr/bin/bash
+# Read-Cycle — Speaks current cycle status: rooms in flower, days-to-harvest,
+# next harvest day. Fetches from the Pi (Facility Tracker API).
+
+# FT api is hosted on Pi at port 8080 behind nginx, or 3000 direct
+URL="https://anderson-hub.tailf0f27a.ts.net/api/rooms"
+
+DATA=$(curl -s --max-time 8 -H 'Accept: application/json' "$URL" 2>/dev/null)
+
+if [ -z "$DATA" ] || ! echo "$DATA" | python3 -c "import sys,json;json.load(sys.stdin)" 2>/dev/null; then
+  termux-tts-speak "Facility Tracker not responding."
+  exit 1
+fi
+
+SUMMARY=$(echo "$DATA" | python3 - <<'PYEOF'
+import sys, json, datetime
+try:
+    data = json.load(sys.stdin)
+    if isinstance(data, dict):
+        data = data.get('rooms', data.get('data', []))
+    today = datetime.date.today()
+    in_flower = 0
+    next_harv = None
+    days = None
+    for r in data:
+        if not isinstance(r, dict): continue
+        stage = (r.get('stage') or r.get('phase') or '').lower()
+        if 'flower' in stage: in_flower += 1
+        sd = r.get('stop_date') or r.get('harvest_date')
+        if sd:
+            try:
+                d = datetime.date.fromisoformat(sd[:10])
+                if d >= today:
+                    delta = (d - today).days
+                    if days is None or delta < days:
+                        days, next_harv = delta, r.get('name', r.get('id','?'))
+            except: pass
+    parts = []
+    if in_flower: parts.append(f"{in_flower} rooms in flower")
+    if next_harv: parts.append(f"next harvest is {next_harv} in {days} days")
+    print(". ".join(parts) if parts else "no cycle data available")
+except Exception as e:
+    print(f"could not parse cycle data")
+PYEOF
+)
+
+termux-tts-speak "$SUMMARY"

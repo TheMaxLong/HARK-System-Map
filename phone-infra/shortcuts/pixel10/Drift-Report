@@ -1,0 +1,42 @@
+#!/data/data/com.termux/files/usr/bin/bash
+# Drift-Report — Voice-driven incident capture for facility drift events.
+# Records via STT, logs to ~/incident-log/, fires ntfy alert.
+
+INCIDENT_DIR="$HOME/incident-log"
+DAY=$(date +%Y-%m-%d)
+LOG="$INCIDENT_DIR/$DAY.log"
+TOPIC="hark-phones-b6d6f70e9913"
+
+mkdir -p "$INCIDENT_DIR"
+
+# Capture: try STT, fall back to dialog text input
+TRANSCRIPT=$(termux-speech-to-text 2>/dev/null)
+if [ -z "$TRANSCRIPT" ] || [ "$TRANSCRIPT" = "}" ] || [ "$TRANSCRIPT" = "" ]; then
+  TRANSCRIPT=$(termux-dialog text -t "Drift Report" -i "Describe the drift" 2>/dev/null | python3 -c "import sys,json;print(json.load(sys.stdin).get('text',''))" 2>/dev/null)
+fi
+
+[ -z "$TRANSCRIPT" ] && { termux-tts-speak "No drift report captured."; exit 1; }
+
+# Capture context
+TS=$(date '+%Y-%m-%d %H:%M:%S')
+BATTERY=$(termux-battery-status 2>/dev/null | python3 -c "import sys,json;d=json.load(sys.stdin);print(d.get('percentage','?'))" 2>/dev/null)
+LOC=$(termux-location -p network 2>/dev/null | python3 -c "import sys,json;d=json.load(sys.stdin);print(f\"{d.get('latitude','?'):.5},{d.get('longitude','?'):.5}\")" 2>/dev/null)
+
+# Write to incident log
+{
+  echo "## $TS"
+  echo "**Drift:** $TRANSCRIPT"
+  echo "**Loc:** $LOC | **Battery:** ${BATTERY}%"
+  echo ""
+} >> "$LOG"
+
+# Fire ntfy alert
+curl -s -X POST \
+  -H "Title: DRIFT — $(date +%H:%M)" \
+  -H "Priority: high" \
+  -H "Tags: rotating_light" \
+  -d "$TRANSCRIPT" \
+  "https://ntfy.sh/$TOPIC" > /dev/null
+
+termux-vibrate -d 400
+termux-tts-speak "Drift logged. ntfy alert sent."

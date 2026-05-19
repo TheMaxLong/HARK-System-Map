@@ -1,0 +1,40 @@
+#!/data/data/com.termux/files/usr/bin/bash
+# Drop-Pin — Capture GPS + WiFi + battery + timestamp, append to movement log.
+# Proves you walked the rooms.
+
+MOVEMENT_LOG="$HOME/movement-log.tsv"
+
+# Init header
+if [ ! -f "$MOVEMENT_LOG" ]; then
+  echo -e "timestamp\tlat\tlon\taccuracy_m\tssid\tbattery_pct\tcharging" > "$MOVEMENT_LOG"
+fi
+
+TS=$(date '+%Y-%m-%d %H:%M:%S')
+
+parse_json() {
+  python3 -c "
+import sys, json
+try:
+    d = json.loads(sys.stdin.read() or '{}')
+    print(d.get('$1', '') if not isinstance(d, list) else '')
+except Exception:
+    print('')
+"
+}
+
+LOC=$(termux-location -p network 2>/dev/null)
+LAT=$(printf '%s' "$LOC" | parse_json latitude)
+LON=$(printf '%s' "$LOC" | parse_json longitude)
+ACC=$(printf '%s' "$LOC" | parse_json accuracy)
+
+WIFI=$(termux-wifi-connectioninfo 2>/dev/null)
+SSID=$(printf '%s' "$WIFI" | parse_json ssid | tr -d '"')
+
+BAT=$(termux-battery-status 2>/dev/null)
+PCT=$(printf '%s' "$BAT" | parse_json percentage)
+CHG=$(printf '%s' "$BAT" | parse_json plugged)
+
+echo -e "$TS\t$LAT\t$LON\t$ACC\t$SSID\t$PCT\t$CHG" >> "$MOVEMENT_LOG"
+
+termux-vibrate -d 150
+termux-tts-speak "Pin dropped. Battery ${PCT} percent."

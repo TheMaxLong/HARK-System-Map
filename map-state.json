@@ -5,8 +5,13 @@
       "label": "CannaMax\n/ HARK",
       "cat": "flagship",
       "sz": 26,
+<<<<<<< Updated upstream
       "x": 0.5038874464138187,
       "y": 0.371038303367489,
+=======
+      "x": 0.45759162303664924,
+      "y": 0.18032786885245902,
+>>>>>>> Stashed changes
       "type": "Flagship Product",
       "status": "live",
       "desc": "The cultivation OS. Drift detection, change feed, real-time pH/EC/flow per zone. Everything else feeds into this.",
@@ -18,8 +23,13 @@
       "label": "Facility\nTracker",
       "cat": "app",
       "sz": 21,
+<<<<<<< Updated upstream
       "x": 0.5375906490841124,
       "y": 0.3995538805459981,
+=======
+      "x": 0.5979057591623037,
+      "y": 0.8051001821493625,
+>>>>>>> Stashed changes
       "type": "Application",
       "status": "live",
       "desc": "Room state dashboard. OCR parsing, env monitoring, runoff chemistry, change events feed. Pi-hosted.",
@@ -31,8 +41,13 @@
       "label": "Recipe\nBook",
       "cat": "app",
       "sz": 18,
+<<<<<<< Updated upstream
       "x": 0.4737096132875393,
       "y": 0.4474210479379428,
+=======
+      "x": 0.4330748549768609,
+      "y": 0.5618598040988151,
+>>>>>>> Stashed changes
       "type": "Application",
       "status": "live",
       "desc": "Grow recipe hub. Cycle tracking, arc charts, drift detection, field notes. Scrapes live controller data.",
@@ -44,8 +59,13 @@
       "label": "Trellis",
       "cat": "app",
       "sz": 17,
+<<<<<<< Updated upstream
       "x": 0.5188171728128704,
       "y": 0.2648310334594366,
+=======
+      "x": 0.4942408376963351,
+      "y": 0.030965391621129327,
+>>>>>>> Stashed changes
       "type": "Application · hark.equipment",
       "status": "live",
       "desc": "Room builder. Runoff monitoring dashboard. OpenAPI-first codegen. Proprietary + Themes Pack tier.",
@@ -57,8 +77,13 @@
       "label": "hark.equipment",
       "cat": "app",
       "sz": 13,
+<<<<<<< Updated upstream
       "x": 0.6198486259305623,
       "y": 0.2943678227164126,
+=======
+      "x": 0.7340314136125654,
+      "y": 0.14571948998178508,
+>>>>>>> Stashed changes
       "type": "Product Site",
       "status": "live",
       "desc": "Public marketing site. Gumroad shop live. Grow Journal $18. SSL on Vercel.",
@@ -70,8 +95,13 @@
       "label": "Fluxuum\nLogger",
       "cat": "data",
       "sz": 22,
+<<<<<<< Updated upstream
       "x": 0.4333384441352834,
       "y": 0.399740489754991,
+=======
+      "x": 0.3771420319800438,
+      "y": 0.40333878248523436,
+>>>>>>> Stashed changes
       "type": "Data Pipeline",
       "status": "live",
       "desc": "Irrigation telemetry. pH/EC/flow/gal per zone, 136 reads/hr. Anomaly alerts via Resend email.",
@@ -83,8 +113,13 @@
       "label": "Alexandria",
       "cat": "data",
       "sz": 17,
+<<<<<<< Updated upstream
       "x": 0.5102840996051619,
       "y": 0.3039845652340691,
+=======
+      "x": 0.612565445026178,
+      "y": 0.20947176684881602,
+>>>>>>> Stashed changes
       "type": "Adapter Library",
       "status": "live",
       "desc": "Controller adapter abstraction. ObservationOnlyMarker enforces read-only. Supports Anderson, Infinium, TrolMaster, Argus, and more.",
@@ -96,8 +131,13 @@
       "label": "Flower Room\nDisplay",
       "cat": "display",
       "sz": 15,
+<<<<<<< Updated upstream
       "x": 0.6124845816080814,
       "y": 0.3395217389006342,
+=======
+      "x": 0.6492146596858639,
+      "y": 0.3533697632058288,
+>>>>>>> Stashed changes
       "type": "Display App",
       "status": "live",
       "desc": "Runoff log OCR. Claude Vision parses handwritten log sheets into structured data.",
@@ -109,8 +149,13 @@
       "label": "Flux\nWidget",
       "cat": "display",
       "sz": 13,
+<<<<<<< Updated upstream
       "x": 0.5661253091791945,
       "y": 0.4096994577618381,
+=======
+      "x": 0.6376963350785341,
+      "y": 0.51183970856102,
+>>>>>>> Stashed changes
       "type": "Android Widget",
       "status": "live",
       "desc": "Home screen widget. Live pH/EC/flow per building. 5-second polling, staleness detection.",
@@ -122,8 +167,13 @@
       "label": "Incident\nLog",
       "cat": "display",
       "sz": 12,
+<<<<<<< Updated upstream
       "x": 0.3920805517719645,
       "y": 0.5138580651241199,
+=======
+      "x": 0.43036649214659684,
+      "y": 0.8142076502732241,
+>>>>>>> Stashed changes
       "type": "Shift Tool · GitHub Pages",
       "status": "live",
       "desc": "Phone-first incident logger. Used every night shift. jsPDF reports. Pulls Fluxuum sensor context.",
@@ -135,8 +185,13 @@
       "label": "Project\nLoRax",
       "cat": "future",
       "sz": 18,
+<<<<<<< Updated upstream
       "x": 0.5716105992555385,
       "y": 0.34504554875943266,
+=======
+      "x": 0.7382198952879581,
+      "y": 0.30965391621129323,
+>>>>>>> Stashed changes
       "type": "Future Platform",
       "status": "planned",
       "desc": "Multi-site cultivation OS. Tailscale primary + LoRa mesh fallback. Consumes Alexandria adapters. 9 packages, 95 tests.",
@@ -148,8 +203,13 @@
       "label": "Project\nPanopticon",
       "cat": "origin",
       "sz": 13,
+<<<<<<< Updated upstream
       "x": 0.31297572444235494,
       "y": 0.3623335786696697,
+=======
+      "x": 0.2513089005235602,
+      "y": 0.2568306010928962,
+>>>>>>> Stashed changes
       "type": "Origin Project",
       "status": "live",
       "desc": "Where it started. First Pi monitor. Flask + SQLite + WebSocket. Proved the concept. Everything grew from here.",
@@ -161,8 +221,13 @@
       "label": "Raspberry Pi",
       "cat": "infra",
       "sz": 23,
+<<<<<<< Updated upstream
       "x": 0.36970135856416747,
       "y": 0.41567953171769045,
+=======
+      "x": 0.4738234699348097,
+      "y": 0.42869433366688897,
+>>>>>>> Stashed changes
       "type": "Edge Compute",
       "status": "live",
       "desc": "The hub. Hosts Fluxuum:3001, Facility-Tracker:8080, recipe-book:5050. Always-on. Always-watching.",
@@ -174,8 +239,13 @@
       "label": "Tailscale\nMesh",
       "cat": "infra",
       "sz": 18,
+<<<<<<< Updated upstream
       "x": 0.48685209419508546,
       "y": 0.3474182489907076,
+=======
+      "x": 0.6010471204188481,
+      "y": 0.04371584699453552,
+>>>>>>> Stashed changes
       "type": "Infrastructure · Mesh VPN",
       "status": "live",
       "desc": "Private encrypted mesh. Mac + Pi + Pixel 10. No open ports, no firewall rules. Just works.",
@@ -187,8 +257,13 @@
       "label": "PostgreSQL",
       "cat": "infra",
       "sz": 16,
+<<<<<<< Updated upstream
       "x": 0.48473393512726115,
       "y": 0.33207033017946913,
+=======
+      "x": 0.5445026178010471,
+      "y": 0.28415300546448086,
+>>>>>>> Stashed changes
       "type": "Database",
       "status": "live",
       "desc": "Used by Trellis, Fluxuum, Facility-Tracker, Flower-Room-Display. The heavy-duty store.",
@@ -200,8 +275,13 @@
       "label": "SQLite",
       "cat": "infra",
       "sz": 13,
+<<<<<<< Updated upstream
       "x": 0.4276157397848523,
       "y": 0.3930211101072009,
+=======
+      "x": 0.5581151832460733,
+      "y": 0.4262295081967213,
+>>>>>>> Stashed changes
       "type": "Database",
       "status": "live",
       "desc": "Used by CannaMax, recipe-book, Panopticon, LoRax. File-based, Pi-friendly, zero config.",
@@ -213,8 +293,13 @@
       "label": "Dead-man\nSwitch",
       "cat": "infra",
       "sz": 10,
+<<<<<<< Updated upstream
       "x": 0.371823276385141,
       "y": 0.5160636708876271,
+=======
+      "x": 0.30157068062827225,
+      "y": 0.7686703096539163,
+>>>>>>> Stashed changes
       "type": "Watchdog",
       "status": "live",
       "desc": "Mac→Pi health monitor. Polls every 5 minutes. Fires ntfy push to phone if Pi goes dark.",
@@ -226,8 +311,13 @@
       "label": "Anderson\nControllers",
       "cat": "hardware",
       "sz": 20,
+<<<<<<< Updated upstream
       "x": 0.34656297183476215,
       "y": 0.44489048300009554,
+=======
+      "x": 0.2450261780104712,
+      "y": 0.4990892531876138,
+>>>>>>> Stashed changes
       "type": "Hardware · 3 Buildings",
       "status": "live",
       "desc": "AB (10.10.9.254), EF (10.10.13.50), GH (10.10.13.251). WebSocket stream. pH/EC/flow/gal per zone. Source of truth for irrigation.",
@@ -239,8 +329,13 @@
       "label": "Infinium\n(Unitronics)",
       "cat": "hardware",
       "sz": 15,
+<<<<<<< Updated upstream
       "x": 0.5866486801182109,
       "y": 0.44724678308341953,
+=======
+      "x": 0.5518324607329843,
+      "y": 0.5774134790528234,
+>>>>>>> Stashed changes
       "type": "Hardware · Env Authority",
       "status": "live",
       "desc": "Lights authority. Temp/RH/CO2/VPD. Trip at 90°F kills lights. Reference only for env — HydroX is ground truth.",
@@ -252,8 +347,13 @@
       "label": "Sensorex\nTX100 pH",
       "cat": "hardware",
       "sz": 10,
+<<<<<<< Updated upstream
       "x": 0.2677920315679657,
       "y": 0.5324947648816443,
+=======
+      "x": 0.16858638743455498,
+      "y": 0.6575591985428051,
+>>>>>>> Stashed changes
       "type": "Hardware · Dual pH Probes",
       "status": "live",
       "desc": "Two redundant TX100 probes per irrigation line. Divergence = sensor flag, never averaged.",
@@ -265,8 +365,13 @@
       "label": "Claude API\n(Vision)",
       "cat": "external",
       "sz": 15,
+<<<<<<< Updated upstream
       "x": 0.6345788566994258,
       "y": 0.42243926352684075,
+=======
+      "x": 0.7109947643979058,
+      "y": 0.5683060109289617,
+>>>>>>> Stashed changes
       "type": "External API · Anthropic",
       "status": "live",
       "desc": "OCR for runoff sheets, Infinium screens, shift briefings. Used by Facility-Tracker, Flower-Room-Display, CannaMax.",
@@ -278,8 +383,13 @@
       "label": "Resend",
       "cat": "external",
       "sz": 10,
+<<<<<<< Updated upstream
       "x": 0.269196412400707,
       "y": 0.386153815410416,
+=======
+      "x": 0.1256544502617801,
+      "y": 0.37158469945355194,
+>>>>>>> Stashed changes
       "type": "External API",
       "status": "live",
       "desc": "Email anomaly alerts from Fluxuum. 30-minute dedup window per zone bucket.",
@@ -291,8 +401,13 @@
       "label": "Fluxuum\nCloud ☠",
       "cat": "external",
       "sz": 10,
+<<<<<<< Updated upstream
       "x": 0.28523424239920625,
       "y": 0.4445710640108739,
+=======
+      "x": 0.11832460732984293,
+      "y": 0.5009107468123861,
+>>>>>>> Stashed changes
       "type": "External · Retiring",
       "status": "retiring",
       "desc": "fluxuum.replit.app — the old cloud host. Pi mirror is live. Being retired. Kept warm as rollback.",
@@ -304,8 +419,13 @@
       "label": "HARK\nController",
       "cat": "dream",
       "sz": 24,
+<<<<<<< Updated upstream
       "x": 0.41480359309292003,
       "y": 0.3207440119022716,
+=======
+      "x": 0.23769633507853402,
+      "y": 0.061930783242258654,
+>>>>>>> Stashed changes
       "type": "Magnum Opus",
       "status": "dream",
       "desc": "The unified cultivation OS. Controller-agnostic, self-serve install, runs on any Pi. Every project in this graph is a feeder. This is what it all becomes.",
@@ -317,12 +437,30 @@
       "label": "Pixel 6 controller",
       "cat": "dream",
       "sz": 18,
+<<<<<<< Updated upstream
       "x": 0.325867971862328,
       "y": 0.31874891639129155,
+=======
+      "x": 0.13926701570680627,
+      "y": 0.08014571948998178,
+>>>>>>> Stashed changes
       "type": "Dream",
       "status": "dream",
       "desc": "My old Pixel 6 will be hook up to my GitHub and all my stuff to talk with Pi , and projects. \n\nIt's basically going to be Claude's phone",
       "tech": "Pixel6",
+      "notes": ""
+    },
+    {
+      "id": "room-builder-mpcycpd9",
+      "label": "Room Builder",
+      "cat": "dream",
+      "sz": 18,
+      "x": 0.3863874345549738,
+      "y": 0.025500910746812388,
+      "type": "Dream",
+      "status": "dream",
+      "desc": "2d , room buildout",
+      "tech": "On Codex, used chat gpt",
       "notes": ""
     }
   ],
@@ -643,5 +781,9 @@
       "pulse": false
     }
   ],
+<<<<<<< Updated upstream
   "_saved": "2026-05-19T17:59:07.607Z"
+=======
+  "_saved": "2026-05-19T18:27:16.898Z"
+>>>>>>> Stashed changes
 }

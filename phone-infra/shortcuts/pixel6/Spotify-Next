@@ -1,0 +1,5 @@
+#!/data/data/com.termux/files/usr/bin/bash
+# Spotify-Next — Skip to next track via Android media key broadcast.
+am broadcast -a android.intent.action.MEDIA_BUTTON --ei "android.intent.extra.KEY_EVENT" 87 > /dev/null 2>&1
+am broadcast -a android.intent.action.MEDIA_BUTTON --ei "android.intent.extra.KEY_EVENT" 87 --ez "EXTRA_DOWN" false > /dev/null 2>&1
+termux-vibrate -d 80

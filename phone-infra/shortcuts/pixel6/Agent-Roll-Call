@@ -1,0 +1,7 @@
+#!/data/data/com.termux/files/usr/bin/bash
+# Agent-Roll-Call — Quick status of Max's agent roster. v1: stub status.
+# Layer 2: actually polls each agent's state file.
+
+ROLL="Zero, idle. Marlo, idle. Tony, idle. Margot, idle. Ryan, idle. Savage, briefed and active on dog monitoring research."
+
+termux-tts-speak "$ROLL"
