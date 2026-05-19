@@ -25,6 +25,12 @@ canvas { position:absolute; top:0; left:0; cursor:default; }
 .tb-btn:hover { background:rgba(255,255,255,0.09); color:rgba(255,255,255,0.85); }
 .tb-btn.on { background:rgba(79,158,255,0.18); border-color:rgba(79,158,255,0.45); color:#4f9eff; }
 .tb-btn.danger:hover { background:rgba(252,129,129,0.12); border-color:rgba(252,129,129,0.35); color:#fc8181; }
+#save-indicator {
+  font-size:9px; letter-spacing:0.1em; text-transform:uppercase;
+  color:rgba(104,211,145,0.7); opacity:0; transition:opacity 0.4s;
+  white-space:nowrap;
+}
+#save-indicator.show { opacity:1; }
 #stats { display:flex; gap:14px; margin-left:auto; flex-shrink:0; }
 .stat { text-align:right; }
 .stat-n { font-size:15px; font-weight:700; color:white; line-height:1; }
@@ -177,8 +183,9 @@ select.mi { background:#0c1018; cursor:pointer; }
   <div style="display:flex;gap:5px;align-items:center;flex-shrink:0">
     <button class="tb-btn" id="btn-edit" onclick="toggleEdit()">✏ Edit</button>
     <button class="tb-btn" id="btn-add" style="display:none" onclick="openModal()">+ Node</button>
-    <button class="tb-btn" onclick="doExport()">↓ JSON</button>
+    <button class="tb-btn" onclick="doExport()">↓ Save</button>
     <label class="tb-btn" style="cursor:pointer">↑ Import<input type="file" accept=".json" style="display:none" onchange="doImport(event)"></label>
+    <span id="save-indicator">● saved</span>
   </div>
   <div id="stats">
     <div class="stat"><div class="stat-n" id="stat-n">25</div><div class="stat-l">Nodes</div></div>
@@ -414,13 +421,107 @@ function buildMaps(){
 function save(){
   const ns=nodes.map(n=>({id:n.id,label:n.label,cat:n.cat,sz:n.sz,x:n.x,y:n.y,type:n.type,status:n.status||'live',desc:n.desc,tech:n.tech,notes:n.notes||'',pinned:n.pinned||false}));
   localStorage.setItem(SKEY,JSON.stringify({nodes:ns,edges}));
+  autoSave();
 }
 
-function doExport(){
-  const ns=nodes.map(n=>({id:n.id,label:n.label,cat:n.cat,sz:n.sz,x:n.x,y:n.y,type:n.type,status:n.status,desc:n.desc,tech:n.tech,notes:n.notes||''}));
-  const blob=new Blob([JSON.stringify({nodes:ns,edges},null,2)],{type:'application/json'});
+// ── FILE SYSTEM ACCESS (persistent save to disk) ──
+let _fileHandle = null;
+let _autoSaveTimer = null;
+const _IDB = 'hark-map-fsa';
+
+async function _getDB(){
+  return new Promise((res,rej)=>{
+    const r=indexedDB.open(_IDB,1);
+    r.onupgradeneeded=e=>e.target.result.createObjectStore('h');
+    r.onsuccess=e=>res(e.target.result);
+    r.onerror=rej;
+  });
+}
+async function _loadHandle(){
+  try{
+    const db=await _getDB();
+    return new Promise(res=>{
+      const tx=db.transaction('h','readonly');
+      const r=tx.objectStore('h').get('f');
+      r.onsuccess=e=>res(e.target.result||null);
+      r.onerror=()=>res(null);
+    });
+  }catch{return null;}
+}
+async function _storeHandle(h){
+  try{
+    const db=await _getDB();
+    const tx=db.transaction('h','readwrite');
+    tx.objectStore('h').put(h,'f');
+  }catch{}
+}
+
+function buildExportData(){
+  const ns=nodes.map(n=>({id:n.id,label:n.label,cat:n.cat,sz:n.sz,x:n.x,y:n.y,type:n.type,status:n.status||'live',desc:n.desc,tech:n.tech,notes:n.notes||''}));
+  return {nodes:ns,edges,_saved:new Date().toISOString()};
+}
+
+function flashSaved(){
+  const el=document.getElementById('save-indicator');
+  el.classList.add('show');
+  clearTimeout(el._t);
+  el._t=setTimeout(()=>el.classList.remove('show'),2200);
+}
+
+async function doExport(){
+  const json=JSON.stringify(buildExportData(),null,2);
+  if(!('showSaveFilePicker' in window)){_fallbackDL(json);return;}
+  try{
+    // Restore saved handle if we have one
+    if(!_fileHandle) _fileHandle=await _loadHandle();
+    let needPicker=!_fileHandle;
+    if(_fileHandle&&!needPicker){
+      try{
+        const p=await _fileHandle.queryPermission({mode:'readwrite'});
+        if(p!=='granted'){
+          const r=await _fileHandle.requestPermission({mode:'readwrite'});
+          if(r!=='granted')needPicker=true;
+        }
+      }catch{needPicker=true;}
+    }
+    if(needPicker){
+      _fileHandle=await window.showSaveFilePicker({
+        suggestedName:'map-state.json',
+        startIn:'documents',
+        types:[{description:'HARK Map JSON',accept:{'application/json':['.json']}}]
+      });
+      await _storeHandle(_fileHandle);
+    }
+    const w=await _fileHandle.createWritable();
+    await w.write(json); await w.close();
+    flashSaved();
+  }catch(e){
+    if(e.name!=='AbortError')_fallbackDL(json);
+  }
+}
+
+async function autoSave(){
+  clearTimeout(_autoSaveTimer);
+  _autoSaveTimer=setTimeout(async()=>{
+    if(!_fileHandle){
+      _fileHandle=await _loadHandle();
+    }
+    if(!_fileHandle)return;
+    try{
+      const p=await _fileHandle.queryPermission({mode:'readwrite'});
+      if(p!=='granted')return;
+      const json=JSON.stringify(buildExportData(),null,2);
+      const w=await _fileHandle.createWritable();
+      await w.write(json); await w.close();
+      flashSaved();
+    }catch{}
+  },1500);
+}
+
+function _fallbackDL(json){
   const a=document.createElement('a');
-  a.href=URL.createObjectURL(blob); a.download='hark-system-map.json'; a.click();
+  a.href=URL.createObjectURL(new Blob([json],{type:'application/json'}));
+  a.download='map-state.json'; a.click();
 }
 
 function doImport(ev){
