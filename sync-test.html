@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>HARK sync test</title>
+<style>
+body{background:#03050a;color:#e2e8f0;font-family:-apple-system,system-ui,sans-serif;padding:24px;font-size:14px}
+.ok{color:#48bb78}.bad{color:#fc8181}
+pre{background:#0a0e16;padding:12px;border-radius:8px;overflow-x:auto;font-size:11px;color:#cbd5e0}
+</style>
+</head>
+<body>
+<h1>HARK sync test</h1>
+<div id="status">Running…</div>
+<pre id="log"></pre>
+<script>
+const log = (m, cls) => {
+  const el = document.getElementById('log');
+  el.innerHTML += (cls ? '<span class="'+cls+'">'+m+'</span>' : m) + '\n';
+};
+(async () => {
+  // Step 1: read token from localStorage (NOT from URL)
+  const token = localStorage.getItem('hark-gh-token');
+  if (!token) {
+    document.getElementById('status').innerHTML = '<span class="bad">FAIL: no token in localStorage</span>';
+    log('localStorage hark-gh-token is missing', 'bad');
+    return;
+  }
+  log('token in localStorage ✓: ' + token.substring(0,12) + '...' + token.substring(token.length-6), 'ok');
+
+  // Step 2: PUT a sync proof file using THAT token
+  const body = 'Sync verified from ' + (navigator.userAgent.includes('Pixel') ? 'Pixel' : 'browser') + ' at ' + new Date().toISOString();
+  const path = 'sync-proof.txt';
+  try {
+    let sha = null;
+    const head = await fetch('https://api.github.com/repos/TheMaxLong/HARK-System-Map/contents/' + path, {
+      headers: {'Authorization': 'token ' + token}
+    });
+    if (head.ok) sha = (await head.json()).sha;
+    const put = await fetch('https://api.github.com/repos/TheMaxLong/HARK-System-Map/contents/' + path, {
+      method: 'PUT',
+      headers: {'Authorization': 'token ' + token, 'Content-Type': 'application/json'},
+      body: JSON.stringify({
+        message: 'sync test from device',
+        content: btoa(body),
+        ...(sha ? {sha} : {})
+      })
+    });
+    log('PUT sync-proof.txt: HTTP ' + put.status, put.ok ? 'ok' : 'bad');
+    if (put.ok) {
+      const r = await put.json();
+      log('commit SHA: ' + (r.commit ? r.commit.sha.substring(0,12) : '?'), 'ok');
+      document.getElementById('status').innerHTML = '<span class="ok">✓ SYNC WORKS — token from localStorage successfully wrote to GitHub</span>';
+    } else {
+      const err = await put.text();
+      log('error: ' + err.substring(0,200), 'bad');
+      document.getElementById('status').innerHTML = '<span class="bad">✗ SYNC FAILED (HTTP ' + put.status + ')</span>';
+    }
+  } catch(e) {
+    log('exception: ' + e.message, 'bad');
+    document.getElementById('status').innerHTML = '<span class="bad">✗ EXCEPTION</span>';
+  }
+})();
+</script>
+</body>
+</html>
