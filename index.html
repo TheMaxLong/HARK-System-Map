@@ -172,6 +172,66 @@ canvas { position:absolute; top:0; left:0; cursor:default; }
 }
 .mi:focus { outline:none; border-color:rgba(79,158,255,0.45); }
 select.mi { background:#0c1018; cursor:pointer; }
+
+/* ── MAP PICKER MODAL ── */
+#map-picker-modal { z-index:50; }
+#map-picker-content {
+  width:480px; max-height:480px; display:flex; flex-direction:column; gap:0;
+}
+#map-picker-header {
+  padding:16px 20px; border-bottom:1px solid rgba(255,255,255,0.09);
+  display:flex; align-items:center; gap:12px;
+}
+#map-picker-hd-title {
+  font-size:14px; font-weight:700; color:white;
+}
+#map-picker-hd-default {
+  font-size:10px; color:rgba(255,255,255,0.3); margin-left:auto; text-transform:uppercase; letter-spacing:0.1em;
+}
+#map-picker-body {
+  flex:1; overflow-y:auto; display:flex; flex-direction:column; gap:0; padding:0;
+}
+#map-picker-body::-webkit-scrollbar { width:3px; }
+#map-picker-body::-webkit-scrollbar-thumb { background:rgba(255,255,255,0.08); border-radius:2px; }
+.map-item {
+  padding:11px 16px; border-bottom:1px solid rgba(255,255,255,0.04);
+  display:flex; align-items:center; gap:10px; cursor:pointer;
+  transition:background 0.12s;
+}
+.map-item:hover { background:rgba(255,255,255,0.04); }
+.map-item.active { background:rgba(79,158,255,0.15); border-left:3px solid #4f9eff; padding-left:13px; }
+.map-item-name {
+  font-size:12px; color:rgba(255,255,255,0.75); flex:1; font-weight:500;
+}
+.map-item.active .map-item-name { color:#4f9eff; }
+.map-item-default { font-size:9px; color:rgba(255,255,255,0.28); text-transform:uppercase; letter-spacing:0.08em; }
+#map-picker-controls {
+  padding:14px 16px; border-top:1px solid rgba(255,255,255,0.09);
+  display:flex; gap:7px; flex-shrink:0;
+}
+#map-picker-controls > button { flex:1; }
+#map-current-name {
+  width:100%; padding:7px 10px; background:rgba(255,255,255,0.05);
+  border:1px solid rgba(255,255,255,0.09); border-radius:6px;
+  color:rgba(255,255,255,0.75); font-size:12px; font-family:inherit; margin-bottom:8px;
+}
+#map-current-name:focus { outline:none; border-color:rgba(79,158,255,0.45); }
+#map-delete-section {
+  padding:12px 16px; border-top:1px solid rgba(255,255,255,0.09); display:none; flex-direction:column; gap:8px;
+}
+#map-delete-section.show { display:flex; }
+.map-delete-label { font-size:9px; color:rgba(255,255,255,0.28); text-transform:uppercase; letter-spacing:0.1em; font-weight:600; margin-bottom:3px; }
+#map-delete-confirm {
+  width:100%; padding:7px 10px; background:rgba(255,255,255,0.05);
+  border:1px solid rgba(255,255,255,0.09); border-radius:6px;
+  color:rgba(255,255,255,0.75); font-size:12px; font-family:inherit;
+}
+#map-delete-confirm:focus { outline:none; border-color:rgba(79,158,255,0.45); }
+#map-delete-message { font-size:10px; color:rgba(255,255,255,0.3); line-height:1.4; }
+#map-btn-delete { margin-top:4px; }
+.tb-btn:disabled, .tb-btn.disabled {
+  opacity:0.4; cursor:not-allowed;
+}
 </style>
 </head>
 <body>
@@ -186,6 +246,7 @@ select.mi { background:#0c1018; cursor:pointer; }
     <button class="tb-btn" onclick="doExport()">↑↓ Sync</button>
     <button class="tb-btn" onclick="setupSync()">⚙</button>
     <label class="tb-btn" style="cursor:pointer" title="Import JSON file">↑ Import<input type="file" accept=".json" style="display:none" onchange="doImport(event)"></label>
+    <button class="tb-btn" onclick="openMapPicker()">Maps</button>
     <span id="save-indicator">● synced</span>
   </div>
   <div id="stats">
@@ -285,6 +346,29 @@ select.mi { background:#0c1018; cursor:pointer; }
   <div style="display:flex;gap:7px;justify-content:flex-end">
     <button class="tb-btn" onclick="closeModal()">Cancel</button>
     <button class="tb-btn on" onclick="addNode()">Add Node</button>
+  </div>
+</div>
+
+<div id="map-picker-backdrop" onclick="closeMapPicker()"></div>
+<div id="map-picker-modal">
+  <div id="map-picker-header">
+    <div id="map-picker-hd-title">Manage Maps</div>
+    <div id="map-picker-hd-default">default: HARK Ecosystem</div>
+    <button id="map-picker-close" onclick="closeMapPicker()">×</button>
+  </div>
+  <div id="map-picker-body"></div>
+  <input type="text" id="map-current-name" placeholder="Enter new name" style="display:none;margin:0 16px 8px;padding:7px 10px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.09);border-radius:6px;color:rgba(255,255,255,0.75);font-size:12px;font-family:inherit" onkeydown="if(event.key==='Enter')saveMapRename();if(event.key==='Escape'){_mapRenameMode=false;this.style.display='none';renderMapList();}">
+  <div id="map-picker-controls">
+    <button class="tb-btn on" onclick="newMap()">+ New Map</button>
+    <button class="tb-btn" onclick="loadSelectedMap()">Load</button>
+    <button class="tb-btn" onclick="toggleMapRename()">Rename</button>
+    <button class="tb-btn danger" id="map-btn-delete-access" onclick="toggleMapDelete()">Delete</button>
+  </div>
+  <div id="map-delete-section">
+    <div class="map-delete-label">Type "delete" to confirm</div>
+    <input type="text" id="map-delete-confirm" placeholder="type delete" oninput="updateDeleteButtonState()">
+    <div id="map-delete-message"></div>
+    <button class="tb-btn danger" id="map-btn-delete" onclick="confirmDeleteMap()" disabled>Delete Map</button>
   </div>
 </div>
 
@@ -978,6 +1062,212 @@ function draw(){
 mouse={x:canvas.width/2,y:canvas.height/2};
 requestAnimationFrame(draw);
 initData();
+
+// ── MAP PICKER ──────────────────────────────────────────────────────────────
+const MAP_STORAGE_PREFIX = 'hark-map-';
+const DEFAULT_MAP_NAME = 'HARK Ecosystem';
+let _selectedMap = null;
+let _mapRenameMode = false;
+
+function getStoredMapNames(){
+  const keys=Object.keys(localStorage);
+  return keys
+    .filter(k=>k.startsWith(MAP_STORAGE_PREFIX))
+    .map(k=>k.slice(MAP_STORAGE_PREFIX.length))
+    .sort();
+}
+
+function openMapPicker(){
+  const modal=document.getElementById('map-picker-modal');
+  const backdrop=document.getElementById('map-picker-backdrop');
+  modal.style.display='flex';
+  backdrop.style.display='block';
+  _selectedMap=null;
+  _mapRenameMode=false;
+  document.getElementById('map-delete-section').classList.remove('show');
+  document.getElementById('map-current-name').style.display='none';
+  renderMapList();
+}
+
+function closeMapPicker(){
+  const modal=document.getElementById('map-picker-modal');
+  const backdrop=document.getElementById('map-picker-backdrop');
+  modal.style.display='none';
+  backdrop.style.display='none';
+  _selectedMap=null;
+  _mapRenameMode=false;
+  document.getElementById('map-delete-section').classList.remove('show');
+  document.getElementById('map-current-name').style.display='none';
+}
+
+function renderMapList(){
+  const names=getStoredMapNames();
+  const body=document.getElementById('map-picker-body');
+  body.innerHTML='';
+
+  if(names.length===0){
+    body.innerHTML='<div style="padding:16px;font-size:11px;color:rgba(255,255,255,0.3);text-align:center">No saved maps yet</div>';
+    return;
+  }
+
+  names.forEach(name=>{
+    const item=document.createElement('div');
+    item.className='map-item';
+    if(_selectedMap===name)item.classList.add('active');
+
+    const isDefault=name===DEFAULT_MAP_NAME;
+    const nameEl=document.createElement('div');
+    nameEl.className='map-item-name';
+    nameEl.textContent=name;
+    item.appendChild(nameEl);
+
+    if(isDefault){
+      const badge=document.createElement('div');
+      badge.className='map-item-default';
+      badge.textContent='default';
+      item.appendChild(badge);
+    }
+
+    item.onclick=()=>{
+      _selectedMap=name;
+      _mapRenameMode=false;
+      document.getElementById('map-delete-section').classList.remove('show');
+      renderMapList();
+    };
+
+    body.appendChild(item);
+  });
+}
+
+function newMap(){
+  const name=prompt('Map name:','').trim();
+  if(!name)return;
+
+  if(getStoredMapNames().includes(name)){
+    alert('Map name already exists');
+    return;
+  }
+
+  const mapData=buildExportData();
+  localStorage.setItem(MAP_STORAGE_PREFIX+name,JSON.stringify(mapData));
+  _selectedMap=name;
+  renderMapList();
+}
+
+function loadSelectedMap(){
+  if(!_selectedMap)return;
+
+  const stored=localStorage.getItem(MAP_STORAGE_PREFIX+_selectedMap);
+  if(!stored){
+    alert('Map not found');
+    return;
+  }
+
+  try{
+    const data=JSON.parse(stored);
+    applyData(data);
+    buildMaps();
+    closePanel();
+    save();
+    updateCount();
+    closeMapPicker();
+  }catch(e){
+    alert('Error loading map: '+e.message);
+  }
+}
+
+function toggleMapRename(){
+  if(!_selectedMap)return;
+  if(_selectedMap===DEFAULT_MAP_NAME){
+    alert('Cannot rename the default map');
+    return;
+  }
+
+  _mapRenameMode=!_mapRenameMode;
+  const nameInput=document.getElementById('map-current-name');
+
+  if(_mapRenameMode){
+    nameInput.style.display='block';
+    nameInput.value=_selectedMap;
+    nameInput.focus();
+    nameInput.select();
+  }else{
+    nameInput.style.display='none';
+  }
+}
+
+function saveMapRename(){
+  if(!_mapRenameMode||!_selectedMap)return;
+
+  const nameInput=document.getElementById('map-current-name');
+  const newName=nameInput.value.trim();
+
+  if(!newName){
+    alert('Name cannot be empty');
+    return;
+  }
+
+  if(newName===_selectedMap)return; // No change
+
+  if(getStoredMapNames().includes(newName)){
+    alert('Map name already exists');
+    return;
+  }
+
+  const stored=localStorage.getItem(MAP_STORAGE_PREFIX+_selectedMap);
+  localStorage.setItem(MAP_STORAGE_PREFIX+newName,stored);
+  localStorage.removeItem(MAP_STORAGE_PREFIX+_selectedMap);
+
+  _selectedMap=newName;
+  _mapRenameMode=false;
+  nameInput.style.display='none';
+  renderMapList();
+}
+
+function toggleMapDelete(){
+  if(!_selectedMap)return;
+  if(_selectedMap===DEFAULT_MAP_NAME){
+    document.getElementById('map-delete-message').innerHTML='<span style="color:#fc8181">Cannot delete the default map (HARK Ecosystem)</span>';
+    document.getElementById('map-delete-section').classList.add('show');
+    document.getElementById('map-delete-confirm').value='';
+    document.getElementById('map-btn-delete').disabled=true;
+    setTimeout(()=>{document.getElementById('map-delete-section').classList.remove('show');},3000);
+    return;
+  }
+
+  const section=document.getElementById('map-delete-section');
+  const isShown=section.classList.contains('show');
+
+  if(isShown){
+    section.classList.remove('show');
+    document.getElementById('map-delete-confirm').value='';
+    document.getElementById('map-btn-delete').disabled=true;
+  }else{
+    document.getElementById('map-delete-message').innerHTML=`Delete <strong>"${_selectedMap}"</strong>? This cannot be undone.`;
+    section.classList.add('show');
+    document.getElementById('map-delete-confirm').focus();
+  }
+}
+
+function updateDeleteButtonState(){
+  const input=document.getElementById('map-delete-confirm');
+  const btn=document.getElementById('map-btn-delete');
+  btn.disabled=input.value!=='delete';
+}
+
+function confirmDeleteMap(){
+  const input=document.getElementById('map-delete-confirm');
+  if(input.value!=='delete')return;
+
+  if(!_selectedMap)return;
+  if(_selectedMap===DEFAULT_MAP_NAME)return; // Guard
+
+  localStorage.removeItem(MAP_STORAGE_PREFIX+_selectedMap);
+  _selectedMap=null;
+  document.getElementById('map-delete-section').classList.remove('show');
+  document.getElementById('map-delete-confirm').value='';
+  renderMapList();
+}
 </script>
 </body>
 </html>
