@@ -363,6 +363,7 @@ select.mi { background:#0c1018; cursor:pointer; }
     <button class="tb-btn" onclick="loadSelectedMap()">Load</button>
     <button class="tb-btn" onclick="toggleMapRename()">Rename</button>
     <button class="tb-btn danger" id="map-btn-delete-access" onclick="toggleMapDelete()">Delete</button>
+    <button class="tb-btn" onclick="downloadAllMaps()" title="Download all maps as ZIP">↓ Backup</button>
   </div>
   <div id="map-delete-section">
     <div class="map-delete-label">Type "delete" to confirm</div>
@@ -374,6 +375,9 @@ select.mi { background:#0c1018; cursor:pointer; }
 
 <script>
 const SKEY = 'hark-map-v3';
+const MAPS_DIR = 'maps';
+const DEFAULT_MAP_NAME = 'HARK Ecosystem';
+const MANIFEST_FILE = 'maps-manifest.json';
 
 const CATS = {
   flagship:{ color:'#ff9f43', rgb:[255,159,67] },
@@ -471,28 +475,73 @@ const DRAG_T=5;
 let mouse={x:0,y:0}, tick=0;
 
 // ── PERSISTENCE ──
+async function migrateV1Maps(){
+  const token=getToken();
+  if(!token)return;
+
+  const v1Prefix='hark-map-';
+  const keys=Object.keys(localStorage).filter(k=>k.startsWith(v1Prefix)&&k!==SKEY);
+  if(keys.length===0)return;
+
+  try{
+    flashSaved('Migrating maps…');
+    const mapEntries=[];
+
+    for(const key of keys){
+      const name=key.slice(v1Prefix.length);
+      if(name===DEFAULT_MAP_NAME)continue;
+
+      const stored=localStorage.getItem(key);
+      const data=JSON.parse(stored);
+      const slug=name.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
+      const mapPath=`${MAPS_DIR}/${slug}.json`;
+      const mapContent=btoa(unescape(encodeURIComponent(JSON.stringify(data,null,2))));
+
+      const r=await ghPutFile(token,mapPath,mapContent);
+      if(r.ok){
+        mapEntries.push({slug,name,created:new Date().toISOString(),modified:new Date().toISOString()});
+      }
+    }
+
+    if(mapEntries.length>0){
+      _mapManifest.maps=[..._mapManifest.maps,...mapEntries];
+      const manifestContent=btoa(unescape(encodeURIComponent(JSON.stringify(_mapManifest,null,2))));
+      await ghPutFile(token,MANIFEST_FILE,manifestContent);
+
+      for(const key of keys){
+        localStorage.removeItem(key);
+      }
+
+      flashSaved(`Migrated ${mapEntries.length} map(s)!`);
+    }
+  }catch(e){
+    console.error('Migration failed:',e);
+  }
+}
+
 async function initData(){
-  // Inject token from URL hash: #gh-token=TOKEN (clears hash after reading)
   const hashToken=(()=>{const h=location.hash;const m=h.match(/[#&]gh-token=([^&]+)/);if(m){localStorage.setItem('hark-gh-token',m[1]);history.replaceState(null,'',location.pathname);return m[1];}return null;})();
-  // 1. Try GitHub (source of truth)
+
+  _mapManifest=await getMapManifest();
+  await migrateV1Maps();
+
   let loaded=false;
   try{
     const r=await fetch(GH_RAW+'?t='+Date.now());
     if(r.ok){
       const d=await r.json();
       applyData(d);
-      // cache SHA in background
       const token=getToken();
       if(token) ghLoadSha(token);
       loaded=true;
     }
   }catch{}
-  // 2. Fall back to localStorage (offline)
+
   if(!loaded){
     const s=localStorage.getItem(SKEY);
     if(s){try{applyData(JSON.parse(s));loaded=true;}catch{}}
   }
-  // 3. Fall back to defaults
+
   if(!loaded) loadDef();
   buildMaps(); updateCount();
 }
@@ -577,6 +626,51 @@ async function ghLoadSha(token){
     const r=await fetch(GH_API,{headers:{Authorization:`token ${token}`}});
     if(r.ok){const d=await r.json(); _ghSha=d.sha;}
   }catch{}
+}
+
+async function ghGetFileSha(token,path){
+  try{
+    const url=`https://api.github.com/repos/${GH_REPO}/contents/${path}`;
+    const r=await fetch(url,{headers:{Authorization:`token ${token}`}});
+    if(r.ok){const d=await r.json();return d.sha;}
+  }catch{}
+  return null;
+}
+
+async function ghPutFile(token,path,content,message=''){
+  try{
+    const url=`https://api.github.com/repos/${GH_REPO}/contents/${path}`;
+    const sha=await ghGetFileSha(token,path);
+    const body={
+      message:message||`Update ${path}`,
+      content:content
+    };
+    if(sha)body.sha=sha;
+    const r=await fetch(url,{
+      method:'PUT',
+      headers:{Authorization:`token ${token}`,'Content-Type':'application/json'},
+      body:JSON.stringify(body)
+    });
+    return r;
+  }catch(e){
+    throw e;
+  }
+}
+
+async function ghDeleteFile(token,path){
+  try{
+    const url=`https://api.github.com/repos/${GH_REPO}/contents/${path}`;
+    const sha=await ghGetFileSha(token,path);
+    if(!sha)return;
+    const r=await fetch(url,{
+      method:'DELETE',
+      headers:{Authorization:`token ${token}`,'Content-Type':'application/json'},
+      body:JSON.stringify({message:`Delete ${path}`,sha:sha})
+    });
+    return r;
+  }catch(e){
+    throw e;
+  }
 }
 
 async function ghCommit(){
@@ -1063,18 +1157,25 @@ mouse={x:canvas.width/2,y:canvas.height/2};
 requestAnimationFrame(draw);
 initData();
 
-// ── MAP PICKER ──────────────────────────────────────────────────────────────
-const MAP_STORAGE_PREFIX = 'hark-map-';
-const DEFAULT_MAP_NAME = 'HARK Ecosystem';
+// ── MAP PICKER (FILE-BASED + GITHUB) ────────────────────────────────────────
+let _mapManifest = { maps: [] };
 let _selectedMap = null;
 let _mapRenameMode = false;
 
+async function getMapManifest(){
+  try{
+    const r=await fetch(`${GH_RAW.replace('map-state.json',MANIFEST_FILE)}?t=`+Date.now());
+    if(r.ok){
+      const data=await r.json();
+      _mapManifest=data;
+      return data;
+    }
+  }catch{}
+  return { maps: [] };
+}
+
 function getStoredMapNames(){
-  const keys=Object.keys(localStorage);
-  return keys
-    .filter(k=>k.startsWith(MAP_STORAGE_PREFIX))
-    .map(k=>k.slice(MAP_STORAGE_PREFIX.length))
-    .sort();
+  return [DEFAULT_MAP_NAME,..._mapManifest.maps.map(m=>m.name)];
 }
 
 function openMapPicker(){
@@ -1139,7 +1240,7 @@ function renderMapList(){
   });
 }
 
-function newMap(){
+async function newMap(){
   const name=prompt('Map name:','').trim();
   if(!name)return;
 
@@ -1148,23 +1249,60 @@ function newMap(){
     return;
   }
 
+  const slug=name.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
   const mapData=buildExportData();
-  localStorage.setItem(MAP_STORAGE_PREFIX+name,JSON.stringify(mapData));
-  _selectedMap=name;
-  renderMapList();
-}
+  const token=getToken();
 
-function loadSelectedMap(){
-  if(!_selectedMap)return;
-
-  const stored=localStorage.getItem(MAP_STORAGE_PREFIX+_selectedMap);
-  if(!stored){
-    alert('Map not found');
+  if(!token){
+    alert('GitHub token required to save maps. Click ⚙ to set up.');
     return;
   }
 
   try{
-    const data=JSON.parse(stored);
+    flashSaved('Saving new map…');
+
+    const entry={ slug, name, created: new Date().toISOString(), modified: new Date().toISOString() };
+    _mapManifest.maps.push(entry);
+
+    const mapJson=JSON.stringify(mapData,null,2);
+    const manifestJson=JSON.stringify(_mapManifest,null,2);
+
+    const mapPath=`${MAPS_DIR}/${slug}.json`;
+    const mapContent=btoa(unescape(encodeURIComponent(mapJson)));
+    const manifestContent=btoa(unescape(encodeURIComponent(manifestJson)));
+
+    const r1=await ghPutFile(token,mapPath,mapContent);
+    if(!r1.ok) throw new Error('Failed to save map file');
+
+    const r2=await ghPutFile(token,MANIFEST_FILE,manifestContent);
+    if(!r2.ok) throw new Error('Failed to update manifest');
+
+    _selectedMap=name;
+    renderMapList();
+    flashSaved('Map saved!');
+  }catch(e){
+    flashError('Failed to create map: '+e.message);
+  }
+}
+
+async function loadSelectedMap(){
+  if(!_selectedMap)return;
+
+  try{
+    let data;
+    if(_selectedMap===DEFAULT_MAP_NAME){
+      const r=await fetch(GH_RAW+'?t='+Date.now());
+      if(!r.ok)throw new Error('Failed to load default map');
+      data=await r.json();
+    }else{
+      const entry=_mapManifest.maps.find(m=>m.name===_selectedMap);
+      if(!entry)throw new Error('Map not found in manifest');
+      const mapPath=`${MAPS_DIR}/${entry.slug}.json`;
+      const mapUrl=`https://raw.githubusercontent.com/${GH_REPO}/main/${mapPath}`;
+      const r=await fetch(mapUrl+'?t='+Date.now());
+      if(!r.ok)throw new Error('Failed to load map');
+      data=await r.json();
+    }
     applyData(data);
     buildMaps();
     closePanel();
@@ -1196,7 +1334,7 @@ function toggleMapRename(){
   }
 }
 
-function saveMapRename(){
+async function saveMapRename(){
   if(!_mapRenameMode||!_selectedMap)return;
 
   const nameInput=document.getElementById('map-current-name');
@@ -1207,21 +1345,60 @@ function saveMapRename(){
     return;
   }
 
-  if(newName===_selectedMap)return; // No change
-
+  if(newName===_selectedMap)return;
   if(getStoredMapNames().includes(newName)){
     alert('Map name already exists');
     return;
   }
+  if(_selectedMap===DEFAULT_MAP_NAME){
+    alert('Cannot rename default map');
+    return;
+  }
 
-  const stored=localStorage.getItem(MAP_STORAGE_PREFIX+_selectedMap);
-  localStorage.setItem(MAP_STORAGE_PREFIX+newName,stored);
-  localStorage.removeItem(MAP_STORAGE_PREFIX+_selectedMap);
+  const token=getToken();
+  if(!token){
+    alert('GitHub token required');
+    return;
+  }
 
-  _selectedMap=newName;
-  _mapRenameMode=false;
-  nameInput.style.display='none';
-  renderMapList();
+  try{
+    flashSaved('Renaming map…');
+    const entry=_mapManifest.maps.find(m=>m.name===_selectedMap);
+    if(!entry)throw new Error('Map not found');
+
+    const oldSlug=entry.slug;
+    const newSlug=newName.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
+
+    entry.name=newName;
+    entry.slug=newSlug;
+    entry.modified=new Date().toISOString();
+
+    const mapPath=`${MAPS_DIR}/${oldSlug}.json`;
+    const newMapPath=`${MAPS_DIR}/${newSlug}.json`;
+
+    const mapUrl=`https://raw.githubusercontent.com/${GH_REPO}/main/${mapPath}`;
+    const mapR=await fetch(mapUrl);
+    if(!mapR.ok)throw new Error('Failed to fetch map for rename');
+    const mapJson=await mapR.text();
+    const mapContent=btoa(unescape(encodeURIComponent(mapJson)));
+
+    const r1=await ghPutFile(token,newMapPath,mapContent);
+    if(!r1.ok)throw new Error('Failed to create new map file');
+
+    await ghDeleteFile(token,mapPath);
+
+    const manifestContent=btoa(unescape(encodeURIComponent(JSON.stringify(_mapManifest,null,2))));
+    const r2=await ghPutFile(token,MANIFEST_FILE,manifestContent);
+    if(!r2.ok)throw new Error('Failed to update manifest');
+
+    _selectedMap=newName;
+    _mapRenameMode=false;
+    nameInput.style.display='none';
+    renderMapList();
+    flashSaved('Map renamed!');
+  }catch(e){
+    flashError('Failed to rename: '+e.message);
+  }
 }
 
 function toggleMapDelete(){
@@ -1255,18 +1432,91 @@ function updateDeleteButtonState(){
   btn.disabled=input.value!=='delete';
 }
 
-function confirmDeleteMap(){
+async function downloadAllMaps(){
+  try{
+    flashSaved('Preparing backup…');
+
+    const maps=[];
+    const defaultR=await fetch(GH_RAW+'?t='+Date.now());
+    if(defaultR.ok){
+      const data=await defaultR.json();
+      maps.push({name:'HARK Ecosystem.json',data});
+    }
+
+    for(const entry of _mapManifest.maps){
+      const mapPath=`${MAPS_DIR}/${entry.slug}.json`;
+      const mapUrl=`https://raw.githubusercontent.com/${GH_REPO}/main/${mapPath}`;
+      const r=await fetch(mapUrl+'?t='+Date.now());
+      if(r.ok){
+        const data=await r.json();
+        maps.push({name:`${entry.name}.json`,data});
+      }
+    }
+
+    if(maps.length===0){
+      alert('No maps to download');
+      return;
+    }
+
+    const script=document.createElement('script');
+    script.src='https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js';
+    script.onload=()=>{
+      const zip=new JSZip();
+      maps.forEach(({name,data})=>{
+        zip.file(name,JSON.stringify(data,null,2));
+      });
+      zip.generateAsync({type:'blob'}).then(blob=>{
+        const url=URL.createObjectURL(blob);
+        const a=document.createElement('a');
+        const today=new Date().toISOString().split('T')[0];
+        a.href=url;
+        a.download=`hark-maps-backup-${today}.zip`;
+        a.click();
+        URL.revokeObjectURL(url);
+        flashSaved('Backup downloaded!');
+      });
+    };
+    document.head.appendChild(script);
+  }catch(e){
+    flashError('Failed to create backup: '+e.message);
+  }
+}
+
+async function confirmDeleteMap(){
   const input=document.getElementById('map-delete-confirm');
   if(input.value!=='delete')return;
 
   if(!_selectedMap)return;
-  if(_selectedMap===DEFAULT_MAP_NAME)return; // Guard
+  if(_selectedMap===DEFAULT_MAP_NAME)return;
 
-  localStorage.removeItem(MAP_STORAGE_PREFIX+_selectedMap);
-  _selectedMap=null;
-  document.getElementById('map-delete-section').classList.remove('show');
-  document.getElementById('map-delete-confirm').value='';
-  renderMapList();
+  const token=getToken();
+  if(!token){
+    alert('GitHub token required');
+    return;
+  }
+
+  try{
+    flashSaved('Deleting map…');
+    const entry=_mapManifest.maps.find(m=>m.name===_selectedMap);
+    if(!entry)throw new Error('Map not found');
+
+    const mapPath=`${MAPS_DIR}/${entry.slug}.json`;
+    const r1=await ghDeleteFile(token,mapPath);
+    if(!r1.ok)throw new Error('Failed to delete map file');
+
+    _mapManifest.maps=_mapManifest.maps.filter(m=>m.slug!==entry.slug);
+    const manifestContent=btoa(unescape(encodeURIComponent(JSON.stringify(_mapManifest,null,2))));
+    const r2=await ghPutFile(token,MANIFEST_FILE,manifestContent);
+    if(!r2.ok)throw new Error('Failed to update manifest');
+
+    _selectedMap=null;
+    document.getElementById('map-delete-section').classList.remove('show');
+    document.getElementById('map-delete-confirm').value='';
+    renderMapList();
+    flashSaved('Map deleted!');
+  }catch(e){
+    flashError('Failed to delete: '+e.message);
+  }
 }
 </script>
 </body>
