@@ -1,6 +1,9 @@
 #!/data/data/com.termux/files/usr/bin/bash
 # Shared Sentinel helpers — sourced by every watcher.
 
+# Termux cron strips PATH; restore it so python3/curl/etc. resolve.
+export PATH="$PATH:/data/data/com.termux/files/usr/bin"
+
 SENTINEL_DIR="$HOME/sentinel"
 STATE_DIR="$SENTINEL_DIR/state"
 LOG_DIR="$SENTINEL_DIR/logs"
