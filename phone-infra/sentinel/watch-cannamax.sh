@@ -1,15 +1,23 @@
 #!/data/data/com.termux/files/usr/bin/bash
-# watch-cannamax.sh — Polls CannaMax drift detector via Pi for new drift events.
+# watch-cannamax.sh — Polls CannaMax drift detector for new drift events.
 # Alerts on each new drift signature not previously seen.
+#
+# Auto-parks when no URL is configured. To enable:
+#   echo "https://your-cannamax-host/api/change-events?since=15m" > ~/sentinel/cannamax.url
+# When the file is missing or empty, this script exits silently (no digest noise).
 source ~/sentinel/lib/common.sh
 
 WATCHER=cannamax-drift
-# CannaMax is hosted via Pi. Endpoint path TBD — try a couple of common ones.
-ENDPOINTS=(
-  "https://anderson-hub.tailf0f27a.ts.net/cannamax/api/drift?since=15m"
-  "https://anderson-hub.tailf0f27a.ts.net/api/drift?since=15m"
-  "http://anderson-hub.tailf0f27a.ts.net:5050/api/drift?since=15m"
-)
+URL_FILE="$HOME/sentinel/cannamax.url"
+
+# Self-park if no URL configured — avoid spamming digest until CannaMax is deployed.
+if [[ ! -s "$URL_FILE" ]]; then
+  exit 0
+fi
+PRIMARY_URL=$(head -1 "$URL_FILE" | tr -d '[:space:]')
+[[ -z "$PRIMARY_URL" ]] && exit 0
+
+ENDPOINTS=("$PRIMARY_URL")
 SEEN_FILE="$STATE_DIR/$WATCHER.seen"
 touch "$SEEN_FILE"
 
