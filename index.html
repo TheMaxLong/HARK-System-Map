@@ -174,9 +174,14 @@ canvas { position:absolute; top:0; left:0; cursor:default; }
 select.mi { background:#0c1018; cursor:pointer; }
 
 /* ── MAP PICKER MODAL ── */
-#map-picker-modal { z-index:50; }
-#map-picker-content {
-  width:480px; max-height:480px; display:flex; flex-direction:column; gap:0;
+#map-picker-backdrop {
+  position:fixed; inset:0; background:rgba(0,0,0,0.6); z-index:49; display:none;
+}
+#map-picker-modal {
+  position:fixed; top:50%; left:50%; transform:translate(-50%,-50%);
+  width:480px; max-height:480px; background:#0c1018;
+  border:1px solid rgba(255,255,255,0.09); border-radius:12px;
+  box-shadow:0 0 80px rgba(0,0,0,0.85); z-index:50; display:none; flex-direction:column; gap:0;
 }
 #map-picker-header {
   padding:16px 20px; border-bottom:1px solid rgba(255,255,255,0.09);
@@ -350,7 +355,7 @@ select.mi { background:#0c1018; cursor:pointer; }
 </div>
 
 <div id="map-picker-backdrop" onclick="closeMapPicker()"></div>
-<div id="map-picker-modal">
+<div id="map-picker-modal" onclick="event.stopPropagation()">
   <div id="map-picker-header">
     <div id="map-picker-hd-title">Manage Maps</div>
     <div id="map-picker-hd-default">default: HARK Ecosystem</div>
@@ -1183,7 +1188,8 @@ function openMapPicker(){
   const backdrop=document.getElementById('map-picker-backdrop');
   modal.style.display='flex';
   backdrop.style.display='block';
-  _selectedMap=null;
+  const names=getStoredMapNames();
+  _selectedMap=names.length>0?names[0]:null;
   _mapRenameMode=false;
   document.getElementById('map-delete-section').classList.remove('show');
   document.getElementById('map-current-name').style.display='none';
