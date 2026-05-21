@@ -1,1 +1,16 @@
-{"maps":[{"slug":"personal-projects","name":"Personal Projects","created":"2026-05-21T04:30:00Z","modified":"2026-05-21T04:30:00Z"}]}
+{
+  "maps": [
+    {
+      "slug": "personal-projects",
+      "name": "Personal Projects",
+      "created": "2026-05-21T04:30:00Z",
+      "modified": "2026-05-21T04:30:00Z"
+    },
+    {
+      "slug": "test",
+      "name": "Test",
+      "created": "2026-05-21T05:40:02.302Z",
+      "modified": "2026-05-21T05:40:02.302Z"
+    }
+  ]
+}
