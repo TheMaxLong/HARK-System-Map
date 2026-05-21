@@ -1,0 +1,660 @@
+{
+  "nodes": [
+    {
+      "id": "cannamax",
+      "label": "CannaMax\n/ HARK",
+      "cat": "flagship",
+      "sz": 26,
+      "x": 0.5077112491047564,
+      "y": 0.3441135387452055,
+      "type": "Flagship Product",
+      "status": "live",
+      "desc": "The cultivation OS. Drift detection, change feed, real-time pH/EC/flow per zone. Everything else feeds into this.",
+      "tech": "TypeScript · Express 5 · Drizzle · Zod · Alexandria adapters · SQLite",
+      "notes": "*Idea* -Add a \"Copy Infinium to All Room\" button to update Environmentals for all 24 rooms all at once"
+    },
+    {
+      "id": "facility-tracker",
+      "label": "Facility\nTracker",
+      "cat": "app",
+      "sz": 21,
+      "x": 0.5310945652646774,
+      "y": 0.49700655822756,
+      "type": "Application",
+      "status": "live",
+      "desc": "Room state dashboard. OCR parsing, env monitoring, runoff chemistry, change events feed. Pi-hosted.",
+      "tech": "React 18 · Express 5 · PostgreSQL · Claude Vision · pnpm monorepo",
+      "notes": ""
+    },
+    {
+      "id": "recipe-book",
+      "label": "Recipe\nBook",
+      "cat": "app",
+      "sz": 18,
+      "x": 0.46236801527070526,
+      "y": 0.5517145124600424,
+      "type": "Application",
+      "status": "live",
+      "desc": "Grow recipe hub. Cycle tracking, arc charts, drift detection, field notes. Scrapes live controller data.",
+      "tech": "Python · Flask · SQLite · WebSocket · OpenAI (optional)",
+      "notes": ""
+    },
+    {
+      "id": "trellis",
+      "label": "Trellis",
+      "cat": "app",
+      "sz": 17,
+      "x": 0.5226507259542341,
+      "y": 0.19701000765012674,
+      "type": "Application · hark.equipment",
+      "status": "live",
+      "desc": "Room builder. Runoff monitoring dashboard. OpenAPI-first codegen. Proprietary + Themes Pack tier.",
+      "tech": "React 19 · Express 5 · PostgreSQL · Drizzle · Orval codegen · pnpm monorepo",
+      "notes": ""
+    },
+    {
+      "id": "hark-site",
+      "label": "hark.equipment",
+      "cat": "app",
+      "sz": 13,
+      "x": 0.6356143430954648,
+      "y": 0.30163331737083354,
+      "type": "Product Site",
+      "status": "live",
+      "desc": "Public marketing site. Gumroad shop live. Grow Journal $18. SSL on Vercel.",
+      "tech": "Vercel · SSL · Gumroad",
+      "notes": ""
+    },
+    {
+      "id": "fluxuum",
+      "label": "Fluxuum\nLogger",
+      "cat": "data",
+      "sz": 22,
+      "x": 0.450901317131988,
+      "y": 0.4577769980771566,
+      "type": "Data Pipeline",
+      "status": "live",
+      "desc": "Irrigation telemetry. pH/EC/flow/gal per zone, 136 reads/hr. Anomaly alerts via Resend email.",
+      "tech": "TypeScript · Express 5 · PostgreSQL · React · Resend · OpenAI · pnpm monorepo",
+      "notes": ""
+    },
+    {
+      "id": "alexandria",
+      "label": "Alexandria",
+      "cat": "data",
+      "sz": 17,
+      "x": 0.5067557105867551,
+      "y": 0.20903205850369486,
+      "type": "Adapter Library",
+      "status": "live",
+      "desc": "Controller adapter abstraction. ObservationOnlyMarker enforces read-only. Supports Anderson, Infinium, TrolMaster, Argus, and more.",
+      "tech": "TypeScript ESM · Zero runtime deps · pnpm monorepo · 5 packages",
+      "notes": ""
+    },
+    {
+      "id": "flower-room",
+      "label": "Flower Room\nDisplay",
+      "cat": "display",
+      "sz": 15,
+      "x": 0.6191820774191561,
+      "y": 0.3001513977090121,
+      "type": "Display App",
+      "status": "live",
+      "desc": "Runoff log OCR. Claude Vision parses handwritten log sheets into structured data.",
+      "tech": "React 19 · Express 5 · PostgreSQL · Claude Vision · Anthropic SDK",
+      "notes": ""
+    },
+    {
+      "id": "flux-widget",
+      "label": "Flux\nWidget",
+      "cat": "display",
+      "sz": 13,
+      "x": 0.5845009401051767,
+      "y": 0.4172466072645597,
+      "type": "Android Widget",
+      "status": "live",
+      "desc": "Home screen widget. Live pH/EC/flow per building. 5-second polling, staleness detection.",
+      "tech": "Flutter · Dart · Kotlin · Jetpack Glance · Tailscale",
+      "notes": ""
+    },
+    {
+      "id": "incident-log",
+      "label": "Incident\nLog",
+      "cat": "display",
+      "sz": 12,
+      "x": 0.373286167379484,
+      "y": 0.5486133534740499,
+      "type": "Shift Tool · GitHub Pages",
+      "status": "live",
+      "desc": "Phone-first incident logger. Used every night shift. jsPDF reports. Pulls Fluxuum sensor context.",
+      "tech": "React 18 · Vite · jsPDF · html2canvas · GitHub Pages",
+      "notes": ""
+    },
+    {
+      "id": "lorax",
+      "label": "Project\nLoRax",
+      "cat": "future",
+      "sz": 18,
+      "x": 0.5852905831572089,
+      "y": 0.333329042337384,
+      "type": "Future Platform",
+      "status": "planned",
+      "desc": "Multi-site cultivation OS. Tailscale primary + LoRa mesh fallback. Consumes Alexandria adapters. 9 packages, 95 tests.",
+      "tech": "TypeScript · SQLite · Meshtastic · RAKwireless · Tailscale · Alexandria",
+      "notes": "Question: <Ask if my home can be used as a test point if facility isn't ready yet?>"
+    },
+    {
+      "id": "panopticon",
+      "label": "Project\nPanopticon",
+      "cat": "origin",
+      "sz": 13,
+      "x": 0.2837476274696112,
+      "y": 0.3159144052930225,
+      "type": "Origin Project",
+      "status": "live",
+      "desc": "Where it started. First Pi monitor. Flask + SQLite + WebSocket. Proved the concept. Everything grew from here.",
+      "tech": "Python · Flask · SQLite · Chart.js · systemd · Raspberry Pi 5",
+      "notes": ""
+    },
+    {
+      "id": "pi",
+      "label": "Raspberry Pi",
+      "cat": "infra",
+      "sz": 23,
+      "x": 0.3684357614925506,
+      "y": 0.4195670264926605,
+      "type": "Edge Compute",
+      "status": "live",
+      "desc": "The hub. Hosts Fluxuum:3001, Facility-Tracker:8080, recipe-book:5050. Always-on. Always-watching.",
+      "tech": "Pi 5 · 8GB · Pi OS 64-bit · systemd · Tailscale Serve",
+      "notes": ""
+    },
+    {
+      "id": "tailscale",
+      "label": "Tailscale\nMesh",
+      "cat": "infra",
+      "sz": 18,
+      "x": 0.4702787255584543,
+      "y": 0.31183934463361584,
+      "type": "Infrastructure · Mesh VPN",
+      "status": "live",
+      "desc": "Private encrypted mesh. Mac + Pi + Pixel 10. No open ports, no firewall rules. Just works.",
+      "tech": "WireGuard · Tailscale Serve · MagicDNS · anderson-hub.tailf0f27a.ts.net",
+      "notes": ""
+    },
+    {
+      "id": "postgres",
+      "label": "PostgreSQL",
+      "cat": "infra",
+      "sz": 16,
+      "x": 0.466457519451938,
+      "y": 0.30596739660815886,
+      "type": "Database",
+      "status": "live",
+      "desc": "Used by Trellis, Fluxuum, Facility-Tracker, Flower-Room-Display. The heavy-duty store.",
+      "tech": "PostgreSQL 16 · Drizzle ORM · drizzle-kit migrations",
+      "notes": ""
+    },
+    {
+      "id": "sqlite",
+      "label": "SQLite",
+      "cat": "infra",
+      "sz": 13,
+      "x": 0.41087732808646954,
+      "y": 0.3701909497883829,
+      "type": "Database",
+      "status": "live",
+      "desc": "Used by CannaMax, recipe-book, Panopticon, LoRax. File-based, Pi-friendly, zero config.",
+      "tech": "SQLite 3 · better-sqlite3 · Drizzle (CannaMax)",
+      "notes": ""
+    },
+    {
+      "id": "dead-man",
+      "label": "Dead-man\nSwitch",
+      "cat": "infra",
+      "sz": 10,
+      "x": 0.37462363809453353,
+      "y": 0.5702692158784695,
+      "type": "Watchdog",
+      "status": "live",
+      "desc": "Mac→Pi health monitor. Polls every 5 minutes. Fires ntfy push to phone if Pi goes dark.",
+      "tech": "~/bin/anderson-hub-watcher · launchd · ntfy.sh",
+      "notes": ""
+    },
+    {
+      "id": "anderson",
+      "label": "Anderson\nControllers",
+      "cat": "hardware",
+      "sz": 20,
+      "x": 0.35549157043346735,
+      "y": 0.45305732198938586,
+      "type": "Hardware · 3 Buildings",
+      "status": "live",
+      "desc": "AB (10.10.9.254), EF (10.10.13.50), GH (10.10.13.251). WebSocket stream. pH/EC/flow/gal per zone. Source of truth for irrigation.",
+      "tech": "HE Anderson · WebSocket ws:// · HTTP login · 24 flower rooms",
+      "notes": ""
+    },
+    {
+      "id": "infinium",
+      "label": "Infinium\n(Unitronics)",
+      "cat": "hardware",
+      "sz": 15,
+      "x": 0.627903855040055,
+      "y": 0.4598322422458991,
+      "type": "Hardware · Env Authority",
+      "status": "live",
+      "desc": "Lights authority. Temp/RH/CO2/VPD. Trip at 90°F kills lights. Reference only for env — HydroX is ground truth.",
+      "tech": "Unitronics PLC · HTTP port 80 · Infinium bridge daemon · launchd",
+      "notes": ""
+    },
+    {
+      "id": "sensorex",
+      "label": "Sensorex\nTX100 pH",
+      "cat": "hardware",
+      "sz": 10,
+      "x": 0.2531292643127094,
+      "y": 0.5472567764657987,
+      "type": "Hardware · Dual pH Probes",
+      "status": "live",
+      "desc": "Two redundant TX100 probes per irrigation line. Divergence = sensor flag, never averaged.",
+      "tech": "Sensorex TX100 · 2 probes per zone · divergence detection",
+      "notes": ""
+    },
+    {
+      "id": "claude-api",
+      "label": "Claude API\n(Vision)",
+      "cat": "external",
+      "sz": 15,
+      "x": 0.6528012393833117,
+      "y": 0.4599032612679578,
+      "type": "External API · Anthropic",
+      "status": "live",
+      "desc": "OCR for runoff sheets, Infinium screens, shift briefings. Used by Facility-Tracker, Flower-Room-Display, CannaMax.",
+      "tech": "claude-opus-4-7 · claude-sonnet-4-6 · @anthropic-ai/sdk",
+      "notes": ""
+    },
+    {
+      "id": "resend",
+      "label": "Resend",
+      "cat": "external",
+      "sz": 10,
+      "x": 0.2884038038334701,
+      "y": 0.390739252434505,
+      "type": "External API",
+      "status": "live",
+      "desc": "Email anomaly alerts from Fluxuum. 30-minute dedup window per zone bucket.",
+      "tech": "Resend API · RESEND_API_KEY · 30min dedup",
+      "notes": ""
+    },
+    {
+      "id": "fluxuum-cloud",
+      "label": "Fluxuum\nCloud ☠",
+      "cat": "external",
+      "sz": 10,
+      "x": 0.2951307648886683,
+      "y": 0.44411699861395837,
+      "type": "External · Retiring",
+      "status": "retiring",
+      "desc": "fluxuum.replit.app — the old cloud host. Pi mirror is live. Being retired. Kept warm as rollback.",
+      "tech": "Replit · retiring → Pi takes over",
+      "notes": ""
+    },
+    {
+      "id": "hark-controller",
+      "label": "HARK\nController",
+      "cat": "dream",
+      "sz": 24,
+      "x": 0.3957094194173931,
+      "y": 0.2901480310836199,
+      "type": "Magnum Opus",
+      "status": "dream",
+      "desc": "The unified cultivation OS. Controller-agnostic, self-serve install, runs on any Pi. Every project in this graph is a feeder. This is what it all becomes.",
+      "tech": "Alexandria adapters · LoRax mesh · Trellis UI · Fluxuum telemetry · CannaMax drift engine",
+      "notes": "Amazon trajectory — apps are the books, this is the AWS. Built for Founder #1 first. Night operator installs it himself and it just works."
+    },
+    {
+      "id": "pixel-6-controller-mpctdapg",
+      "label": "Pixel 6 controller",
+      "cat": "dream",
+      "sz": 18,
+      "x": 0.3103819358849189,
+      "y": 0.2844458355449884,
+      "type": "Dream",
+      "status": "dream",
+      "desc": "My old Pixel 6 will be hook up to my GitHub and all my stuff to talk with Pi , and projects. \n\nIt's basically going to be Claude's phone",
+      "tech": "Pixel6",
+      "notes": ""
+    },
+    {
+      "id": "room-builder-mpcycpd9",
+      "label": "Room Builder",
+      "cat": "dream",
+      "sz": 18,
+      "x": 0.3841770360732432,
+      "y": 0.026494896463060583,
+      "type": "Dream",
+      "status": "dream",
+      "desc": "2d , room buildout",
+      "tech": "On Codex, used chat gpt",
+      "notes": ""
+    }
+  ],
+  "edges": [
+    {
+      "s": "anderson",
+      "t": "fluxuum",
+      "label": "pH/EC/flow",
+      "pulse": true
+    },
+    {
+      "s": "anderson",
+      "t": "recipe-book",
+      "label": "live state",
+      "pulse": true
+    },
+    {
+      "s": "anderson",
+      "t": "cannamax",
+      "label": "via alexandria",
+      "pulse": true
+    },
+    {
+      "s": "anderson",
+      "t": "panopticon",
+      "label": "origin feed",
+      "pulse": false,
+      "dash": true
+    },
+    {
+      "s": "sensorex",
+      "t": "anderson",
+      "label": "pH probes",
+      "pulse": false
+    },
+    {
+      "s": "infinium",
+      "t": "facility-tracker",
+      "label": "env data",
+      "pulse": true
+    },
+    {
+      "s": "infinium",
+      "t": "cannamax",
+      "label": "env data",
+      "pulse": true
+    },
+    {
+      "s": "fluxuum",
+      "t": "cannamax",
+      "label": "irrigation",
+      "pulse": true
+    },
+    {
+      "s": "fluxuum",
+      "t": "flux-widget",
+      "label": "latest reads",
+      "pulse": true
+    },
+    {
+      "s": "fluxuum",
+      "t": "incident-log",
+      "label": "sensor ctx",
+      "pulse": false
+    },
+    {
+      "s": "recipe-book",
+      "t": "facility-tracker",
+      "label": "harvest/load",
+      "pulse": true
+    },
+    {
+      "s": "recipe-book",
+      "t": "cannamax",
+      "label": "recipe drift",
+      "pulse": true
+    },
+    {
+      "s": "facility-tracker",
+      "t": "cannamax",
+      "label": "change events",
+      "pulse": true
+    },
+    {
+      "s": "flower-room",
+      "t": "facility-tracker",
+      "label": "runoff data",
+      "pulse": true
+    },
+    {
+      "s": "trellis",
+      "t": "flower-room",
+      "label": "shared arc",
+      "pulse": false
+    },
+    {
+      "s": "alexandria",
+      "t": "cannamax",
+      "label": "adapters",
+      "pulse": false
+    },
+    {
+      "s": "alexandria",
+      "t": "lorax",
+      "label": "adapters",
+      "pulse": false
+    },
+    {
+      "s": "alexandria",
+      "t": "fluxuum",
+      "label": "adapters",
+      "pulse": false
+    },
+    {
+      "s": "pi",
+      "t": "fluxuum",
+      "label": "hosts :3001",
+      "pulse": false
+    },
+    {
+      "s": "pi",
+      "t": "facility-tracker",
+      "label": "hosts :8080",
+      "pulse": false
+    },
+    {
+      "s": "pi",
+      "t": "cannamax",
+      "label": "target :3031",
+      "pulse": false
+    },
+    {
+      "s": "pi",
+      "t": "recipe-book",
+      "label": "hosts :5050",
+      "pulse": false
+    },
+    {
+      "s": "pi",
+      "t": "panopticon",
+      "label": "hosts :5001",
+      "pulse": false
+    },
+    {
+      "s": "tailscale",
+      "t": "pi",
+      "label": "mesh node",
+      "pulse": false
+    },
+    {
+      "s": "tailscale",
+      "t": "flux-widget",
+      "label": "remote access",
+      "pulse": false
+    },
+    {
+      "s": "tailscale",
+      "t": "facility-tracker",
+      "label": "Serve HTTPS",
+      "pulse": false
+    },
+    {
+      "s": "postgres",
+      "t": "trellis",
+      "label": "DB",
+      "pulse": false
+    },
+    {
+      "s": "postgres",
+      "t": "fluxuum",
+      "label": "DB",
+      "pulse": false
+    },
+    {
+      "s": "postgres",
+      "t": "facility-tracker",
+      "label": "DB",
+      "pulse": false
+    },
+    {
+      "s": "postgres",
+      "t": "flower-room",
+      "label": "DB",
+      "pulse": false
+    },
+    {
+      "s": "sqlite",
+      "t": "cannamax",
+      "label": "DB",
+      "pulse": false
+    },
+    {
+      "s": "sqlite",
+      "t": "recipe-book",
+      "label": "DB",
+      "pulse": false
+    },
+    {
+      "s": "sqlite",
+      "t": "panopticon",
+      "label": "DB",
+      "pulse": false
+    },
+    {
+      "s": "sqlite",
+      "t": "lorax",
+      "label": "DB",
+      "pulse": false
+    },
+    {
+      "s": "claude-api",
+      "t": "facility-tracker",
+      "label": "OCR",
+      "pulse": true
+    },
+    {
+      "s": "claude-api",
+      "t": "flower-room",
+      "label": "runoff OCR",
+      "pulse": true
+    },
+    {
+      "s": "claude-api",
+      "t": "cannamax",
+      "label": "vision",
+      "pulse": true
+    },
+    {
+      "s": "resend",
+      "t": "fluxuum",
+      "label": "alerts",
+      "pulse": false
+    },
+    {
+      "s": "fluxuum-cloud",
+      "t": "fluxuum",
+      "label": "retiring",
+      "pulse": false,
+      "dash": true
+    },
+    {
+      "s": "dead-man",
+      "t": "pi",
+      "label": "watchdog",
+      "pulse": false
+    },
+    {
+      "s": "lorax",
+      "t": "cannamax",
+      "label": "drift engine",
+      "pulse": false
+    },
+    {
+      "s": "lorax",
+      "t": "facility-tracker",
+      "label": "UI consumer",
+      "pulse": false
+    },
+    {
+      "s": "panopticon",
+      "t": "fluxuum",
+      "label": "evolved into",
+      "pulse": false,
+      "dash": true
+    },
+    {
+      "s": "hark-site",
+      "t": "trellis",
+      "label": "product",
+      "pulse": false
+    },
+    {
+      "s": "hark-site",
+      "t": "cannamax",
+      "label": "product",
+      "pulse": false
+    },
+    {
+      "s": "cannamax",
+      "t": "hark-controller",
+      "label": "drift engine",
+      "pulse": true
+    },
+    {
+      "s": "lorax",
+      "t": "hark-controller",
+      "label": "mesh layer",
+      "pulse": false
+    },
+    {
+      "s": "alexandria",
+      "t": "hark-controller",
+      "label": "all adapters",
+      "pulse": false
+    },
+    {
+      "s": "trellis",
+      "t": "hark-controller",
+      "label": "UI layer",
+      "pulse": false
+    },
+    {
+      "s": "fluxuum",
+      "t": "hark-controller",
+      "label": "telemetry",
+      "pulse": true
+    },
+    {
+      "s": "pixel-6-controller-mpctdapg",
+      "t": "pi",
+      "label": "Data",
+      "pulse": false
+    },
+    {
+      "s": "lorax",
+      "t": "fluxuum",
+      "label": "2nd Data stream",
+      "pulse": false
+    }
+  ],
+  "_saved": "2026-05-21T05:08:46.015Z"
+}
