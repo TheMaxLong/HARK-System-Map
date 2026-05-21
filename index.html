@@ -535,28 +535,23 @@ async function initData(){
   let loaded=false;
 
   if(slugStillExists){
-    try{
-      const url=`https://raw.githubusercontent.com/${GH_REPO}/main/${MAPS_DIR}/${persistedSlug}.json?t=${Date.now()}`;
-      const r=await fetch(url);
-      if(r.ok){
-        applyData(await r.json());
-        _currentMapSlug=persistedSlug;
-        loaded=true;
-      }
-    }catch{}
+    const data=await ghReadFileJSON(`${MAPS_DIR}/${persistedSlug}.json`);
+    if(data){
+      applyData(data);
+      _currentMapSlug=persistedSlug;
+      loaded=true;
+    }
   }else if(persistedSlug){
     localStorage.removeItem(CURRENT_MAP_KEY);
   }
 
   if(!loaded){
-    try{
-      const r=await fetch(GH_RAW+'?t='+Date.now());
-      if(r.ok){
-        applyData(await r.json());
-        _currentMapSlug=null;
-        loaded=true;
-      }
-    }catch{}
+    const data=await ghReadFileJSON(GH_FILE);
+    if(data){
+      applyData(data);
+      _currentMapSlug=null;
+      loaded=true;
+    }
   }
 
   if(!loaded){
@@ -1173,15 +1168,26 @@ let _selectedMap = null;
 let _mapRenameMode = false;
 const CURRENT_MAP_KEY = 'hark-current-map-slug';
 
-async function getMapManifest(){
+async function ghReadFileJSON(path){
+  const token=getToken();
+  if(token){
+    try{
+      const url=`https://api.github.com/repos/${GH_REPO}/contents/${path}?ref=main`;
+      const r=await fetch(url,{headers:{Authorization:`token ${token}`,Accept:'application/vnd.github.raw'}});
+      if(r.ok) return await r.json();
+    }catch{}
+  }
   try{
-    const r=await fetch(`${GH_RAW.replace('map-state.json',MANIFEST_FILE)}?t=`+Date.now());
-    if(r.ok){
-      const data=await r.json();
-      _mapManifest=data;
-      return data;
-    }
+    const rawUrl=`https://raw.githubusercontent.com/${GH_REPO}/main/${path}?t=${Date.now()}`;
+    const r=await fetch(rawUrl);
+    if(r.ok) return await r.json();
   }catch{}
+  return null;
+}
+
+async function getMapManifest(){
+  const data=await ghReadFileJSON(MANIFEST_FILE);
+  if(data){ _mapManifest=data; return data; }
   return { maps: [] };
 }
 
@@ -1309,17 +1315,13 @@ async function loadSelectedMap(){
     let data;
     let newSlug=null;
     if(_selectedMap===DEFAULT_MAP_NAME){
-      const r=await fetch(GH_RAW+'?t='+Date.now());
-      if(!r.ok)throw new Error('Failed to load default map');
-      data=await r.json();
+      data=await ghReadFileJSON(GH_FILE);
+      if(!data) throw new Error('Failed to load default map');
     }else{
       const entry=_mapManifest.maps.find(m=>m.name===_selectedMap);
       if(!entry)throw new Error('Map not found in manifest');
-      const mapPath=`${MAPS_DIR}/${entry.slug}.json`;
-      const mapUrl=`https://raw.githubusercontent.com/${GH_REPO}/main/${mapPath}`;
-      const r=await fetch(mapUrl+'?t='+Date.now());
-      if(!r.ok)throw new Error('Failed to load map');
-      data=await r.json();
+      data=await ghReadFileJSON(`${MAPS_DIR}/${entry.slug}.json`);
+      if(!data) throw new Error('Failed to load map');
       newSlug=entry.slug;
     }
     _currentMapSlug=newSlug;
