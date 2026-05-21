@@ -530,17 +530,34 @@ async function initData(){
   _mapManifest=await getMapManifest();
   await migrateV1Maps();
 
+  const persistedSlug=localStorage.getItem(CURRENT_MAP_KEY);
+  const slugStillExists=persistedSlug && _mapManifest.maps.some(m=>m.slug===persistedSlug);
   let loaded=false;
-  try{
-    const r=await fetch(GH_RAW+'?t='+Date.now());
-    if(r.ok){
-      const d=await r.json();
-      applyData(d);
-      const token=getToken();
-      if(token) ghLoadSha(token);
-      loaded=true;
-    }
-  }catch{}
+
+  if(slugStillExists){
+    try{
+      const url=`https://raw.githubusercontent.com/${GH_REPO}/main/${MAPS_DIR}/${persistedSlug}.json?t=${Date.now()}`;
+      const r=await fetch(url);
+      if(r.ok){
+        applyData(await r.json());
+        _currentMapSlug=persistedSlug;
+        loaded=true;
+      }
+    }catch{}
+  }else if(persistedSlug){
+    localStorage.removeItem(CURRENT_MAP_KEY);
+  }
+
+  if(!loaded){
+    try{
+      const r=await fetch(GH_RAW+'?t='+Date.now());
+      if(r.ok){
+        applyData(await r.json());
+        _currentMapSlug=null;
+        loaded=true;
+      }
+    }catch{}
+  }
 
   if(!loaded){
     const s=localStorage.getItem(SKEY);
@@ -684,28 +701,15 @@ async function ghCommit(){
   if(!token)return; // silent — only syncs if token is set
   _syncing=true;
   try{
-    if(!_ghSha) await ghLoadSha(token);
     const json=JSON.stringify(buildExportData(),null,2);
     const content=btoa(unescape(encodeURIComponent(json)));
-    const body={message:`map update ${new Date().toISOString().slice(0,16)}`,content};
-    if(_ghSha) body.sha=_ghSha;
-    const r=await fetch(GH_API,{
-      method:'PUT',
-      headers:{Authorization:`token ${token}`,'Content-Type':'application/json'},
-      body:JSON.stringify(body)
-    });
-    if(r.ok){
-      const d=await r.json();
-      _ghSha=d.content.sha;
+    const path=_currentMapSlug?`${MAPS_DIR}/${_currentMapSlug}.json`:GH_FILE;
+    const message=`map update ${new Date().toISOString().slice(0,16)}`;
+    const r=await ghPutFile(token,path,content,message);
+    if(r&&r.ok){
       flashSaved();
-    }else if(r.status===401||r.status===403){
+    }else if(r&&(r.status===401||r.status===403)){
       flashError('⚠ token invalid — click ⚙');
-    }else if(r.status===409){
-      // conflict — refresh SHA and retry once
-      await ghLoadSha(token);
-      _syncing=false;
-      await ghCommit();
-      return;
     }else{
       flashError('⚠ sync failed');
     }
@@ -1164,8 +1168,10 @@ initData();
 
 // ── MAP PICKER (FILE-BASED + GITHUB) ────────────────────────────────────────
 let _mapManifest = { maps: [] };
+let _currentMapSlug = null;
 let _selectedMap = null;
 let _mapRenameMode = false;
+const CURRENT_MAP_KEY = 'hark-current-map-slug';
 
 async function getMapManifest(){
   try{
@@ -1256,7 +1262,6 @@ async function newMap(){
   }
 
   const slug=name.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
-  const mapData=buildExportData();
   const token=getToken();
 
   if(!token){
@@ -1265,12 +1270,13 @@ async function newMap(){
   }
 
   try{
-    flashSaved('Saving new map…');
+    flashSaved('Creating new map…');
 
-    const entry={ slug, name, created: new Date().toISOString(), modified: new Date().toISOString() };
+    const blankData={ nodes:[], edges:[], _saved:new Date().toISOString() };
+    const entry={ slug, name, created:new Date().toISOString(), modified:new Date().toISOString() };
     _mapManifest.maps.push(entry);
 
-    const mapJson=JSON.stringify(mapData,null,2);
+    const mapJson=JSON.stringify(blankData,null,2);
     const manifestJson=JSON.stringify(_mapManifest,null,2);
 
     const mapPath=`${MAPS_DIR}/${slug}.json`;
@@ -1283,10 +1289,15 @@ async function newMap(){
     const r2=await ghPutFile(token,MANIFEST_FILE,manifestContent);
     if(!r2.ok) throw new Error('Failed to update manifest');
 
-    _selectedMap=name;
-    renderMapList();
-    flashSaved('Map saved!');
+    _currentMapSlug=slug;
+    localStorage.setItem(CURRENT_MAP_KEY,slug);
+    applyData(blankData);
+    buildMaps();
+    updateCount();
+    closeMapPicker();
+    flashSaved('New map ready');
   }catch(e){
+    _mapManifest.maps=_mapManifest.maps.filter(m=>m.slug!==slug);
     flashError('Failed to create map: '+e.message);
   }
 }
@@ -1296,6 +1307,7 @@ async function loadSelectedMap(){
 
   try{
     let data;
+    let newSlug=null;
     if(_selectedMap===DEFAULT_MAP_NAME){
       const r=await fetch(GH_RAW+'?t='+Date.now());
       if(!r.ok)throw new Error('Failed to load default map');
@@ -1308,11 +1320,14 @@ async function loadSelectedMap(){
       const r=await fetch(mapUrl+'?t='+Date.now());
       if(!r.ok)throw new Error('Failed to load map');
       data=await r.json();
+      newSlug=entry.slug;
     }
+    _currentMapSlug=newSlug;
+    if(newSlug) localStorage.setItem(CURRENT_MAP_KEY,newSlug);
+    else        localStorage.removeItem(CURRENT_MAP_KEY);
     applyData(data);
     buildMaps();
     closePanel();
-    save();
     updateCount();
     closeMapPicker();
   }catch(e){
@@ -1397,6 +1412,10 @@ async function saveMapRename(){
     const r2=await ghPutFile(token,MANIFEST_FILE,manifestContent);
     if(!r2.ok)throw new Error('Failed to update manifest');
 
+    if(_currentMapSlug===oldSlug){
+      _currentMapSlug=newSlug;
+      localStorage.setItem(CURRENT_MAP_KEY,newSlug);
+    }
     _selectedMap=newName;
     _mapRenameMode=false;
     nameInput.style.display='none';
@@ -1514,6 +1533,15 @@ async function confirmDeleteMap(){
     const manifestContent=btoa(unescape(encodeURIComponent(JSON.stringify(_mapManifest,null,2))));
     const r2=await ghPutFile(token,MANIFEST_FILE,manifestContent);
     if(!r2.ok)throw new Error('Failed to update manifest');
+
+    if(_currentMapSlug===entry.slug){
+      _currentMapSlug=null;
+      localStorage.removeItem(CURRENT_MAP_KEY);
+      try{
+        const r=await fetch(GH_RAW+'?t='+Date.now());
+        if(r.ok){ applyData(await r.json()); buildMaps(); updateCount(); }
+      }catch{}
+    }
 
     _selectedMap=null;
     document.getElementById('map-delete-section').classList.remove('show');
