@@ -9,8 +9,8 @@
       "y": 0.34604210193921225,
       "type": "Flagship Product",
       "status": "live",
-      "desc": "The cultivation OS. Drift detection, change feed, real-time pH/EC/flow per zone. Everything else feeds into this.",
-      "tech": "TypeScript · Express 5 · Drizzle · Zod · Alexandria adapters · SQLite",
+      "desc": "The cultivation OS. Drift detection, change feed, real-time pH/EC/flow per zone. Runoff system of record since 2026-05-21 \u2014 fed directly by the Run-off Logger via /api/runoff/from-frd over Tailscale Funnel. Postgres on Pi (fluxuum DB).",
+      "tech": "TypeScript \u00b7 Express 5 \u00b7 Drizzle \u00b7 Zod \u00b7 PostgreSQL (Pi) \u00b7 Tailscale Funnel",
       "notes": "*Idea* -Add a \"Copy Infinium to All Room\" button to update Environmentals for all 24 rooms all at once"
     },
     {
@@ -22,8 +22,8 @@
       "y": 0.4799426295856687,
       "type": "Application",
       "status": "live",
-      "desc": "Room state dashboard. OCR parsing, env monitoring, runoff chemistry, change events feed. Pi-hosted.",
-      "tech": "React 18 · Express 5 · PostgreSQL · Claude Vision · pnpm monorepo",
+      "desc": "Room state dashboard. OCR parsing, env monitoring, change events feed. Pi-hosted. NOTE: runoff capture moved off FT to CannaMax 2026-05-21.",
+      "tech": "React 18 \u00b7 Express 5 \u00b7 PostgreSQL \u00b7 Claude Vision \u00b7 pnpm monorepo",
       "notes": ""
     },
     {
@@ -36,7 +36,7 @@
       "type": "Application",
       "status": "live",
       "desc": "Grow recipe hub. Cycle tracking, arc charts, drift detection, field notes. Scrapes live controller data.",
-      "tech": "Python · Flask · SQLite · WebSocket · OpenAI (optional)",
+      "tech": "Python \u00b7 Flask \u00b7 SQLite \u00b7 WebSocket \u00b7 OpenAI (optional)",
       "notes": ""
     },
     {
@@ -46,10 +46,10 @@
       "sz": 17,
       "x": 0.5215157601102187,
       "y": 0.21542415693891873,
-      "type": "Application · hark.equipment",
+      "type": "Application \u00b7 hark.equipment",
       "status": "live",
       "desc": "Room builder. Runoff monitoring dashboard. OpenAPI-first codegen. Proprietary + Themes Pack tier.",
-      "tech": "React 19 · Express 5 · PostgreSQL · Drizzle · Orval codegen · pnpm monorepo",
+      "tech": "React 19 \u00b7 Express 5 \u00b7 PostgreSQL \u00b7 Drizzle \u00b7 Orval codegen \u00b7 pnpm monorepo",
       "notes": ""
     },
     {
@@ -62,7 +62,7 @@
       "type": "Product Site",
       "status": "live",
       "desc": "Public marketing site. Gumroad shop live. Grow Journal $18. SSL on Vercel.",
-      "tech": "Vercel · SSL · Gumroad",
+      "tech": "Vercel \u00b7 SSL \u00b7 Gumroad",
       "notes": ""
     },
     {
@@ -75,7 +75,7 @@
       "type": "Data Pipeline",
       "status": "live",
       "desc": "Irrigation telemetry. pH/EC/flow/gal per zone, 136 reads/hr. Anomaly alerts via Resend email.",
-      "tech": "TypeScript · Express 5 · PostgreSQL · React · Resend · OpenAI · pnpm monorepo",
+      "tech": "TypeScript \u00b7 Express 5 \u00b7 PostgreSQL \u00b7 React \u00b7 Resend \u00b7 OpenAI \u00b7 pnpm monorepo",
       "notes": ""
     },
     {
@@ -88,20 +88,20 @@
       "type": "Adapter Library",
       "status": "live",
       "desc": "Controller adapter abstraction. ObservationOnlyMarker enforces read-only. Supports Anderson, Infinium, TrolMaster, Argus, and more.",
-      "tech": "TypeScript ESM · Zero runtime deps · pnpm monorepo · 5 packages",
+      "tech": "TypeScript ESM \u00b7 Zero runtime deps \u00b7 pnpm monorepo \u00b7 5 packages",
       "notes": ""
     },
     {
       "id": "flower-room",
-      "label": "Flower Room\nDisplay",
+      "label": "Run-off\nLogger",
       "cat": "display",
       "sz": 15,
       "x": 0.621305684688684,
       "y": 0.30581718761303,
       "type": "Display App",
       "status": "live",
-      "desc": "Runoff log OCR. Claude Vision parses handwritten log sheets into structured data.",
-      "tech": "React 19 · Express 5 · PostgreSQL · Claude Vision · Anthropic SDK",
+      "desc": "Run-off Logger (a.k.a. FRD / Flower-Room-Display). Vision OCR of runoff log sheets \u2192 finalized text. One-click 'SEND TO CANNAMAX' button POSTs to Pi via Tailscale Funnel \u2014 no more screenshot+re-upload.",
+      "tech": "React 19 \u00b7 Express 5 \u00b7 PostgreSQL \u00b7 Claude Vision \u00b7 Anthropic SDK",
       "notes": ""
     },
     {
@@ -114,7 +114,7 @@
       "type": "Android Widget",
       "status": "live",
       "desc": "Home screen widget. Live pH/EC/flow per building. 5-second polling, staleness detection.",
-      "tech": "Flutter · Dart · Kotlin · Jetpack Glance · Tailscale",
+      "tech": "Flutter \u00b7 Dart \u00b7 Kotlin \u00b7 Jetpack Glance \u00b7 Tailscale",
       "notes": ""
     },
     {
@@ -124,10 +124,10 @@
       "sz": 12,
       "x": 0.37928652915868505,
       "y": 0.5395604148305236,
-      "type": "Shift Tool · GitHub Pages",
+      "type": "Shift Tool \u00b7 GitHub Pages",
       "status": "live",
       "desc": "Phone-first incident logger. Used every night shift. jsPDF reports. Pulls Fluxuum sensor context.",
-      "tech": "React 18 · Vite · jsPDF · html2canvas · GitHub Pages",
+      "tech": "React 18 \u00b7 Vite \u00b7 jsPDF \u00b7 html2canvas \u00b7 GitHub Pages",
       "notes": ""
     },
     {
@@ -140,7 +140,7 @@
       "type": "Future Platform",
       "status": "planned",
       "desc": "Multi-site cultivation OS. Tailscale primary + LoRa mesh fallback. Consumes Alexandria adapters. 9 packages, 95 tests.",
-      "tech": "TypeScript · SQLite · Meshtastic · RAKwireless · Tailscale · Alexandria",
+      "tech": "TypeScript \u00b7 SQLite \u00b7 Meshtastic \u00b7 RAKwireless \u00b7 Tailscale \u00b7 Alexandria",
       "notes": "Question: <Ask if my home can be used as a test point if facility isn't ready yet?>"
     },
     {
@@ -153,7 +153,7 @@
       "type": "Origin Project",
       "status": "live",
       "desc": "Where it started. First Pi monitor. Flask + SQLite + WebSocket. Proved the concept. Everything grew from here.",
-      "tech": "Python · Flask · SQLite · Chart.js · systemd · Raspberry Pi 5",
+      "tech": "Python \u00b7 Flask \u00b7 SQLite \u00b7 Chart.js \u00b7 systemd \u00b7 Raspberry Pi 5",
       "notes": ""
     },
     {
@@ -166,7 +166,7 @@
       "type": "Edge Compute",
       "status": "live",
       "desc": "The hub. Hosts Fluxuum:3001, Facility-Tracker:8080, recipe-book:5050. Always-on. Always-watching.",
-      "tech": "Pi 5 · 8GB · Pi OS 64-bit · systemd · Tailscale Serve",
+      "tech": "Pi 5 \u00b7 8GB \u00b7 Pi OS 64-bit \u00b7 systemd \u00b7 Tailscale Serve",
       "notes": ""
     },
     {
@@ -176,10 +176,10 @@
       "sz": 18,
       "x": 0.4709726538730144,
       "y": 0.31841815748828456,
-      "type": "Infrastructure · Mesh VPN",
+      "type": "Infrastructure \u00b7 Mesh VPN",
       "status": "live",
       "desc": "Private encrypted mesh. Mac + Pi + Pixel 10. No open ports, no firewall rules. Just works.",
-      "tech": "WireGuard · Tailscale Serve · MagicDNS · anderson-hub.tailf0f27a.ts.net",
+      "tech": "WireGuard \u00b7 Tailscale Serve \u00b7 MagicDNS \u00b7 anderson-hub.tailf0f27a.ts.net",
       "notes": ""
     },
     {
@@ -192,7 +192,7 @@
       "type": "Database",
       "status": "live",
       "desc": "Used by Trellis, Fluxuum, Facility-Tracker, Flower-Room-Display. The heavy-duty store.",
-      "tech": "PostgreSQL 16 · Drizzle ORM · drizzle-kit migrations",
+      "tech": "PostgreSQL 16 \u00b7 Drizzle ORM \u00b7 drizzle-kit migrations",
       "notes": ""
     },
     {
@@ -205,7 +205,7 @@
       "type": "Database",
       "status": "live",
       "desc": "Used by CannaMax, recipe-book, Panopticon, LoRax. File-based, Pi-friendly, zero config.",
-      "tech": "SQLite 3 · better-sqlite3 · Drizzle (CannaMax)",
+      "tech": "SQLite 3 \u00b7 better-sqlite3 \u00b7 Drizzle (CannaMax)",
       "notes": ""
     },
     {
@@ -217,8 +217,8 @@
       "y": 0.5557353814458089,
       "type": "Watchdog",
       "status": "live",
-      "desc": "Mac→Pi health monitor. Polls every 5 minutes. Fires ntfy push to phone if Pi goes dark.",
-      "tech": "~/bin/anderson-hub-watcher · launchd · ntfy.sh",
+      "desc": "Mac\u2192Pi health monitor. Polls every 5 minutes. Fires ntfy push to phone if Pi goes dark.",
+      "tech": "~/bin/anderson-hub-watcher \u00b7 launchd \u00b7 ntfy.sh",
       "notes": ""
     },
     {
@@ -228,10 +228,10 @@
       "sz": 20,
       "x": 0.354419811278532,
       "y": 0.4556242297259511,
-      "type": "Hardware · 3 Buildings",
+      "type": "Hardware \u00b7 3 Buildings",
       "status": "live",
       "desc": "AB (10.10.9.254), EF (10.10.13.50), GH (10.10.13.251). WebSocket stream. pH/EC/flow/gal per zone. Source of truth for irrigation.",
-      "tech": "HE Anderson · WebSocket ws:// · HTTP login · 24 flower rooms",
+      "tech": "HE Anderson \u00b7 WebSocket ws:// \u00b7 HTTP login \u00b7 24 flower rooms",
       "notes": ""
     },
     {
@@ -241,10 +241,10 @@
       "sz": 15,
       "x": 0.6210759424231402,
       "y": 0.46222779629000993,
-      "type": "Hardware · Env Authority",
+      "type": "Hardware \u00b7 Env Authority",
       "status": "live",
-      "desc": "Lights authority. Temp/RH/CO2/VPD. Trip at 90°F kills lights. Reference only for env — HydroX is ground truth.",
-      "tech": "Unitronics PLC · HTTP port 80 · Infinium bridge daemon · launchd",
+      "desc": "Lights authority. Temp/RH/CO2/VPD. Trip at 90\u00b0F kills lights. Reference only for env \u2014 HydroX is ground truth.",
+      "tech": "Unitronics PLC \u00b7 HTTP port 80 \u00b7 Infinium bridge daemon \u00b7 launchd",
       "notes": ""
     },
     {
@@ -254,10 +254,10 @@
       "sz": 10,
       "x": 0.2570918567167316,
       "y": 0.5438481216944021,
-      "type": "Hardware · Dual pH Probes",
+      "type": "Hardware \u00b7 Dual pH Probes",
       "status": "live",
       "desc": "Two redundant TX100 probes per irrigation line. Divergence = sensor flag, never averaged.",
-      "tech": "Sensorex TX100 · 2 probes per zone · divergence detection",
+      "tech": "Sensorex TX100 \u00b7 2 probes per zone \u00b7 divergence detection",
       "notes": ""
     },
     {
@@ -267,10 +267,10 @@
       "sz": 15,
       "x": 0.6499722548293515,
       "y": 0.45340142027351843,
-      "type": "External API · Anthropic",
+      "type": "External API \u00b7 Anthropic",
       "status": "live",
       "desc": "OCR for runoff sheets, Infinium screens, shift briefings. Used by Facility-Tracker, Flower-Room-Display, CannaMax.",
-      "tech": "claude-opus-4-7 · claude-sonnet-4-6 · @anthropic-ai/sdk",
+      "tech": "claude-opus-4-7 \u00b7 claude-sonnet-4-6 \u00b7 @anthropic-ai/sdk",
       "notes": ""
     },
     {
@@ -283,20 +283,20 @@
       "type": "External API",
       "status": "live",
       "desc": "Email anomaly alerts from Fluxuum. 30-minute dedup window per zone bucket.",
-      "tech": "Resend API · RESEND_API_KEY · 30min dedup",
+      "tech": "Resend API \u00b7 RESEND_API_KEY \u00b7 30min dedup",
       "notes": ""
     },
     {
       "id": "fluxuum-cloud",
-      "label": "Fluxuum\nCloud ☠",
+      "label": "Fluxuum\nCloud \u2620",
       "cat": "external",
       "sz": 10,
       "x": 0.2913405279068417,
       "y": 0.4437022463165142,
-      "type": "External · Retiring",
+      "type": "External \u00b7 Retiring",
       "status": "retiring",
-      "desc": "fluxuum.replit.app — the old cloud host. Pi mirror is live. Being retired. Kept warm as rollback.",
-      "tech": "Replit · retiring → Pi takes over",
+      "desc": "fluxuum.replit.app \u2014 the old cloud host. Pi mirror is live. Being retired. Kept warm as rollback.",
+      "tech": "Replit \u00b7 retiring \u2192 Pi takes over",
       "notes": ""
     },
     {
@@ -309,8 +309,8 @@
       "type": "Magnum Opus",
       "status": "dream",
       "desc": "The unified cultivation OS. Controller-agnostic, self-serve install, runs on any Pi. Every project in this graph is a feeder. This is what it all becomes.",
-      "tech": "Alexandria adapters · LoRax mesh · Trellis UI · Fluxuum telemetry · CannaMax drift engine",
-      "notes": "Amazon trajectory — apps are the books, this is the AWS. Built for Founder #1 first. Night operator installs it himself and it just works."
+      "tech": "Alexandria adapters \u00b7 LoRax mesh \u00b7 Trellis UI \u00b7 Fluxuum telemetry \u00b7 CannaMax drift engine",
+      "notes": "Amazon trajectory \u2014 apps are the books, this is the AWS. Built for Founder #1 first. Night operator installs it himself and it just works."
     },
     {
       "id": "pixel-6-controller-mpctdapg",
@@ -420,12 +420,6 @@
       "pulse": true
     },
     {
-      "s": "flower-room",
-      "t": "facility-tracker",
-      "label": "runoff data",
-      "pulse": true
-    },
-    {
       "s": "trellis",
       "t": "flower-room",
       "label": "shared arc",
@@ -464,7 +458,7 @@
     {
       "s": "pi",
       "t": "cannamax",
-      "label": "target :3031",
+      "label": "hosts :3030 (frd-receiver) + Postgres",
       "pulse": false
     },
     {
@@ -654,7 +648,20 @@
       "t": "fluxuum",
       "label": "2nd Data stream",
       "pulse": false
+    },
+    {
+      "s": "flower-room",
+      "t": "cannamax",
+      "label": "runoff POST (Funnel)",
+      "pulse": true
+    },
+    {
+      "s": "tailscale",
+      "t": "flower-room",
+      "label": "Funnel HTTPS",
+      "pulse": false,
+      "dash": true
     }
   ],
-  "_saved": "2026-05-21T05:00:20.638Z"
+  "_saved": "2026-05-21T12:49:05.374304Z"
 }
