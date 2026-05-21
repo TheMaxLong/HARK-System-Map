@@ -1,16 +1,1 @@
-{
-  "maps": [
-    {
-      "slug": "personal-projects",
-      "name": "Personal Projects",
-      "created": "2026-05-21T05:00:20.639Z",
-      "modified": "2026-05-21T05:00:20.639Z"
-    },
-    {
-      "slug": "playwrightprobe1779340121610",
-      "name": "PlaywrightProbe1779340121610",
-      "created": "2026-05-21T05:08:46.016Z",
-      "modified": "2026-05-21T05:08:46.016Z"
-    }
-  ]
-}
+{"maps":[{"slug":"personal-projects","name":"Personal Projects","created":"2026-05-21T04:30:00Z","modified":"2026-05-21T04:30:00Z"}]}
