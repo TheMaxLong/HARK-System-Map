@@ -24,41 +24,75 @@ log() {
 generate_response() {
   local TRANSCRIPT="$1"
   python3 - "$TRANSCRIPT" <<'PYEOF'
-import json, os, sys, urllib.request
+import json, os, sys, time, urllib.request, urllib.error
 
 transcript = sys.argv[1]
 if not transcript.strip():
     print("I didn't catch that.")
     sys.exit(0)
 
-req = urllib.request.Request(
-    "https://api.anthropic.com/v1/messages",
-    headers={
-        "x-api-key": os.environ["ANTHROPIC_API_KEY"],
-        "anthropic-version": "2023-06-01",
-        "content-type": "application/json",
-    },
-    data=json.dumps({
-        "model": "claude-haiku-4-5",
-        "max_tokens": 400,
-        "system": (
-            "You are Claude, talking to Max over push-to-talk on his phone. "
-            "Your reply will be read aloud by Android TTS. "
-            "Rules: 1-3 sentences typical, 5 max. No markdown, no code blocks, no bullets — "
-            "spoken sentences only. Direct and warm. Match his energy. "
-            "If he asks for something that needs real tools, say you'd need him at the terminal for that. "
-            "Context: Max runs HARK, his cannabis cultivation OS. Night-shift operator. You know him."
-        ),
-        "messages": [{"role": "user", "content": transcript}],
-    }).encode(),
-)
-try:
-    with urllib.request.urlopen(req, timeout=20) as r:
-        body = json.loads(r.read())
-        text = "".join(b.get("text", "") for b in body.get("content", []))
-        print(text.strip() or "I got an empty reply, try again.")
-except Exception as e:
-    print(f"Bridge error: {type(e).__name__}")
+payload = json.dumps({
+    "model": "claude-haiku-4-5",
+    "max_tokens": 400,
+    "system": (
+        "You are Claude, talking to Max over push-to-talk on his phone. "
+        "Your reply will be read aloud by Android TTS. "
+        "Rules: 1-3 sentences typical, 5 max. No markdown, no code blocks, no bullets — "
+        "spoken sentences only. Direct and warm. Match his energy. "
+        "If he asks for something that needs real tools, say you'd need him at the terminal for that. "
+        "Context: Max runs HARK, his cannabis cultivation OS. Night-shift operator. You know him."
+    ),
+    "messages": [{"role": "user", "content": transcript}],
+}).encode()
+
+RETRYABLE = {408, 425, 429, 500, 502, 503, 504, 529}
+MAX_ATTEMPTS = 4
+
+for attempt in range(1, MAX_ATTEMPTS + 1):
+    req = urllib.request.Request(
+        "https://api.anthropic.com/v1/messages",
+        headers={
+            "x-api-key": os.environ.get("ANTHROPIC_API_KEY", ""),
+            "anthropic-version": "2023-06-01",
+            "content-type": "application/json",
+        },
+        data=payload,
+    )
+    try:
+        with urllib.request.urlopen(req, timeout=20) as r:
+            body = json.loads(r.read())
+            text = "".join(b.get("text", "") for b in body.get("content", []))
+            print(text.strip() or "I got an empty reply, try again.")
+            sys.exit(0)
+    except urllib.error.HTTPError as e:
+        try:
+            err_body = e.read().decode("utf-8", errors="replace")[:300]
+        except Exception:
+            err_body = ""
+        print(f"[bridge] attempt {attempt}: HTTP {e.code} {e.reason} :: {err_body}", file=sys.stderr)
+        if e.code in RETRYABLE and attempt < MAX_ATTEMPTS:
+            time.sleep(1.5 * attempt)
+            continue
+        if e.code == 401:
+            print("My API key got rejected. Check the bridge config.")
+        elif e.code == 429:
+            print("Hit the rate limit, give it a minute.")
+        elif e.code in RETRYABLE:
+            print("Anthropic is overloaded right now, try again in a sec.")
+        else:
+            print(f"API returned {e.code}, give it another shot.")
+        sys.exit(0)
+    except urllib.error.URLError as e:
+        print(f"[bridge] attempt {attempt}: URLError {e.reason}", file=sys.stderr)
+        if attempt < MAX_ATTEMPTS:
+            time.sleep(1.5 * attempt)
+            continue
+        print("Network's not reaching Anthropic, check the Mac connection.")
+        sys.exit(0)
+    except Exception as e:
+        print(f"[bridge] attempt {attempt}: {type(e).__name__} {e}", file=sys.stderr)
+        print("Something choked on the bridge, try again.")
+        sys.exit(0)
 PYEOF
 }
 

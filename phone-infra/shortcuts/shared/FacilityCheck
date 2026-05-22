@@ -1,21 +1,30 @@
 #!/data/data/com.termux/files/usr/bin/bash
 # FacilityCheck — Triggers Max's FacilityCheck audit on Mac via ntfy.
 # Mac runs the 5-step sweep, SSHes back with TTS summary + notification.
+#
+# Why this script returns immediately:
+# Termux:Widget shows Android's "App not responding" dialog if the shortcut
+# blocks the UI thread past ~5s. The original synchronous tts-speak alone is
+# ~5–6s of audio, right at the ANR threshold. Curl with no timeout could
+# block indefinitely on a flaky network. We background both and exit.
 
 TOPIC="hark-facility-check-b6d6f70e9913"
 
-# Detect which phone we are (used so Mac knows where to send the result back)
 DEVICE_MODEL=$(getprop ro.product.model 2>/dev/null)
 case "$DEVICE_MODEL" in
   *"Pixel 10"*) PHONE=pixel10 ;;
-  *"Pixel 6"*) PHONE=pixel6 ;;
-  *) PHONE=pixel6 ;;  # default
+  *"Pixel 6"*)  PHONE=pixel6  ;;
+  *)            PHONE=pixel6  ;;
 esac
 
-curl -s -X POST \
-  -H "Title: FacilityCheck triggered" \
-  -d "$PHONE" \
-  "https://ntfy.sh/$TOPIC" > /dev/null
+termux-vibrate -d 200 &
 
-termux-vibrate -d 200
-termux-tts-speak "Facility check started on Mac. I'll report when it's done."
+( curl -s -X POST --connect-timeout 3 --max-time 6 \
+    -H "Title: FacilityCheck triggered" \
+    -d "$PHONE" \
+    "https://ntfy.sh/$TOPIC" >/dev/null 2>&1 ) &
+
+( termux-tts-speak "Facility check started on Mac. I'll report when it's done." >/dev/null 2>&1 ) &
+
+disown -a
+exit 0
