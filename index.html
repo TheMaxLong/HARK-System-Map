@@ -1006,7 +1006,7 @@ function draw(){
       if(m===n)return;
       const dx=px(n)-px(m),dy=py(n)-py(m);
       const dist=Math.hypot(dx,dy)+1;
-      const f=2200/(dist*dist);
+      const f=6000/(dist*dist);
       n.vx+=(dx/dist)*f/W*.012;
       n.vy+=(dy/dist)*f/H*.012;
     });
@@ -1016,7 +1016,7 @@ function draw(){
       if(!oth)return;
       const dx=px(oth)-px(n),dy=py(oth)-py(n);
       const dist=Math.hypot(dx,dy)+1;
-      const k=(dist-W*.14)/dist*.006;
+      const k=(dist-W*.24)/dist*.002;
       n.vx+=dx*k/W*12; n.vy+=dy*k/H*12;
     });
     n.vx+=(.5-n.x)*.0006; n.vy+=(.5-n.y)*.0006;
