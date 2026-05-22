@@ -96,13 +96,23 @@ for attempt in range(1, MAX_ATTEMPTS + 1):
 PYEOF
 }
 
+# SSH/SCP options — ConnectTimeout protects the dial; ServerAliveInterval +
+# ServerAliveCountMax kill the session if the remote stops talking mid-flight
+# (without these, a half-dead connection wedges the polling loop forever).
+SSH_OPTS=(-o ConnectTimeout=5 -o ServerAliveInterval=3 -o ServerAliveCountMax=2 -o BatchMode=yes)
+# `timeout` belt-and-suspenders cap on the whole call. Need gtimeout on macOS.
+TIMEOUT_CMD=$(command -v gtimeout || command -v timeout || echo "")
+ssh_call()  { [ -n "$TIMEOUT_CMD" ] && "$TIMEOUT_CMD" 15 ssh "${SSH_OPTS[@]}" "$@" || ssh "${SSH_OPTS[@]}" "$@"; }
+scp_call()  { [ -n "$TIMEOUT_CMD" ] && "$TIMEOUT_CMD" 20 scp "${SSH_OPTS[@]}" "$@" || scp "${SSH_OPTS[@]}" "$@"; }
+
 log "=== Bridge daemon started — watching $PHONE ==="
 log "Local inbox mirror: $INBOX_LOCAL"
 log "Phone inbox path:   $INBOX_REMOTE"
+log "timeout cmd: ${TIMEOUT_CMD:-NONE (sessions will rely on ServerAlive only)}"
 
 while true; do
   # List unprocessed files on phone
-  FILES=$(ssh -o ConnectTimeout=5 "$PHONE" "ls $INBOX_REMOTE/*.txt 2>/dev/null | xargs -n1 basename 2>/dev/null" || true)
+  FILES=$(ssh_call "$PHONE" "ls $INBOX_REMOTE/*.txt 2>/dev/null | xargs -n1 basename 2>/dev/null" || true)
 
   for FNAME in $FILES; do
     if grep -qxF "$FNAME" "$PROCESSED" 2>/dev/null; then continue; fi
@@ -110,7 +120,7 @@ while true; do
     log "New transcript: $FNAME"
 
     # Pull
-    if scp -q "$PHONE:$INBOX_REMOTE/$FNAME" "$INBOX_LOCAL/$FNAME" 2>>"$LOGFILE"; then
+    if scp_call -q "$PHONE:$INBOX_REMOTE/$FNAME" "$INBOX_LOCAL/$FNAME" 2>>"$LOGFILE"; then
       TRANSCRIPT=$(cat "$INBOX_LOCAL/$FNAME")
       log "  Transcript: \"$TRANSCRIPT\""
 
@@ -121,10 +131,10 @@ while true; do
       echo "$RESPONSE" > "$OUTBOX_LOCAL/$FNAME"
 
       # Push to phone
-      if scp -q "$OUTBOX_LOCAL/$FNAME" "$PHONE:$OUTBOX_REMOTE/$FNAME" 2>>"$LOGFILE"; then
+      if scp_call -q "$OUTBOX_LOCAL/$FNAME" "$PHONE:$OUTBOX_REMOTE/$FNAME" 2>>"$LOGFILE"; then
         log "  Pushed response to phone."
         # Remove the inbox file on phone so it doesn't reprocess
-        ssh -o ConnectTimeout=5 "$PHONE" "rm $INBOX_REMOTE/$FNAME" 2>>"$LOGFILE" || true
+        ssh_call "$PHONE" "rm $INBOX_REMOTE/$FNAME" 2>>"$LOGFILE" || true
         echo "$FNAME" >> "$PROCESSED"
       else
         log "  scp push FAILED"
