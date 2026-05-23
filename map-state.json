@@ -138,10 +138,10 @@
       "x": 0.5178435839028094,
       "y": 0.8038922155688623,
       "type": "Future Platform",
-      "status": "planned",
-      "desc": "Multi-site cultivation OS. Tailscale primary + LoRa mesh fallback. Consumes Alexandria adapters. 9 packages, 95 tests.",
-      "tech": "TypeScript · SQLite · Meshtastic · RAKwireless · Tailscale · Alexandria",
-      "notes": "Question: <Ask if my home can be used as a test point if facility isn't ready yet?>"
+      "status": "building",
+      "desc": "Multi-site cultivation OS. Tailscale primary + LoRa mesh fallback. Consumes Alexandria adapters. 12 packages, 150 tests. site-hub binary deployable. ThresholdDetector lifted from facility-watch v1.",
+      "tech": "TypeScript · SQLite · Meshtastic · RAKwireless · Tailscale · Alexandria · systemd",
+      "notes": "Phase 4 shipped 2026-05-22: @lorax/site-hub (deployable CLI) + Threshold/RecipeDrift/CycleDrift detectors. Awaiting: power monitoring pick (Vue 3 rec), alexandria consumption strategy (file: rec), hardware spend ($960+$250 relay rec)."
     },
     {
       "id": "panopticon",
