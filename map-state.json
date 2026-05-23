@@ -44,8 +44,8 @@
       "label": "Trellis",
       "cat": "app",
       "sz": 17,
-      "x": 0.408061992465717,
-      "y": 0.4533812493664778,
+      "x": 0.4108851346324849,
+      "y": 0.5055219126680528,
       "type": "Application · hark.equipment",
       "status": "live",
       "desc": "Room builder. Runoff monitoring dashboard. OpenAPI-first codegen. Proprietary + Themes Pack tier.",
@@ -57,8 +57,8 @@
       "label": "hark.equipment",
       "cat": "app",
       "sz": 13,
-      "x": 0.5337889141989369,
-      "y": 0.4595808383233533,
+      "x": 0.5995500562429696,
+      "y": 0.4656,
       "type": "Product Site",
       "status": "live",
       "desc": "Public marketing site. Gumroad shop live. Grow Journal $18. SSL on Vercel.",
@@ -89,15 +89,15 @@
       "status": "live",
       "desc": "Controller adapter abstraction. ObservationOnlyMarker enforces read-only. Supports Anderson, Infinium, TrolMaster, Argus, and more.",
       "tech": "TypeScript ESM · Zero runtime deps · pnpm monorepo · 5 packages",
-      "notes": "2026-05-23: @alexandria/adapter-he-anderson LIVE in production via LoRax on anderson-hub. Polling AB controller (10.10.9.254), real pH/EC/flow events flowing. Library API composes cleanly with @lorax/site-hub via documented adapters spec."
+      "notes": ""
     },
     {
       "id": "flower-room",
       "label": "Flower Room\nDisplay",
       "cat": "display",
       "sz": 15,
-      "x": 0.5191035691663665,
-      "y": 0.44828151729601295,
+      "x": 0.4915791369582603,
+      "y": 0.39298283052097904,
       "type": "Display App",
       "status": "live",
       "desc": "Runoff log OCR. Claude Vision parses handwritten log sheets into structured data.",
@@ -134,14 +134,14 @@
       "id": "lorax",
       "label": "Project\nLoRax",
       "cat": "future",
-      "sz": 20,
+      "sz": 18,
       "x": 0.5178435839028094,
       "y": 0.8038922155688623,
       "type": "Future Platform",
-      "status": "live",
-      "desc": "Multi-site cultivation OS — LIVE on anderson-hub. @alexandria/adapter-he-anderson wired, real AB pH/EC/flow events ingesting + persisting to SQLite. /briefing/morning.html UI renders. 12 packages, 150+ tests.",
-      "tech": "TypeScript · SQLite · Meshtastic · RAKwireless · Tailscale · @alexandria/* · systemd",
-      "notes": "2026-05-23: lorax-anderson.service deployed to anderson-hub (Node 24, /opt/lorax-deploy). 100 events first poll across AB1-AB6, 4 sensors per zone, 5-min cadence. hub-backup runs lorax-site-hub.service as standby/mesh peer (no adapter). API :8085, transport :8084 fleet-wide. ADR-0011 accepted."
+      "status": "planned",
+      "desc": "Multi-site cultivation OS. Tailscale primary + LoRa mesh fallback. Consumes Alexandria adapters. 9 packages, 95 tests.",
+      "tech": "TypeScript · SQLite · Meshtastic · RAKwireless · Tailscale · Alexandria",
+      "notes": "Question: <Ask if my home can be used as a test point if facility isn't ready yet?>"
     },
     {
       "id": "panopticon",
@@ -165,30 +165,17 @@
       "y": 0.7649700598802395,
       "type": "Edge Compute",
       "status": "live",
-      "desc": "The hub (anderson-hub). Hosts Fluxuum:3001, Facility-Tracker:8080, recipe-book:5050, facility-watch:3031, LoRax:8085. Always-on. Always-watching.",
-      "tech": "Pi 5 · 8GB · Pi OS 64-bit · systemd · Tailscale Serve · Node 24",
+      "desc": "The hub. Hosts Fluxuum:3001, Facility-Tracker:8080, recipe-book:5050. Always-on. Always-watching.",
+      "tech": "Pi 5 · 8GB · Pi OS 64-bit · systemd · Tailscale Serve",
       "notes": ""
-    },
-    {
-      "id": "hub-backup",
-      "label": "hub-backup\n(Twin Pi)",
-      "cat": "infra",
-      "sz": 18,
-      "x": 0.09,
-      "y": 0.65,
-      "type": "Edge Compute · Standby",
-      "status": "live",
-      "desc": "Twin standby Pi. Full stack mirror of anderson-hub. Collectors disabled — 5-min sync pulls anderson.db, recipe_book.db, facility-tracker-data, CannaMax pgdata, Fluxuum PostgreSQL. Failover: enable 4 services and it becomes primary. Also runs lorax-site-hub.service as standby mesh peer (no adapter, observation-only).",
-      "tech": "Pi 5 · Pi OS 64-bit · systemd · Tailscale · rsync · pg_dump cron · lorax-site-hub",
-      "notes": "Currently on home WiFi (192.168.12.x) — not on facility LAN, so can't reach controllers directly. GoldFlora + pixel10 hotspot pre-configured. LoRax peer config points at anderson-hub:8084 for mesh."
     },
     {
       "id": "tailscale",
       "label": "Tailscale\nMesh",
       "cat": "infra",
       "sz": 18,
-      "x": 0.2934842975150792,
-      "y": 0.5763166056826362,
+      "x": 0.2771961974760928,
+      "y": 0.4759401384238536,
       "type": "Infrastructure · Mesh VPN",
       "status": "live",
       "desc": "Private encrypted mesh. Mac + Pi + Pixel 10. No open ports, no firewall rules. Just works.",
@@ -226,8 +213,8 @@
       "label": "Dead-man\nSwitch",
       "cat": "infra",
       "sz": 10,
-      "x": 0.27421996227685186,
-      "y": 0.6194147463816126,
+      "x": 0.2676444372104987,
+      "y": 0.627273972101368,
       "type": "Watchdog",
       "status": "live",
       "desc": "Mac→Pi health monitor. Polls every 5 minutes. Fires ntfy push to phone if Pi goes dark.",
@@ -291,8 +278,8 @@
       "label": "Resend",
       "cat": "external",
       "sz": 10,
-      "x": 0.36340531163342377,
-      "y": 0.7243996687362415,
+      "x": 0.36492352551298235,
+      "y": 0.7267065315785576,
       "type": "External API",
       "status": "live",
       "desc": "Email anomaly alerts from Fluxuum. 30-minute dedup window per zone bucket.",
@@ -343,8 +330,8 @@
       "label": "Room Builder",
       "cat": "dream",
       "sz": 18,
-      "x": 0.4615129534488589,
-      "y": 0.2781428632979088,
+      "x": 0.46224696499903695,
+      "y": 0.27951050006779976,
       "type": "Dream",
       "status": "dream",
       "desc": "2d , room buildout",
@@ -454,7 +441,7 @@
       "s": "alexandria",
       "t": "lorax",
       "label": "adapters",
-      "pulse": true
+      "pulse": false
     },
     {
       "s": "alexandria",
@@ -467,12 +454,6 @@
       "t": "fluxuum",
       "label": "hosts :3001",
       "pulse": false
-    },
-    {
-      "s": "pi",
-      "t": "lorax",
-      "label": "hosts :8085",
-      "pulse": true
     },
     {
       "s": "pi",
@@ -673,20 +654,7 @@
       "t": "fluxuum",
       "label": "2nd Data stream",
       "pulse": false
-    },
-    {
-      "s": "pi",
-      "t": "hub-backup",
-      "label": "5-min sync",
-      "pulse": false,
-      "dash": true
-    },
-    {
-      "s": "tailscale",
-      "t": "hub-backup",
-      "label": "mesh node",
-      "pulse": false
     }
   ],
-  "_saved": "2026-05-23T06:34:53.172Z"
+  "_saved": "2026-05-23T16:28:32.794Z"
 }
