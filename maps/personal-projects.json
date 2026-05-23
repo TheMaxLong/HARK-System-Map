@@ -134,14 +134,14 @@
       "id": "lorax",
       "label": "Project\nLoRax",
       "cat": "future",
-      "sz": 18,
+      "sz": 20,
       "x": 0.5178435839028094,
       "y": 0.8038922155688623,
       "type": "Future Platform",
-      "status": "building",
-      "desc": "Multi-site cultivation OS. Tailscale primary + LoRa mesh fallback. Consumes Alexandria adapters. 12 packages, 150 tests. site-hub binary deployable. ThresholdDetector lifted from facility-watch v1.",
-      "tech": "TypeScript · SQLite · Meshtastic · RAKwireless · Tailscale · Alexandria · systemd",
-      "notes": "Phase 4 shipped 2026-05-22: @lorax/site-hub (deployable CLI) + Threshold/RecipeDrift/CycleDrift detectors. Awaiting: power monitoring pick (Vue 3 rec), alexandria consumption strategy (file: rec), hardware spend ($960+$250 relay rec)."
+      "status": "live-alpha",
+      "desc": "Multi-site cultivation OS — LIVE ALPHA. Real data flowing from AB Anderson via @alexandria adapter. 12 packages, 150+ tests, deployable site-hub binary. ThresholdDetector lifted from facility-watch v1.",
+      "tech": "TypeScript · SQLite · Meshtastic · RAKwireless · Tailscale · @alexandria/* · systemd",
+      "notes": "Phase 5 shipped 2026-05-22 evening: wired @alexandria/adapter-he-anderson, smoke pulled 300 real events from AB1-AB7 in 90s. ADR-0011 accepted (pnpm workspace consumption). Next: Pi deployment when backup Pi arrives."
     },
     {
       "id": "panopticon",
