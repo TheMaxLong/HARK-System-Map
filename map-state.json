@@ -89,7 +89,7 @@
       "status": "live",
       "desc": "Controller adapter abstraction. ObservationOnlyMarker enforces read-only. Supports Anderson, Infinium, TrolMaster, Argus, and more.",
       "tech": "TypeScript ESM · Zero runtime deps · pnpm monorepo · 5 packages",
-      "notes": ""
+      "notes": "2026-05-23: @alexandria/adapter-he-anderson LIVE in production via LoRax on anderson-hub. Polling AB controller (10.10.9.254), real pH/EC/flow events flowing. Library API composes cleanly with @lorax/site-hub via documented adapters spec."
     },
     {
       "id": "flower-room",
@@ -138,10 +138,10 @@
       "x": 0.5178435839028094,
       "y": 0.8038922155688623,
       "type": "Future Platform",
-      "status": "live-alpha",
-      "desc": "Multi-site cultivation OS — LIVE ALPHA. Real data flowing from AB Anderson via @alexandria adapter. 12 packages, 150+ tests, deployable site-hub binary. ThresholdDetector lifted from facility-watch v1.",
+      "status": "live",
+      "desc": "Multi-site cultivation OS — LIVE on anderson-hub. @alexandria/adapter-he-anderson wired, real AB pH/EC/flow events ingesting + persisting to SQLite. /briefing/morning.html UI renders. 12 packages, 150+ tests.",
       "tech": "TypeScript · SQLite · Meshtastic · RAKwireless · Tailscale · @alexandria/* · systemd",
-      "notes": "Phase 5 shipped 2026-05-22 evening: wired @alexandria/adapter-he-anderson, smoke pulled 300 real events from AB1-AB7 in 90s. ADR-0011 accepted (pnpm workspace consumption). Next: Pi deployment when backup Pi arrives."
+      "notes": "2026-05-23: lorax-anderson.service deployed to anderson-hub (Node 24, /opt/lorax-deploy). 100 events first poll across AB1-AB6, 4 sensors per zone, 5-min cadence. hub-backup runs lorax-site-hub.service as standby/mesh peer (no adapter). API :8085, transport :8084 fleet-wide. ADR-0011 accepted."
     },
     {
       "id": "panopticon",
@@ -165,8 +165,8 @@
       "y": 0.7649700598802395,
       "type": "Edge Compute",
       "status": "live",
-      "desc": "The hub. Hosts Fluxuum:3001, Facility-Tracker:8080, recipe-book:5050. Always-on. Always-watching.",
-      "tech": "Pi 5 · 8GB · Pi OS 64-bit · systemd · Tailscale Serve",
+      "desc": "The hub (anderson-hub). Hosts Fluxuum:3001, Facility-Tracker:8080, recipe-book:5050, facility-watch:3031, LoRax:8085. Always-on. Always-watching.",
+      "tech": "Pi 5 · 8GB · Pi OS 64-bit · systemd · Tailscale Serve · Node 24",
       "notes": ""
     },
     {
@@ -178,9 +178,9 @@
       "y": 0.65,
       "type": "Edge Compute · Standby",
       "status": "live",
-      "desc": "Twin standby Pi. Full stack mirror of anderson-hub. Collectors disabled — 5-min sync pulls anderson.db, recipe_book.db, facility-tracker-data, CannaMax pgdata, Fluxuum PostgreSQL. Failover: enable 4 services and it becomes primary.",
-      "tech": "Pi 5 · Pi OS 64-bit · systemd · Tailscale · rsync · pg_dump cron",
-      "notes": "Location TBD — deploy to a different building than anderson-hub for power independence. GoldFlora + pixel10 hotspot pre-configured."
+      "desc": "Twin standby Pi. Full stack mirror of anderson-hub. Collectors disabled — 5-min sync pulls anderson.db, recipe_book.db, facility-tracker-data, CannaMax pgdata, Fluxuum PostgreSQL. Failover: enable 4 services and it becomes primary. Also runs lorax-site-hub.service as standby mesh peer (no adapter, observation-only).",
+      "tech": "Pi 5 · Pi OS 64-bit · systemd · Tailscale · rsync · pg_dump cron · lorax-site-hub",
+      "notes": "Currently on home WiFi (192.168.12.x) — not on facility LAN, so can't reach controllers directly. GoldFlora + pixel10 hotspot pre-configured. LoRax peer config points at anderson-hub:8084 for mesh."
     },
     {
       "id": "tailscale",
@@ -454,7 +454,7 @@
       "s": "alexandria",
       "t": "lorax",
       "label": "adapters",
-      "pulse": false
+      "pulse": true
     },
     {
       "s": "alexandria",
@@ -467,6 +467,12 @@
       "t": "fluxuum",
       "label": "hosts :3001",
       "pulse": false
+    },
+    {
+      "s": "pi",
+      "t": "lorax",
+      "label": "hosts :8085",
+      "pulse": true
     },
     {
       "s": "pi",
