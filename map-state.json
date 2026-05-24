@@ -11,7 +11,7 @@
       "status": "live",
       "desc": "The cultivation OS. Drift detection, change feed, real-time pH/EC/flow per zone. Everything else feeds into this.",
       "tech": "TypeScript · Express 5 · Drizzle · Zod · Alexandria adapters · SQLite",
-      "notes": "*Idea* -Add a \"Copy Infinium to All Room\" button to update Environmentals for all 24 rooms all at once"
+      "notes": "2026-05-24: Apply Infinium to All button shipped — one tap snapshots live Infinium readings into all 24 rooms at once. Env timestamps on every tile. Fixed env_readings_source_check DB constraint (infinium-snapshot was missing). Anderson tab live via Fluxuum/facility-tracker integration."
     },
     {
       "id": "facility-tracker",
@@ -24,7 +24,7 @@
       "status": "live",
       "desc": "Room state dashboard. OCR parsing, env monitoring, runoff chemistry, change events feed. Pi-hosted.",
       "tech": "React 18 · Express 5 · PostgreSQL · Claude Vision · pnpm monorepo",
-      "notes": ""
+      "notes": "2026-05-24: Apply Infinium to All button added to INFINIUM tab — fills all 24 room env tiles from live Infinium reads in one tap."
     },
     {
       "id": "recipe-book",
@@ -314,16 +314,29 @@
     },
     {
       "id": "pixel-6-controller-mpctdapg",
-      "label": "Pixel 6 controller",
-      "cat": "dream",
+      "label": "Pixel 6\n(Claude's Phone)",
+      "cat": "infra",
       "sz": 18,
       "x": 0.2201974183750949,
       "y": 0.43862275449101795,
-      "type": "Dream",
-      "status": "dream",
-      "desc": "My old Pixel 6 will be hook up to my GitHub and all my stuff to talk with Pi , and projects. \n\nIt's basically going to be Claude's phone",
-      "tech": "Pixel6",
-      "notes": ""
+      "type": "Edge Device · Voice Node",
+      "status": "live",
+      "desc": "Claude's phone. On Tailscale mesh. Runs Possession Daemon (Czech TTS p=0.15 r=0.35 — demonic Latin incantations at random intervals). Also outputs Seaman's voice via SSH + termux-tts-speak (Italian locale p=0.55 r=0.70).",
+      "tech": "Pixel 6 · Termux · termux-tts-speak · Tailscale · SSH :8022 · hark-possession.sh",
+      "notes": "2026-05-24: Possession daemon upgraded to Czech locale at extreme low pitch — genuinely demonic. Seaman companion routes fish TTS here via SSH. Always on tailnet at 100.72.211.71."
+    },
+    {
+      "id": "project-seaman",
+      "label": "Project\nSeaman",
+      "cat": "app",
+      "sz": 15,
+      "x": 0.86,
+      "y": 0.18,
+      "type": "Side Project · Game Mod",
+      "status": "live",
+      "desc": "Dreamcast Seaman mod. Hold SPACE → Whisper STT → Claude Haiku answers as the fish → Italian TTS voice out of Pixel 6. Python companion runs alongside Flycast emulator. I am the fish.",
+      "tech": "Python · whisper.cpp (small) · Anthropic SDK (Haiku) · Flycast · pynput · SSH → termux-tts-speak",
+      "notes": "2026-05-24: Companion live at ~/Documents/GitHub/project-seaman. Stage 0–4 personality chain (Mushroomer → Gillman → Podfish → Tadman → Frogman). Voice routes to Pixel 6 via SSH nohup. Xbox controller mapped in Flycast."
     },
     {
       "id": "room-builder-mpcycpd9",
@@ -654,7 +667,50 @@
       "t": "fluxuum",
       "label": "2nd Data stream",
       "pulse": false
+    },
+    {
+      "s": "pi",
+      "t": "hub-backup",
+      "label": "5-min sync",
+      "pulse": false,
+      "dash": true
+    },
+    {
+      "s": "tailscale",
+      "t": "hub-backup",
+      "label": "mesh node",
+      "pulse": false
+    },
+    {
+      "s": "tailscale",
+      "t": "pixel-6-controller-mpctdapg",
+      "label": "mesh node",
+      "pulse": false
+    },
+    {
+      "s": "project-seaman",
+      "t": "claude-api",
+      "label": "fish brain",
+      "pulse": true
+    },
+    {
+      "s": "project-seaman",
+      "t": "pixel-6-controller-mpctdapg",
+      "label": "TTS voice",
+      "pulse": true
+    },
+    {
+      "s": "infinium",
+      "t": "cannamax",
+      "label": "apply all",
+      "pulse": true
+    },
+    {
+      "s": "infinium",
+      "t": "facility-tracker",
+      "label": "apply all",
+      "pulse": true
     }
   ],
-  "_saved": "2026-05-23T16:28:32.794Z"
+  "_saved": "2026-05-24T18:30:00.000Z"
 }
