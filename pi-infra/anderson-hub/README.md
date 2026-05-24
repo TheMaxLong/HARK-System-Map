@@ -14,8 +14,18 @@ this directory is the inverse: scripts the Pi itself runs.
 
 | File | What it does |
 |------|--------------|
-| `run-flower-lights-out-check.sh` | Cron-invoked wrapper. Calls alexandria's `check-lights-out` script, throttles per-room signatures, fires ntfy on alert. |
+| `run-flower-lights-out-check.sh` | Cron-invoked wrapper. Calls alexandria's `check-lights-out` script, throttles per-room signatures, fires ntfy on alert, and emits a min-priority "HARK Flower Check" heartbeat every run. |
 | `install-flower-lights-out-check.sh` | Idempotent installer. Copies the wrapper into `~/.hark/bin/` and wires a `*/5 * * * *` crontab entry. |
+
+## Heartbeat → backup-hub cross-watchdog
+
+Every completed run posts a min-priority `HARK Flower Check` heartbeat to the
+ntfy topic (alert or not, even if tag maps are still `REPLACE_ME`). The
+**backup-hub** Pi polls for that heartbeat and pages if it goes stale — catching
+the case where this checker silently dies while the Pi stays up. See
+`pi-infra/backup-hub/`. Nothing here needs configuring for that to work; the
+heartbeat fires by default. If you installed this job before 2026-05-24, re-run
+the installer to pick up the heartbeat emission.
 
 ## Flower lights-out alert — first-time setup on the Pi
 

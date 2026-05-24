@@ -18,6 +18,8 @@ LOG_FILE="${LOG_FILE:-$STATE_DIR/last-run.log}"
 LAST_OUTPUT="${LAST_OUTPUT:-$STATE_DIR/last-output.json}"
 NTFY_TOPIC="${NTFY_TOPIC:-hark-phones-b6d6f70e9913}"
 THROTTLE_MIN="${THROTTLE_MIN:-30}"
+HEARTBEAT_TOPIC="${HEARTBEAT_TOPIC:-$NTFY_TOPIC}"
+HEARTBEAT_TITLE="${HEARTBEAT_TITLE:-HARK Flower Check}"
 
 mkdir -p "$STATE_DIR"
 
@@ -35,6 +37,25 @@ EXIT_CODE=$?
 # The script's JSON summary is the only thing on stdout. Persist it for later
 # diffs and so other tooling can read state.
 echo "$RAW_OUTPUT" > "$LAST_OUTPUT"
+
+# Heartbeat — fires every completed run (alert or not) at min priority so the
+# backup-hub cross-watchdog knows the room-watcher actually executed this
+# cycle. If this stops, the rooms are unwatched even if the Pi is still up.
+HEARTBEAT_MSG="$(LAST_OUTPUT="$LAST_OUTPUT" python3 - <<'PY'
+import json, os, pathlib
+try:
+    d = json.loads(pathlib.Path(os.environ["LAST_OUTPUT"]).read_text())
+    print(f'ran ok checkedAt={d.get("checkedAt","?")} roomsRead={d.get("roomsRead",0)} alerts={d.get("alertCount",0)}')
+except Exception as e:
+    print(f'ran, output unparseable: {e}')
+PY
+)"
+curl -s -o /dev/null --max-time 10 \
+  -H "Title: $HEARTBEAT_TITLE" \
+  -H "Priority: 1" \
+  -H "Tags: heartbeat" \
+  -d "$HEARTBEAT_MSG" \
+  "https://ntfy.sh/$HEARTBEAT_TOPIC" || true
 
 # Parse JSON, find alerting rooms, decide whether to fire ntfy.
 ALERTS_JSON="$(LAST_OUTPUT="$LAST_OUTPUT" python3 - <<'PY'
