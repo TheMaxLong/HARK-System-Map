@@ -31,7 +31,9 @@ fi
 cd "$ALEXANDRIA_DIR" || exit 1
 
 # Run the engine in dry-run mode (we handle ntfy here so we can throttle).
-RAW_OUTPUT="$(pnpm --silent --filter @alexandria/adapter-http-websocket run check-lights-out -- --dry-run 2>>"$LOG_FILE")"
+# --state persists per-room temps between runs so the freshness guard can tell
+# a frozen/stuck feed from a live cold room (and not page on stale data).
+RAW_OUTPUT="$(pnpm --silent --filter @alexandria/adapter-http-websocket run check-lights-out -- --dry-run --state="$STATE_DIR/poll-state.json" 2>>"$LOG_FILE")"
 EXIT_CODE=$?
 
 # The script's JSON summary is the only thing on stdout. Persist it for later
