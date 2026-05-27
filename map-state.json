@@ -179,7 +179,7 @@
       "type": "Infrastructure · Mesh VPN",
       "status": "live",
       "desc": "Private encrypted mesh. Mac + Pi + Pixel 10. No open ports, no firewall rules. Just works.",
-      "tech": "WireGuard · Tailscale Serve · MagicDNS · anderson-hub.tailf0f27a.ts.net",
+      "tech": "WireGuard · Tailscale Serve · MagicDNS · hub-backup.tailf0f27a.ts.net (primary, post-2026-05-27)",
       "notes": ""
     },
     {
@@ -218,7 +218,7 @@
       "type": "Watchdog",
       "status": "live",
       "desc": "Mac→Pi health monitor. Polls every 5 minutes. Fires ntfy push to phone if Pi goes dark.",
-      "tech": "~/bin/anderson-hub-watcher · launchd · ntfy.sh",
+      "tech": "~/bin/hub-backup-watcher · launchd com.max.hub-backup-watcher · ntfy.sh (repointed from anderson-hub 2026-05-27)",
       "notes": ""
     },
     {
