@@ -4,7 +4,7 @@
 source ~/sentinel/lib/common.sh
 
 WATCHER=pi-health
-PI="anderson-hub.tailf0f27a.ts.net"
+PI="hub-backup.tailf0f27a.ts.net"
 STATE_FILE="$STATE_DIR/$WATCHER.json"
 
 # 1. Tailscale reachability to Pi root
