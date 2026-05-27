@@ -89,7 +89,7 @@
       "status": "live",
       "desc": "Controller adapter abstraction. ObservationOnlyMarker enforces read-only. Supports Anderson, Infinium, TrolMaster, Argus, and more.",
       "tech": "TypeScript ESM · Zero runtime deps · pnpm monorepo · 5 packages",
-      "notes": "2026-05-23: @alexandria/adapter-he-anderson LIVE in production via LoRax on anderson-hub. Polling AB controller (10.10.9.254), real pH/EC/flow events flowing. Library API composes cleanly with @lorax/site-hub via documented adapters spec."
+      "notes": "Library itself is fine; the anderson-hub LoRax deployment that exercised it died 2026-05-27 (SD card). Adapter API composes cleanly with @lorax/site-hub via documented adapters spec — ready to redeploy when a new Anderson host comes online."
     },
     {
       "id": "flower-room",
@@ -139,9 +139,9 @@
       "y": 0.8038922155688623,
       "type": "Future Platform",
       "status": "live",
-      "desc": "Multi-site cultivation OS — LIVE on anderson-hub. @alexandria/adapter-he-anderson wired, real AB pH/EC/flow events ingesting + persisting to SQLite. /briefing/morning.html UI renders. 12 packages, 150+ tests.",
+      "desc": "Multi-site cultivation OS. lorax-anderson.service (the live polling deployment) died with the anderson-hub SD card 2026-05-27. lorax-site-hub.service on hub-backup still alive as observation-only peer. 12 packages, 150+ tests intact — code-level fine, ops-level needs a new host.",
       "tech": "TypeScript · SQLite · Meshtastic · RAKwireless · Tailscale · @alexandria/* · systemd",
-      "notes": "2026-05-23: lorax-anderson.service deployed to anderson-hub (Node 24, /opt/lorax-deploy). 100 events first poll across AB1-AB6, 4 sensors per zone, 5-min cadence. hub-backup runs lorax-site-hub.service as standby/mesh peer (no adapter). API :8085, transport :8084 fleet-wide. ADR-0011 accepted."
+      "notes": "Hub-backup still runs lorax-site-hub.service (API :8085, transport :8084). To re-light the polling layer: deploy lorax-anderson.service onto hub-backup (which CAN reach 10.10.13.x from facility LAN) or onto whatever replaces anderson-hub. ADR-0011 accepted."
     },
     {
       "id": "panopticon",
@@ -164,23 +164,23 @@
       "x": 0.15641609719058466,
       "y": 0.7649700598802395,
       "type": "Edge Compute",
-      "status": "live",
-      "desc": "The hub (anderson-hub). Hosts Fluxuum:3001, Facility-Tracker:8080, recipe-book:5050, facility-watch:3031, LoRax:8085. Always-on. Always-watching.",
-      "tech": "Pi 5 · 8GB · Pi OS 64-bit · systemd · Tailscale Serve · Node 24",
-      "notes": ""
+      "status": "dead",
+      "desc": "anderson-hub. DEAD 2026-05-27 — SD card failure (Pi 5 hardware itself is intact, just needs a new card flashed). Used to host Fluxuum/FT/recipe-book/facility-watch/LoRax — all of which now live on hub-backup. Hold position in the map as historical / future-revive slot.",
+      "tech": "Pi 5 · 8GB · DEAD CARD — pulled 2026-05-27 ~05:45 PT",
+      "notes": "Recovery blocked: old pgdata is PG16, installed PG is 17, USE_FLOAT8_BYVAL mismatch makes it unrecoverable. Card itself is the corpse; reflash a fresh card with Pi OS to revive this host when desired."
     },
     {
       "id": "hub-backup",
-      "label": "hub-backup\n(Twin Pi)",
+      "label": "hub-backup\n(Primary Pi)",
       "cat": "infra",
-      "sz": 18,
+      "sz": 23,
       "x": 0.09,
       "y": 0.65,
-      "type": "Edge Compute · Standby",
+      "type": "Edge Compute · Primary",
       "status": "live",
-      "desc": "Twin standby Pi. Full stack mirror of anderson-hub. Collectors disabled — 5-min sync pulls anderson.db, recipe_book.db, facility-tracker-data, CannaMax pgdata, Fluxuum PostgreSQL. Failover: enable 4 services and it becomes primary. Also runs lorax-site-hub.service as standby mesh peer (no adapter, observation-only).",
-      "tech": "Pi 5 · Pi OS 64-bit · systemd · Tailscale · rsync · pg_dump cron · lorax-site-hub",
-      "notes": "Currently on home WiFi (192.168.12.x) — not on facility LAN, so can't reach controllers directly. GoldFlora + pixel10 hotspot pre-configured. LoRax peer config points at anderson-hub:8084 for mesh."
+      "desc": "PRIMARY production Pi as of 2026-05-27. Hosts Fluxuum:3001, Facility-Tracker:8080, recipe-book:5050, CannaMax:3031, FRD:3035, LoRax:8085, infinium-bridge (15s poll → ingest fan-out). All collectors active. Hourly pg_dump → /home/pi/cannamax-backups; daily config snapshot → /home/pi/local-backups; both pulled to Max's Mac via Tailscale at 04:30 daily.",
+      "tech": "Pi 5 · Pi OS 64-bit · systemd · Tailscale · PostgreSQL 17 · Node 24 · infinium-bridge (tsx) · lorax-site-hub",
+      "notes": "AT FACILITY LAN — reaches Anderson controllers 10.10.13.x directly (verified 2026-05-27 04:00 PT). Promoted from twin-standby to primary after anderson-hub SD death. hub-backup-watcher.service DISABLED (it was the killer that stopped cannamax every ~5min). External Mac dead-man-switch at ~/Library/LaunchAgents/com.max.hub-backup-watcher.plist polls :5001 every 5 min."
     },
     {
       "id": "tailscale",
@@ -192,7 +192,7 @@
       "type": "Infrastructure · Mesh VPN",
       "status": "live",
       "desc": "Private encrypted mesh. Mac + Pi + Pixel 10. No open ports, no firewall rules. Just works.",
-      "tech": "WireGuard · Tailscale Serve · MagicDNS · anderson-hub.tailf0f27a.ts.net",
+      "tech": "WireGuard · Tailscale Serve · MagicDNS · hub-backup.tailf0f27a.ts.net (primary, post-2026-05-27)",
       "notes": ""
     },
     {
@@ -231,7 +231,7 @@
       "type": "Watchdog",
       "status": "live",
       "desc": "Mac→Pi health monitor. Polls every 5 minutes. Fires ntfy push to phone if Pi goes dark.",
-      "tech": "~/bin/anderson-hub-watcher · launchd · ntfy.sh",
+      "tech": "~/bin/hub-backup-watcher · launchd com.max.hub-backup-watcher · ntfy.sh (repointed from anderson-hub 2026-05-27)",
       "notes": ""
     },
     {
