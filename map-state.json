@@ -158,16 +158,16 @@
     },
     {
       "id": "pi",
-      "label": "Raspberry Pi",
+      "label": "Raspberry Pi\n(hub-backup)",
       "cat": "infra",
       "sz": 23,
       "x": 0.2112177288714819,
       "y": 0.8509844520116436,
-      "type": "Edge Compute",
+      "type": "Edge Compute · Primary",
       "status": "live",
-      "desc": "The hub. Hosts Fluxuum:3001, Facility-Tracker:8080, recipe-book:5050. Always-on. Always-watching.",
-      "tech": "Pi 5 · 8GB · Pi OS 64-bit · systemd · Tailscale Serve",
-      "notes": ""
+      "desc": "Hub-backup Pi is now the production primary (2026-05-27 — anderson-hub SD died). Hosts Fluxuum:3001, Facility-Tracker:8080, recipe-book:5050, CannaMax:3031, FRD:3035, LoRax site-hub:8085, infinium-bridge. At facility LAN; reaches 10.10.13.x controllers directly. Always-on.",
+      "tech": "Pi 5 · 8GB · Pi OS 64-bit · systemd · Tailscale Serve · PostgreSQL 17 · Node 24 · infinium-bridge",
+      "notes": "Hourly pg_dump + daily config snapshot on-device; both pulled to Max's Mac via Tailscale at 04:30 (~/hub-backup-snapshots/). hub-backup-watcher.service DISABLED — was killing CannaMax every ~5min before tonight. External dead-man-switch lives on Mac (com.max.hub-backup-watcher)."
     },
     {
       "id": "tailscale",
