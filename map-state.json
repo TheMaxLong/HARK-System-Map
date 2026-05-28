@@ -128,7 +128,7 @@
       "status": "live",
       "desc": "Phone-first incident logger. Used every night shift. jsPDF reports. Pulls Fluxuum sensor context.",
       "tech": "React 18 · Vite · jsPDF · html2canvas · GitHub Pages",
-      "notes": ""
+      "notes": "2026-05-28: URL handler shipped — accepts ?draft=<base64>&recorded=<iso>&test=<0|1>. Auto-creates today's S2 session if missing, opens new-incident form pre-filled with the description from a Drift Report transcript. Site is now the destination of the voice pipeline. Live commits: e3c0445 (draftHandler), ff2d07f (App+IncidentPage wiring). Spec doc inside the repo."
     },
     {
       "id": "lorax",
@@ -167,7 +167,7 @@
       "status": "live",
       "desc": "Hub-backup Pi is now the production primary (2026-05-27 — anderson-hub SD died). Hosts Fluxuum:3001, Facility-Tracker:8080, recipe-book:5050, CannaMax:3031, FRD:3035, LoRax site-hub:8085, infinium-bridge. At facility LAN; reaches 10.10.13.x controllers directly. Always-on.",
       "tech": "Pi 5 · 8GB · Pi OS 64-bit · systemd · Tailscale Serve · PostgreSQL 17 · Node 24 · infinium-bridge",
-      "notes": "Hourly pg_dump + daily config snapshot on-device; both pulled to Max's Mac via Tailscale at 04:30 (~/hub-backup-snapshots/). hub-backup-watcher.service DISABLED — was killing CannaMax every ~5min before tonight. External dead-man-switch lives on Mac (com.max.hub-backup-watcher)."
+      "notes": "Hourly pg_dump + daily config snapshot on-device; both pulled to Max's Mac via Tailscale at 04:30 (~/hub-backup-snapshots/). hub-backup-watcher.service DISABLED — was killing CannaMax every ~5min before tonight. External dead-man-switch lives on Mac (com.max.hub-backup-watcher).  2026-05-28: also hosts hourly neon_sync.py cron pushing data to Neon cloud Postgres (project gentle-star-35848479) — first off-site backup of the facility's canonical recipe/cycle data."
     },
     {
       "id": "tailscale",
@@ -180,7 +180,7 @@
       "status": "live",
       "desc": "Private encrypted mesh. Mac + Pi + Pixel 10. No open ports, no firewall rules. Just works.",
       "tech": "WireGuard · Tailscale Serve · MagicDNS · hub-backup.tailf0f27a.ts.net (primary, post-2026-05-27)",
-      "notes": ""
+      "notes": "2026-05-28: Subnet routing live. hub-backup advertises 10.10.9.0/24 + 10.10.13.0/24 — Mac and Pixel now reach facility controllers directly (AB/EF/GH web UIs) via their LAN IPs over the tailnet. No nginx proxy, no port forwarding."
     },
     {
       "id": "postgres",
@@ -232,7 +232,7 @@
       "status": "live",
       "desc": "AB (10.10.9.254), EF (10.10.13.50), GH (10.10.13.251). WebSocket stream. pH/EC/flow/gal per zone. Source of truth for irrigation.",
       "tech": "HE Anderson · WebSocket ws:// · HTTP login · 24 flower rooms",
-      "notes": ""
+      "notes": "2026-05-28: Web UIs accessible from anywhere via Tailscale subnet routing through hub-backup. Direct LAN IPs work as if on the facility network."
     },
     {
       "id": "infinium",
@@ -350,6 +350,58 @@
       "desc": "2d , room buildout",
       "tech": "On Codex, used chat gpt",
       "notes": ""
+    },
+    {
+      "id": "drift-report",
+      "label": "Drift\nReport",
+      "cat": "app",
+      "sz": 16,
+      "x": 0.34,
+      "y": 0.28,
+      "type": "Voice Pipeline · Incident Drafter",
+      "status": "live",
+      "desc": "Tap widget → 90s mic record → Tailscale upload → Mac whisper.cpp → ntfy push → Incident-Log auto-fill. Walk and talk, get a drafted incident.",
+      "tech": "Termux:API · termux-microphone-record · curl · ntfy.sh · base64 deep-link",
+      "notes": "2026-05-28: SHIPPED end-to-end in one session. Two real-world taps caught (1) a TV in the background — Whisper transcribed full punctuated sentences about Pretty Woman, Julia Roberts; (2) a door slam — labeled '(door slams)' in the transcript. Spec at Incident-Log/docs/superpowers/specs/2026-05-28-drift-report-pipeline-design.md. ntfy topic hark-drift-ready-88b4872c55cb98a9."
+    },
+    {
+      "id": "pixel-10",
+      "label": "Pixel 10\n(primary)",
+      "cat": "hardware",
+      "sz": 16,
+      "x": 0.42,
+      "y": 0.21,
+      "type": "Edge Device · Primary Phone",
+      "status": "live",
+      "desc": "Max's primary phone. Hosts Drift Report widget, FacilityCheck, Hub-Status, Read-Cycle, ntfy listener. On Tailscale at 100.75.250.48.",
+      "tech": "Pixel 10 · Termux · Termux:API · termux-job-scheduler · Tailscale",
+      "notes": "2026-05-28: Drift Report widget rewritten — voice → Whisper pipeline. Fixed Hub-Status and Read-Cycle to point to hub-backup (anderson-hub dead). Old widget backup at ~/.shortcuts-backups/."
+    },
+    {
+      "id": "whisper-mac",
+      "label": "Whisper\n(Mac)",
+      "cat": "infra",
+      "sz": 14,
+      "x": 0.55,
+      "y": 0.24,
+      "type": "Transcription Service",
+      "status": "live",
+      "desc": "whisper.cpp HTTP server on Max's Mac. Tailscale-bound. Auth via bearer token. 90s of audio transcribed in ~3-5s with full sentences and punctuation.",
+      "tech": "whisper.cpp · ggml-small.en · Python http.server · ffmpeg · launchd KeepAlive",
+      "notes": "2026-05-28: Deployed at ~/.local/hark-whisper/. Bound to Tailscale IP 100.65.146.120:9090. Auto-restart on crash. Audit log at ~/Library/Logs/hark-drift-transcripts.log."
+    },
+    {
+      "id": "neon-hark",
+      "label": "Neon\n(HARK)",
+      "cat": "data",
+      "sz": 16,
+      "x": 0.08,
+      "y": 0.76,
+      "type": "Cloud Postgres · Read-only Mirror",
+      "status": "live",
+      "desc": "Pi data mirrored to Neon cloud Postgres hourly. 6 tables live: recipes, recipe_phases, recipe_doses, runoff_readings, cycles, fluxuum_runs. Pi is source of truth; Neon is off-site backup + cloud-queryable.",
+      "tech": "Neon (managed Postgres 17, aws-us-east-1) · psycopg2 · cron · org-blue-frog-30334610 · project gentle-star-35848479",
+      "notes": "2026-05-28: SHIPPED. Sync script at /home/pi/neon_sync.py on hub-backup, hourly via cron. First pass: 10 recipes, 46 phases, 345 doses, 335 runoff readings, 25 cycles, 1403 fluxuum_runs. 10-day rolling window for fluxuum_runs; all history for cycles/recipes. Duplicate project raspy-bar-42114503 deleted."
     }
   ],
   "edges": [
@@ -710,7 +762,61 @@
       "t": "facility-tracker",
       "label": "apply all",
       "pulse": true
+    },
+    {
+      "s": "pixel-10",
+      "t": "drift-report",
+      "label": "voice tap",
+      "pulse": true
+    },
+    {
+      "s": "drift-report",
+      "t": "tailscale",
+      "label": "audio upload",
+      "pulse": true
+    },
+    {
+      "s": "tailscale",
+      "t": "whisper-mac",
+      "label": "audio",
+      "pulse": false
+    },
+    {
+      "s": "whisper-mac",
+      "t": "drift-report",
+      "label": "transcript",
+      "pulse": true
+    },
+    {
+      "s": "drift-report",
+      "t": "incident-log",
+      "label": "ntfy push → URL",
+      "pulse": true
+    },
+    {
+      "s": "pi",
+      "t": "neon-hark",
+      "label": "hourly sync",
+      "pulse": true
+    },
+    {
+      "s": "cannamax",
+      "t": "neon-hark",
+      "label": "cycles, fluxuum_runs",
+      "pulse": false
+    },
+    {
+      "s": "recipe-book",
+      "t": "neon-hark",
+      "label": "recipes, runoff",
+      "pulse": false
+    },
+    {
+      "s": "tailscale",
+      "t": "anderson",
+      "label": "subnet route",
+      "pulse": false
     }
   ],
-  "_saved": "2026-05-25T03:56:38.732Z"
+  "_saved": "2026-05-28T15:18:23"
 }
