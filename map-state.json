@@ -179,7 +179,7 @@
       "type": "Infrastructure \u00b7 Mesh VPN",
       "status": "live",
       "desc": "Private encrypted mesh. Mac + Pi + Pixel 10. No open ports, no firewall rules. Just works.",
-      "tech": "WireGuard \u00b7 Tailscale Serve \u00b7 MagicDNS \u00b7 hub-backup.tailf0f27a.ts.net (primary, post-2026-05-27)",
+      "tech": "WireGuard \u00b7 Tailscale Serve \u00b7 MagicDNS \u00b7 anderson-hub.tailf0f27a.ts.net (primary, post-2026-05-28 flip-back)",
       "notes": "2026-05-28: Subnet routing live. hub-backup advertises 10.10.9.0/24 + 10.10.13.0/24 \u2014 Mac and Pixel now reach facility controllers directly (AB/EF/GH web UIs) via their LAN IPs over the tailnet. No nginx proxy, no port forwarding."
     },
     {

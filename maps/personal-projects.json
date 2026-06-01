@@ -35,9 +35,9 @@
       "y": 0.8862275449101796,
       "type": "Application",
       "status": "live",
-      "desc": "Grow recipe hub. Cycle tracking, arc charts, drift detection, field notes. Scrapes live controller data.",
-      "tech": "Python · Flask · SQLite · WebSocket · OpenAI (optional)",
-      "notes": ""
+      "desc": "Grow recipe hub. Cycle tracking, arc charts, drift detection, field notes. Scrapes live controller data. 2026-06-01: HydroZ trial active on AB only (port 15, 5 phases — D 1-7→D 21-28 @2.0 mL/Gal + DRIP VEG @1.0). EF/GH no HydroZ by design.",
+      "tech": "Python · Flask · SQLite (recipe_book.db) · controller HTTP scrapers · recipe_drift queue runner · Neon HARK mirror",
+      "notes": "2026-06-01: FacilityCheck run + 832b111 sync commit pushed. All review items (C1-C3, H1-H4, M1) shipped + verified. Mac→Pi deploy SHA-verified both Pis. Webpage at http://anderson-hub.tailf0f27a.ts.net:5050 serves current state."
     },
     {
       "id": "trellis",
@@ -158,29 +158,29 @@
     },
     {
       "id": "pi",
-      "label": "Raspberry Pi",
+      "label": "Raspberry Pi\n(anderson-hub)",
       "cat": "infra",
       "sz": 23,
       "x": 0.15641609719058466,
       "y": 0.7649700598802395,
-      "type": "Edge Compute",
-      "status": "dead",
-      "desc": "anderson-hub. DEAD 2026-05-27 — SD card failure (Pi 5 hardware itself is intact, just needs a new card flashed). Used to host Fluxuum/FT/recipe-book/facility-watch/LoRax — all of which now live on hub-backup. Hold position in the map as historical / future-revive slot.",
-      "tech": "Pi 5 · 8GB · DEAD CARD — pulled 2026-05-27 ~05:45 PT",
-      "notes": "Recovery blocked: old pgdata is PG16, installed PG is 17, USE_FLOAT8_BYVAL mismatch makes it unrecoverable. Card itself is the corpse; reflash a fresh card with Pi OS to revive this host when desired."
+      "type": "Edge Compute · Primary",
+      "status": "live",
+      "desc": "anderson-hub PRIMARY again as of 2026-05-28 22:31 PT — identity-only restore on new microSD after 2026-05-27 SD-card death; flipped back from hub-backup after 51-sec outage. Hosts Fluxuum:3001, Facility-Tracker:8080, recipe-book:5050 (HydroZ trial active on AB), CannaMax:3031, FRD:3035, LoRax:8085, infinium-bridge. Facility LAN; reaches 10.10.x.x controllers directly.",
+      "tech": "Pi 5 · 8GB · Pi OS 64-bit · new microSD (2026-05-28) · systemd · Tailscale Serve · PostgreSQL 17 · Node 24",
+      "notes": "2026-06-01: Recipe-book sync 832b111 pushed to GitHub + Mac→Pi JSONs deployed (SHA-verified). 2026-05-31 22:40 PT — failover-watcher auto-promoted hub-backup briefly; manual demote pending."
     },
     {
       "id": "hub-backup",
-      "label": "hub-backup\n(Primary Pi)",
+      "label": "hub-backup\n(Standby Pi)",
       "cat": "infra",
       "sz": 23,
       "x": 0.09,
       "y": 0.65,
-      "type": "Edge Compute · Primary",
+      "type": "Edge Compute · Standby",
       "status": "live",
-      "desc": "PRIMARY production Pi as of 2026-05-27. Hosts Fluxuum:3001, Facility-Tracker:8080, recipe-book:5050, CannaMax:3031, FRD:3035, LoRax:8085, infinium-bridge (15s poll → ingest fan-out). All collectors active. Hourly pg_dump → /home/pi/cannamax-backups; daily config snapshot → /home/pi/local-backups; both pulled to Max's Mac via Tailscale at 04:30 daily.",
-      "tech": "Pi 5 · Pi OS 64-bit · systemd · Tailscale · PostgreSQL 17 · Node 24 · infinium-bridge (tsx) · lorax-site-hub",
-      "notes": "AT FACILITY LAN — reaches Anderson controllers 10.10.13.x directly (verified 2026-05-27 04:00 PT). Promoted from twin-standby to primary after anderson-hub SD death. hub-backup-watcher.service DISABLED (it was the killer that stopped cannamax every ~5min). External Mac dead-man-switch at ~/Library/LaunchAgents/com.max.hub-backup-watcher.plist polls :5001 every 5 min."
+      "desc": "STANDBY Pi as of 2026-05-28 22:31 PT (anderson-hub primary identity restored). Runs sync-from-primary.sh cron (5min pulls of dumps from anderson-hub) + failover-watcher.sh (auto-promote on 6 consecutive ping/health fails). Replicated stack idle but warm: Fluxuum/Facility-Tracker/recipe-book/CannaMax/FRD/LoRax/infinium-bridge. PROMOTE_RUNBOOK.md on-device.",
+      "tech": "Pi 5 · Pi OS 64-bit · systemd · Tailscale · PostgreSQL 17 · Node 24 · failover-watcher · promote-to-primary",
+      "notes": "2026-05-31 22:40 PT — auto-promoted briefly when anderson-hub failed 6 consecutive checks; demote is MANUAL and still pending (split-brain since). 2026-06-01: matched JSONs to anderson-hub. Currently both Pis show identical recipe data (SHA-verified). Snapshot of crontab + systemd + ~/bin scripts in TheMaxLong/infra-checkpoints subdir 2026-06-01_post-recipe-sync."
     },
     {
       "id": "tailscale",
@@ -192,7 +192,7 @@
       "type": "Infrastructure · Mesh VPN",
       "status": "live",
       "desc": "Private encrypted mesh. Mac + Pi + Pixel 10. No open ports, no firewall rules. Just works.",
-      "tech": "WireGuard · Tailscale Serve · MagicDNS · hub-backup.tailf0f27a.ts.net (primary, post-2026-05-27)",
+      "tech": "WireGuard · Tailscale Serve · MagicDNS · anderson-hub.tailf0f27a.ts.net (primary, post-2026-05-28 flip-back)",
       "notes": ""
     },
     {
