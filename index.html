@@ -1008,6 +1008,7 @@ function draw(){
   requestAnimationFrame(draw);
 }
 function _draw(){
+  if(!ctx)return;
   tick++;
   ctx.clearRect(0,0,canvas.width,canvas.height);
   const W=canvas.width,H=canvas.height-PT;
@@ -1174,6 +1175,8 @@ function _draw(){
   });
 }
 
+// Always show defaults immediately — network data overwrites when it arrives
+loadDef(); buildMaps(); updateCount();
 mouse={x:canvas.width/2,y:canvas.height/2};
 requestAnimationFrame(draw);
 initData();
