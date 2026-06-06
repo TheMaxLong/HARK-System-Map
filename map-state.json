@@ -11,7 +11,7 @@
       "status": "live",
       "desc": "The cultivation OS. Drift detection, change feed, real-time pH/EC/flow per zone. Everything else feeds into this.",
       "tech": "TypeScript \u00b7 Express 5 \u00b7 Drizzle \u00b7 Zod \u00b7 Alexandria adapters \u00b7 SQLite",
-      "notes": "2026-05-24: Apply Infinium to All button shipped \u2014 one tap snapshots live Infinium readings into all 24 rooms at once. Env timestamps on every tile. Fixed env_readings_source_check DB constraint (infinium-snapshot was missing). Anderson tab live via Fluxuum/facility-tracker integration. 2026-05-29: AB1 chart fix shipped (src/windowing.ts multi-run assignment \u2014 fixed empty-chart bug from operator's nested manual catch-runs). 2026-05-30: fluxuum-anderson-drift + lights-on-too-cold detectors both live; main branch caught back up to production via two clean merges."
+      "notes": "2026-05-24: Apply Infinium to All button shipped \u2014 one tap snapshots live Infinium readings into all 24 rooms at once. Env timestamps on every tile. Fixed env_readings_source_check DB constraint (infinium-snapshot was missing). Anderson tab live via Fluxuum/facility-tracker integration. 2026-05-29: AB1 chart fix shipped (src/windowing.ts multi-run assignment \u2014 fixed empty-chart bug from operator's nested manual catch-runs). 2026-05-30: fluxuum-anderson-drift + lights-on-too-cold detectors both live; main branch caught back up to production via two clean merges. 2026-06-02: dual-backend DB client landed (commit 61ba220) \u2014 real PostgreSQL via DATABASE_URL when set, PGlite fallback. Ingredient recon-report updated to reflect 29\u219213 canonical ingredient cleanup."
     },
     {
       "id": "facility-tracker",
@@ -37,7 +37,7 @@
       "status": "live",
       "desc": "Grow recipe hub. Cycle tracking, arc charts, drift detection, field notes. Scrapes live controller data.",
       "tech": "Python \u00b7 Flask \u00b7 SQLite \u00b7 WebSocket \u00b7 OpenAI (optional)",
-      "notes": "2026-05-30: env program update \u2014 photoperiod widened (00:00-11:50 main, +5min UC), D14-42 = 1150W (new tier above 1000W), W7 split (D42 still 1150W, D43 steps down to 1000W). Forward-looking spec; per-room rollout state lives in CannaMax facility-watch-config. Pi recipe-book is plain-copied files (NOT a git checkout) \u2014 edits go via scp + service restart."
+      "notes": "2026-05-30: env program update \u2014 photoperiod widened (00:00-11:50 main, +5min UC), D14-42 = 1150W (new tier above 1000W), W7 split (D42 still 1150W, D43 steps down to 1000W). Pi recipe-book is plain-copied files (NOT a git checkout) \u2014 edits go via scp + service restart. 2026-06-01-02: HydroZ campus-wide trial complete; Hydro z stub (id=30) consolidated into canonical HydroZ (id=16, GH port 11 / AB port 15 / EF port 16). 29\u219213 canonical ingredients \u2014 Drip A NPK 15-0-0 confirmed, shared name_normalize.py ingester, 9 unit tests. 2026-06-03-04: Drip vendor sheets live for A/B/C/D \u2014 ingredient modal restructured into 'Our Program' + 'Vendor Sheet' tabs. 2026-06-04: Day 0 = Load day fixed (removed +1 offset from cycle_day calc). Controller-drift UI removed (room cards + modal banner + 'Actually Running'). Collapsible changelog \u2014 day-based grouping, single-open accordion. Deployed to both anderson-hub + hub-backup via redeploy.sh."
     },
     {
       "id": "trellis",
@@ -74,9 +74,9 @@
       "y": 0.8638083228247163,
       "type": "Data Pipeline",
       "status": "live",
-      "desc": "Irrigation telemetry. pH/EC/flow/gal per zone, 136 reads/hr. Anomaly alerts via Resend email. 2026-05-30: poller v5 ESM rewrite \u2014 consumes @alexandria/adapter-he-anderson directly (byte-equivalent to the v4 bespoke WebSocket scrape).",
+      "desc": "Irrigation telemetry. pH/EC/flow/gal per zone, 136 reads/hr. Anomaly alerts via Resend email. v5 ESM rewrite (Alexandria-native) is now the sole production poller on anderson-hub (v4.3 stopped 2026-06-04).",
       "tech": "TypeScript \u00b7 Express 5 \u00b7 PostgreSQL \u00b7 React \u00b7 Resend \u00b7 OpenAI \u00b7 pnpm monorepo",
-      "notes": "2026-05-30: v5 Alexandria-native ESM rewrite of poller landed on origin/main (commits 17d8b45 plan, 4673bd9 impl, a8748df heartbeat-fix). 12/12 golden byte-equivalence tests green. fluxuum-poller-shadow service running on anderson-hub alongside v4 production poller per don't-clean-up rule."
+      "notes": "2026-05-30: v5 Alexandria-native ESM rewrite of poller landed on origin/main (commits 17d8b45 plan, 4673bd9 impl, a8748df heartbeat-fix). 12/12 golden byte-equivalence tests green. 2026-06-04: v4.3 poller stopped + disabled; fluxuum-poller-shadow (v5) is now the sole production poller on anderson-hub. Temp probe Phase 1+2 shipped (branch feature/temp-probe): anderson_probe_readings table created, schema + extractor in source (commit 6645990); DRY_RUN=1 (logs only, no DB writes yet). /api/runs/latest-by-building widget route recovered after it went missing from new bundle (commit ed282b9). /api/anderson-probe/import endpoint in source but old bundle still rolled back \u2014 pending new bundle SCP to flip DRY_RUN=0."
     },
     {
       "id": "alexandria",
@@ -167,7 +167,7 @@
       "status": "live",
       "desc": "Anderson-hub Pi is the production primary again as of 2026-05-28 22:31 PT (identity-only restore on new microSD after the 5/27 SD-card death; 51-sec failover-back from hub-backup). Hosts Fluxuum:3001, Facility-Tracker:8080, recipe-book:5050, CannaMax:3031, FRD:3035, infinium-bridge. At facility LAN; reaches 10.10.13.x controllers directly. Always-on.",
       "tech": "Pi 5 \u00b7 8GB \u00b7 Pi OS 64-bit \u00b7 systemd \u00b7 Tailscale Serve \u00b7 PostgreSQL 17 \u00b7 Node 24 \u00b7 infinium-bridge",
-      "notes": "2026-05-30: drift detector cron enabled (*/15 min, writes change_events). FT web/ rsync deploy 08:44 PT brought isLightsOn AB2+EF4 fix + D14-42=1150W wattage update live (was 11 days stale). 2026-05-28 22:31 PT: primary flipped BACK to anderson-hub from hub-backup; hub-backup now standby/mesh peer with 5-min sync. Off-site backup syncs hourly to Neon Postgres."
+      "notes": "2026-05-30: drift detector cron enabled (*/15 min, writes change_events). FT web/ rsync deploy 08:44 PT brought isLightsOn AB2+EF4 fix + D14-42=1150W wattage update live. 2026-05-28 22:31 PT: primary flipped BACK to anderson-hub; hub-backup now standby with 5-min sync. Off-site backup syncs hourly to Neon Postgres. 2026-06-04: v4.3 poller stopped + disabled; fluxuum-poller-shadow (v5) is now sole production poller. anderson_probe_readings table created (empty; DRY_RUN=1). New API bundle built (feature/temp-probe) with recovered widget route + probe endpoint; bundle deployed to service. facility-watch now on anderson-hub (was hub-backup)."
     },
     {
       "id": "tailscale",
@@ -412,9 +412,9 @@
       "y": 0.78,
       "type": "Env Alerting Subsystem",
       "status": "live",
-      "desc": "Env smoke alarm inside CannaMax. 30s tick, 24 rooms, 3 detectors (high_temp 90\u00b0F, high_co2 3000ppm, lights_out_inferred). Fires events to /events page + ntfy push. Lives on hub-backup.",
+      "desc": "Env smoke alarm inside CannaMax. 30s tick, 24 rooms, 2 detectors (high_temp 90\u00b0F, high_co2 3000ppm). Fires events to /events page + ntfy push. Lives on anderson-hub.",
       "tech": "TypeScript \u00b7 Drizzle \u00b7 Postgres facility_events table \u00b7 pure-function detectors \u00b7 ntfy.sh push",
-      "notes": "2026-05-28: enabled (was silently off via systemd override). Fire+clear path verified end-to-end with AB6 test. Source mirrored from hub-backup back to git (commit 912818c) \u2014 was hand-edited on Pi with no version tracking. Master switch: FACILITY_WATCH=on in /home/pi/cannamax/demo/runoff-loader/.env. Push topic: gacx-power-y2k7q9pmx3."
+      "notes": "2026-05-28: enabled (was silently off via systemd override). Fire+clear path verified end-to-end with AB6 test. Source mirrored from hub-backup back to git (commit 912818c) \u2014 was hand-edited on Pi with no version tracking. Master switch: FACILITY_WATCH=on in /home/pi/cannamax/demo/runoff-loader/.env. Push topic: gacx-power-y2k7q9pmx3. 2026-06-01: lights_out_inferred + lights_on_too_cold stripped from all 24 rooms (CannaMax commit aa7e424). Only high_temp + high_co2 remain active. lights_on_too_cold lives as standalone detector node."
     },
     {
       "id": "ntfy",
@@ -440,7 +440,7 @@
       "status": "live",
       "desc": "Standby/mesh-peer Pi at Max's condo (home WiFi, no direct controller access). Full mirror of anderson-hub services; flipped to primary on 5/27 during anderson-hub SD-card death and ran production for ~24h. Flipped back to standby 5/28 22:31 PT. Watcher + 5-min sync from anderson-hub keep it warm.",
       "tech": "Pi 5 \u00b7 8GB \u00b7 Pi OS 64-bit \u00b7 systemd \u00b7 Tailscale \u00b7 PostgreSQL 17 \u00b7 Node 24",
-      "notes": "Spare microSD complete 2026-05-29 05:30 PT \u2014 services enabled but stopped. Hosts widget-URL nginx proxy + Tailscale Funnel to preserve public URLs while anderson-hub is primary. Promote procedure documented in memory."
+      "notes": "Spare microSD complete 2026-05-29 05:30 PT \u2014 services enabled but stopped. Hosts widget-URL nginx proxy + Tailscale Funnel to preserve public URLs while anderson-hub is primary. Promote procedure documented in memory. 2026-06-04: v5 fluxuum-poller-shadow code synced from anderson-hub and deployed; new API bundle (feature/temp-probe) deployed; systemd unit installed + daemon reloaded \u2014 service not yet enabled+started (session paused before final step). v4 poller service still present."
     },
     {
       "id": "fluxuum-anderson-drift",
@@ -477,9 +477,9 @@
       "y": 0.78,
       "type": "Service \u00b7 Byte-equivalence Verifier",
       "status": "live",
-      "desc": "v5 Alexandria-native poller running alongside v4 production on anderson-hub. Writes to readings.source='pi-poller-alexandria-shadow'. Validates byte-equivalence before any production cutover.",
+      "desc": "v5 Alexandria-native poller \u2014 now the sole production poller on anderson-hub (v4.3 stopped 2026-06-04). 'Shadow' in name is legacy from pre-promotion staging. Also deployed to hub-backup (unit installed, not yet started).",
       "tech": "Node 22 ESM \u00b7 @alexandria/adapter-he-anderson via file:.tgz \u00b7 systemd unit fluxuum-poller-shadow.service \u00b7 Pi-side install",
-      "notes": "Started 2026-05-30 04:59 PDT. Empirical: 11/11 same-message pairs byte-identical to v4 (pH1, pH2, EC, flow_rate, accumulated_gal). Zero spurious rows. Zero future-dated timestamps. Per don't-clean-up rule, stays running indefinitely until cutover decision. Rollback = sudo systemctl stop fluxuum-poller-shadow."
+      "notes": "Started 2026-05-30 04:59 PDT as shadow alongside v4. 11/11 byte-identical pairs green. 2026-06-04: v4.3 stopped + disabled; fluxuum-poller-shadow promoted to sole production poller on anderson-hub. Temperature probe extractor runs in DRY_RUN=1 mode (logs readings, no DB writes). hub-backup: code + unit installed (obs 9041, 9045), systemd daemon reloaded, service not yet enabled+started (session paused). Rollback = sudo systemctl start fluxuum-poller (v4.3 code still at /home/pi/fluxuum-poller/)."
     }
   ],
   "edges": [
@@ -1000,5 +1000,5 @@
       "pulse": true
     }
   ],
-  "_saved": "2026-05-30T16:34:51.953041Z"
+  "_saved": "2026-06-05T03:54:00.000000Z"
 }
