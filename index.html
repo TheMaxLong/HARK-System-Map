@@ -539,38 +539,39 @@ async function migrateV1Maps(){
 
 async function initData(){
   const hashToken=(()=>{const h=location.hash;const m=h.match(/[#&]gh-token=([^&]+)/);if(m){localStorage.setItem('hark-gh-token',m[1]);history.replaceState(null,'',location.pathname);return m[1];}return null;})();
-
-  _mapManifest=await getMapManifest();
-  await migrateV1Maps();
-
-  const persistedSlug=localStorage.getItem(CURRENT_MAP_KEY);
-  const slugStillExists=persistedSlug && _mapManifest.maps.some(m=>m.slug===persistedSlug);
   let loaded=false;
+  try{
+    _mapManifest=await getMapManifest();
+    await migrateV1Maps();
 
-  if(slugStillExists){
-    const data=await ghReadFileJSON(`${MAPS_DIR}/${persistedSlug}.json`);
-    if(data){
-      applyData(data);
-      _currentMapSlug=persistedSlug;
-      loaded=true;
+    const persistedSlug=localStorage.getItem(CURRENT_MAP_KEY);
+    const slugStillExists=persistedSlug && _mapManifest.maps.some(m=>m.slug===persistedSlug);
+
+    if(slugStillExists){
+      const data=await ghReadFileJSON(`${MAPS_DIR}/${persistedSlug}.json`);
+      if(data){
+        applyData(data);
+        _currentMapSlug=persistedSlug;
+        loaded=true;
+      }
+    }else if(persistedSlug){
+      localStorage.removeItem(CURRENT_MAP_KEY);
     }
-  }else if(persistedSlug){
-    localStorage.removeItem(CURRENT_MAP_KEY);
-  }
 
-  if(!loaded){
-    const data=await ghReadFileJSON(GH_FILE);
-    if(data){
-      applyData(data);
-      _currentMapSlug=null;
-      loaded=true;
+    if(!loaded){
+      const data=await ghReadFileJSON(GH_FILE);
+      if(data){
+        applyData(data);
+        _currentMapSlug=null;
+        loaded=true;
+      }
     }
-  }
 
-  if(!loaded){
-    const s=localStorage.getItem(SKEY);
-    if(s){try{applyData(JSON.parse(s));loaded=true;}catch{}}
-  }
+    if(!loaded){
+      const s=localStorage.getItem(SKEY);
+      if(s){try{applyData(JSON.parse(s));loaded=true;}catch{}}
+    }
+  }catch(e){console.error('initData:',e);}
 
   if(!loaded) loadDef();
   buildMaps(); updateCount();
@@ -1185,14 +1186,20 @@ async function ghReadFileJSON(path){
   const token=getToken();
   if(token){
     try{
+      const ctrl=new AbortController();
+      const tid=setTimeout(()=>ctrl.abort(),5000);
       const url=`https://api.github.com/repos/${GH_REPO}/contents/${path}?ref=main`;
-      const r=await fetch(url,{headers:{Authorization:`token ${token}`,Accept:'application/vnd.github.raw'}});
+      const r=await fetch(url,{headers:{Authorization:`token ${token}`,Accept:'application/vnd.github.raw'},signal:ctrl.signal});
+      clearTimeout(tid);
       if(r.ok) return await r.json();
     }catch{}
   }
   try{
+    const ctrl=new AbortController();
+    const tid=setTimeout(()=>ctrl.abort(),5000);
     const rawUrl=`https://raw.githubusercontent.com/${GH_REPO}/main/${path}?t=${Date.now()}`;
-    const r=await fetch(rawUrl);
+    const r=await fetch(rawUrl,{signal:ctrl.signal});
+    clearTimeout(tid);
     if(r.ok) return await r.json();
   }catch{}
   return null;
