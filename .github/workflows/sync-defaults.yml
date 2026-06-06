@@ -1,0 +1,28 @@
+name: Sync DN/DE defaults
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - map-state.json
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    # Don't re-trigger on the bot's own sync commit
+    if: github.actor != 'github-actions[bot]'
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Sync map-state.json → index.html defaults
+        run: python3 sync-defaults.py
+
+      - name: Commit and push if index.html changed
+        run: |
+          git diff --quiet index.html && echo "no changes" && exit 0
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add index.html
+          git commit -m "sync: DN/DE defaults from map-state.json [skip ci]"
+          git push
