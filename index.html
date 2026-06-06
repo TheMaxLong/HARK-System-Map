@@ -578,9 +578,9 @@ async function initData(){
 }
 
 function applyData(d){
-  nodes=d.nodes.map(n=>({...n,vx:(Math.random()-.5)*.2,vy:(Math.random()-.5)*.2,
+  nodes=(d.nodes||[]).map(n=>({...n,vx:(Math.random()-.5)*.2,vy:(Math.random()-.5)*.2,
     pulse:Math.random()*Math.PI*2,pinned:n.pinned||false,notes:n.notes||'',status:n.status||'live'}));
-  edges=d.edges;
+  edges=(d.edges||[]).map(e=>({...e}));
 }
 
 function loadDef(){
@@ -757,8 +757,8 @@ function doImport(ev){
   r.onload=e=>{
     try{
       const d=JSON.parse(e.target.result);
-      nodes=d.nodes.map(n=>({...n,vx:0,vy:0,pulse:Math.random()*Math.PI*2,pinned:n.pinned||false,notes:n.notes||'',status:n.status||'live'}));
-      edges=d.edges;
+      nodes=(d.nodes||[]).map(n=>({...n,vx:0,vy:0,pulse:Math.random()*Math.PI*2,pinned:n.pinned||false,notes:n.notes||'',status:n.status||'live'}));
+      edges=(d.edges||[]).map(e=>({...e}));
       buildMaps(); closePanel(); save(); updateCount();
     }catch{alert('Invalid JSON');}
   };
