@@ -671,6 +671,12 @@
       "pulse": false
     },
     {
+      "s": "postgres",
+      "t": "cannamax",
+      "label": "dual-backend (DATABASE_URL)",
+      "pulse": false
+    },
+    {
       "s": "sqlite",
       "t": "recipe-book",
       "label": "DB",
@@ -922,9 +928,8 @@
     {
       "s": "facility-watch",
       "t": "pi",
-      "label": "runs on hub-backup",
-      "pulse": false,
-      "dash": true
+      "label": "runs on anderson-hub",
+      "pulse": false
     },
     {
       "s": "anderson",
@@ -984,7 +989,7 @@
     {
       "s": "pi",
       "t": "fluxuum-poller-shadow",
-      "label": "hosts shadow",
+      "label": "hosts primary poller",
       "pulse": false
     },
     {
@@ -996,9 +1001,9 @@
     {
       "s": "fluxuum-poller-shadow",
       "t": "fluxuum",
-      "label": "byte-equiv shadow writes",
+      "label": "production writes",
       "pulse": true
     }
   ],
-  "_saved": "2026-06-05T03:54:00.000000Z"
+  "_saved": "2026-06-05T04:10:00.000000Z"
 }
