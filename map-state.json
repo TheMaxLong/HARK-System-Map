@@ -542,9 +542,9 @@
       "y": 0.6887865523595363,
       "type": "Dossier Viewer · Observatory web",
       "status": "live",
-      "desc": "Standalone viewer for harvest dossiers — index (filter/sort) → drill-in detail with dual-stream charts (runs + runoff kept separate), tooltips on every point, sortable data tables, dimension toggles. Live in the Observatory web root on anderson-hub. Design refinement (compare ≤3 rooms runoff/runs separate, target band, filter/sort index) handed to Claude Design.",
-      "tech": "Single-file HTML · Chart.js · reads dossier JSON · harvest-archive.html",
-      "notes": "2026-06-15: harvest-archive.html shipped (commit f292437). Claude Design handoff folder packaged at ~/Documents/Claude-Design-Handoff-HarvestArchive/ (BRIEF.md + working viewer v1 + real sample dossiers EF3/AB6). Next: Claude Design refines look → Claude Code deploys."
+      "desc": "Operator viewer for harvest dossiers. Index (filter/sort by building/shift/date/status) → drill-in detail: per-metric tabs (pH/EC/VWC/Solus/Environment), an All / full-scope view (deviation heatmap + small multiples on a shared day-of-cycle axis + a Normalize %-of-target overlay for divergence-spotting), ≤3-room Compare, collapsible run-log, raw-records table. Runs & runoff kept distinct, S1/S2/S3 shown equally (never ranked), tooltips on every point. Live in the Observatory web root on anderson-hub.",
+      "tech": "Claude Design standalone (Observatory design system) · Chart.js · self-contained HTML, reads ./dossiers/ via symlink · served by nginx on anderson-hub · harvest-archive.html (primary) + harvest-archive-v2.html",
+      "notes": "2026-06-18: Claude Design viewer LIVE — /observatory/harvest-archive.html (primary, repointed from the old single-file v1 which is backed up on Pi) + harvest-archive-v2.html. Division of labor: Claude Design owns the LOOK (their file, never edited by code); Claude Code wires/deploys/verifies. Round-trips this session: raw-records table export bug reported→fixed; collapsible run-log (1 row/cycle-day, click to expand). Normalize overlay is a DUMB VISUAL — correlation math stays in Observatory (/api/analysis/ec-ph-correlation). Pipeline verified end-to-end: CannaMax mark-harvested → build_dossier.py → manifest → viewer; fires on Monday harvests."
     }
   ],
   "edges": [
@@ -1173,5 +1173,5 @@
       "pulse": false
     }
   ],
-  "_saved": "2026-06-16T14:41:48.738Z"
+  "_saved": "2026-06-18T16:48:52.000Z"
 }
