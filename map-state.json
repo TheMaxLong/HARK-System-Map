@@ -11,7 +11,7 @@
       "status": "live",
       "desc": "The cultivation OS. Drift detection, change feed, real-time pH/EC/flow per zone. Everything else feeds into this.",
       "tech": "TypeScript · Express 5 · Drizzle · Zod · Alexandria adapters · SQLite",
-      "notes": "2026-05-24: Apply Infinium to All button shipped — one tap snapshots live Infinium readings into all 24 rooms at once. Env timestamps on every tile. Fixed env_readings_source_check DB constraint (infinium-snapshot was missing). Anderson tab live via Fluxuum/facility-tracker integration. 2026-05-29: AB1 chart fix shipped (src/windowing.ts multi-run assignment — fixed empty-chart bug from operator's nested manual catch-runs). 2026-05-30: fluxuum-anderson-drift + lights-on-too-cold detectors both live; main branch caught back up to production via two clean merges. 2026-06-02: dual-backend DB client landed (commit 61ba220) — real PostgreSQL via DATABASE_URL when set, PGlite fallback. Ingredient recon-report updated to reflect 29→13 canonical ingredient cleanup. 2026-06-12+: mark-harvested handler now fires harvest-dossier capture fire-and-forget (commit ca1d094), passing the cycle's load date explicitly; harvest events mirrored to Recipe Book on anderson-hub (3572b2b); lights schedule flipped 11:30→11:50 campus-wide (c082fb4)."
+      "notes": "2026-05-24: Apply Infinium to All button shipped — one tap snapshots live Infinium readings into all 24 rooms at once. Env timestamps on every tile. Fixed env_readings_source_check DB constraint (infinium-snapshot was missing). Anderson tab live via Fluxuum/facility-tracker integration. 2026-05-29: AB1 chart fix shipped (src/windowing.ts multi-run assignment — fixed empty-chart bug from operator's nested manual catch-runs). 2026-05-30: fluxuum-anderson-drift + lights-on-too-cold detectors both live; main branch caught back up to production via two clean merges. 2026-06-02: dual-backend DB client landed (commit 61ba220) — real PostgreSQL via DATABASE_URL when set, PGlite fallback. Ingredient recon-report updated to reflect 29→13 canonical ingredient cleanup. 2026-06-12+: mark-harvested handler now fires harvest-dossier capture fire-and-forget (commit ca1d094), passing the cycle's load date explicitly; harvest events mirrored to Recipe Book on anderson-hub (3572b2b); lights schedule flipped 11:30→11:50 campus-wide (c082fb4). 2026-06-20: public /cannamax funnel hardening — MOUNT-prefix client URLs + nav rewrite so it works under the Tailscale funnel; runoff writes + Infinium capture gated behind the admin password (ca6ad7a, 85ab630), both Pis, deep-verify passed."
     },
     {
       "id": "facility-tracker",
@@ -37,7 +37,7 @@
       "status": "live",
       "desc": "Grow recipe hub. Cycle tracking, arc charts, drift detection, field notes. Scrapes live controller data.",
       "tech": "Python · Flask · SQLite · WebSocket · OpenAI (optional)",
-      "notes": "2026-05-30: env program update — photoperiod widened (00:00-11:50 main, +5min UC), D14-42 = 1150W (new tier above 1000W), W7 split (D42 still 1150W, D43 steps down to 1000W). Pi recipe-book is plain-copied files (NOT a git checkout) — edits go via scp + service restart. 2026-06-01-02: HydroZ campus-wide trial complete; Hydro z stub (id=30) consolidated into canonical HydroZ (id=16, GH port 11 / AB port 15 / EF port 16). 29→13 canonical ingredients — Drip A NPK 15-0-0 confirmed, shared name_normalize.py ingester, 9 unit tests. 2026-06-03-04: Drip vendor sheets live for A/B/C/D — ingredient modal restructured into 'Our Program' + 'Vendor Sheet' tabs. 2026-06-04: Day 0 = Load day fixed (removed +1 offset from cycle_day calc). Controller-drift UI removed (room cards + modal banner + 'Actually Running'). Collapsible changelog — day-based grouping, single-open accordion. Deployed to both anderson-hub + hub-backup via redeploy.sh. 2026-06-12: scraper sweep merged (PR #1, TheMaxLong/scraper-sweep-2026-06-12) — hardware relabels + recipe + irrigation snapshots. 2026-06-14: AB7 phantom-runoff purged + guarded (DB trigger guard_runoff_scope); manual.html font deploy + Today's-Panel day off-by-one fix. Recipe Book is treated as a vendor API by downstream tools — READ-ONLY, never migrated. Now also a read source for Observatory + harvest-dossier (runoff reports)."
+      "notes": "2026-05-30: env program update — photoperiod widened (00:00-11:50 main, +5min UC), D14-42 = 1150W (new tier above 1000W), W7 split (D42 still 1150W, D43 steps down to 1000W). Pi recipe-book is plain-copied files (NOT a git checkout) — edits go via scp + service restart. 2026-06-01-02: HydroZ campus-wide trial complete; Hydro z stub (id=30) consolidated into canonical HydroZ (id=16, GH port 11 / AB port 15 / EF port 16). 29→13 canonical ingredients — Drip A NPK 15-0-0 confirmed, shared name_normalize.py ingester, 9 unit tests. 2026-06-03-04: Drip vendor sheets live for A/B/C/D — ingredient modal restructured into 'Our Program' + 'Vendor Sheet' tabs. 2026-06-04: Day 0 = Load day fixed (removed +1 offset from cycle_day calc). Controller-drift UI removed (room cards + modal banner + 'Actually Running'). Collapsible changelog — day-based grouping, single-open accordion. Deployed to both anderson-hub + hub-backup via redeploy.sh. 2026-06-12: scraper sweep merged (PR #1, TheMaxLong/scraper-sweep-2026-06-12) — hardware relabels + recipe + irrigation snapshots. 2026-06-14: AB7 phantom-runoff purged + guarded (DB trigger guard_runoff_scope); manual.html font deploy + Today's-Panel day off-by-one fix. Recipe Book is treated as a vendor API by downstream tools — READ-ONLY, never migrated. Now also a read source for Observatory + harvest-dossier (runoff reports). 2026-06-25: AB/EF/GH pump-relabel consolidation (broken pumps relabeled, ingredients moved to working ports; library 16→11 canonical cards, Athena Balance #2 retired/hidden) + broken-pump auto-reconcile detector now armed in FacilityCheck (read-only, see broken-pump node). 2026-06-23: program display now reads controller_recipe directly (dropped the +1 shortcut); transition rooms show the loaded program. 2026-06-21: FacilityCheck harvest-forecast off-by-one fixed. 2026-06-24: both-Pi app.py parity drift closed (sha256 904a35d1)."
     },
     {
       "id": "trellis",
@@ -167,7 +167,7 @@
       "status": "live",
       "desc": "Anderson-hub Pi is the production primary again as of 2026-05-28 22:31 PT (identity-only restore on new microSD after the 5/27 SD-card death; 51-sec failover-back from hub-backup). Hosts Fluxuum:3001, Facility-Tracker:8080, recipe-book:5050, CannaMax:3031, FRD:3035, infinium-bridge. At facility LAN; reaches 10.10.13.x controllers directly. Always-on.",
       "tech": "Pi 5 · 8GB · Pi OS 64-bit · systemd · Tailscale Serve · PostgreSQL 17 · Node 24 · infinium-bridge",
-      "notes": "2026-05-30: drift detector cron enabled (*/15 min, writes change_events). FT web/ rsync deploy 08:44 PT brought isLightsOn AB2+EF4 fix + D14-42=1150W wattage update live. 2026-05-28 22:31 PT: primary flipped BACK to anderson-hub; hub-backup now standby with 5-min sync. Off-site backup syncs hourly to Neon Postgres. 2026-06-04: v4.3 poller stopped + disabled; fluxuum-poller-shadow (v5) is now sole production poller. anderson_probe_readings table created (empty; DRY_RUN=1). New API bundle built (feature/temp-probe) with recovered widget route + probe endpoint; bundle deployed to service. facility-watch now on anderson-hub (was hub-backup). 2026-06-09+: also hosts Observatory dashboard /observatory. 2026-06-14: hosts harvest-dossier capture (build_dossier.py) + permanent run archive /home/pi/observatory-lake/runs.db (cron 5,35) + dossier store /home/pi/harvest-dossiers/ symlinked into the Observatory web root."
+      "notes": "2026-05-30: drift detector cron enabled (*/15 min, writes change_events). FT web/ rsync deploy 08:44 PT brought isLightsOn AB2+EF4 fix + D14-42=1150W wattage update live. 2026-05-28 22:31 PT: primary flipped BACK to anderson-hub; hub-backup now standby with 5-min sync. Off-site backup syncs hourly to Neon Postgres. 2026-06-04: v4.3 poller stopped + disabled; fluxuum-poller-shadow (v5) is now sole production poller. anderson_probe_readings table created (empty; DRY_RUN=1). New API bundle built (feature/temp-probe) with recovered widget route + probe endpoint; bundle deployed to service. facility-watch now on anderson-hub (was hub-backup). 2026-06-09+: also hosts Observatory dashboard /observatory. 2026-06-14: hosts harvest-dossier capture (build_dossier.py) + permanent run archive /home/pi/observatory-lake/runs.db (cron 5,35) + dossier store /home/pi/harvest-dossiers/ symlinked into the Observatory web root. 2026-06-20→25: anderson-hub now also hosts the facility-drift poller (cron/min) and the recipe-change tripwire (cron 10,40); the broken-pump detector runs from the Mac FacilityCheck. These are anderson-hub-only by design."
     },
     {
       "id": "tailscale",
@@ -375,7 +375,7 @@
       "status": "live",
       "desc": "Max's primary phone. Hosts Drift Report widget, FacilityCheck, Hub-Status, Read-Cycle, ntfy listener. On Tailscale at 100.75.250.48.",
       "tech": "Pixel 10 · Termux · Termux:API · termux-job-scheduler · Tailscale",
-      "notes": "2026-05-28: Drift Report widget rewritten — voice → Whisper pipeline. Fixed Hub-Status and Read-Cycle to point to hub-backup (anderson-hub dead). Old widget backup at ~/.shortcuts-backups/."
+      "notes": "2026-05-28: Drift Report widget rewritten — voice → Whisper pipeline. Fixed Hub-Status and Read-Cycle to point to hub-backup (anderson-hub dead). Old widget backup at ~/.shortcuts-backups/. 2026-06-25: Termux 'FacilityCheck' home-screen button wired — publishes to the trigger topic; Mac runs the sweep and returns a result digest on the recipe tripwire topic."
     },
     {
       "id": "whisper-mac",
@@ -414,7 +414,7 @@
       "status": "live",
       "desc": "Env smoke alarm inside CannaMax. 30s tick, 24 rooms, 2 detectors (high_temp 90°F, high_co2 3000ppm). Fires events to /events page + ntfy push. Lives on anderson-hub.",
       "tech": "TypeScript · Drizzle · Postgres facility_events table · pure-function detectors · ntfy.sh push",
-      "notes": "2026-05-28: enabled (was silently off via systemd override). Fire+clear path verified end-to-end with AB6 test. Source mirrored from hub-backup back to git (commit 912818c) — was hand-edited on Pi with no version tracking. Master switch: FACILITY_WATCH=on in /home/pi/cannamax/demo/runoff-loader/.env. Push topic: gacx-power-y2k7q9pmx3. 2026-06-01: lights_out_inferred + lights_on_too_cold stripped from all 24 rooms (CannaMax commit aa7e424). Only high_temp + high_co2 remain active. lights_on_too_cold lives as standalone detector node."
+      "notes": "2026-05-28: enabled (was silently off via systemd override). Fire+clear path verified end-to-end with AB6 test. Source mirrored from hub-backup back to git (commit 912818c) — was hand-edited on Pi with no version tracking. Master switch: FACILITY_WATCH=on in /home/pi/cannamax/demo/runoff-loader/.env. Push topic: gacx-power-y2k7q9pmx3. 2026-06-01: lights_out_inferred + lights_on_too_cold stripped from all 24 rooms (CannaMax commit aa7e424). Only high_temp + high_co2 remain active. lights_on_too_cold lives as standalone detector node. 2026-06-19: startFacilityWatch() call restored in server.ts (its absence had broken ALL room temp/CO2 alerts since 6/17); 24 rooms, 90°F/3000ppm, ntfy gacx-power-y2k7q9pmx3 — confirmed live 2026-06-25."
     },
     {
       "id": "ntfy",
@@ -440,7 +440,7 @@
       "status": "live",
       "desc": "Standby/mesh-peer Pi at Max's condo (home WiFi, no direct controller access). Full mirror of anderson-hub services; flipped to primary on 5/27 during anderson-hub SD-card death and ran production for ~24h. Flipped back to standby 5/28 22:31 PT. Watcher + 5-min sync from anderson-hub keep it warm.",
       "tech": "Pi 5 · 8GB · Pi OS 64-bit · systemd · Tailscale · PostgreSQL 17 · Node 24",
-      "notes": "Spare microSD complete 2026-05-29 05:30 PT — services enabled but stopped. Hosts widget-URL nginx proxy + Tailscale Funnel to preserve public URLs while anderson-hub is primary. Promote procedure documented in memory. 2026-06-04: v5 fluxuum-poller-shadow code synced from anderson-hub and deployed; new API bundle (feature/temp-probe) deployed; systemd unit installed + daemon reloaded — service not yet enabled+started (session paused before final step). v4 poller service still present."
+      "notes": "Spare microSD complete 2026-05-29 05:30 PT — services enabled but stopped. Hosts widget-URL nginx proxy + Tailscale Funnel to preserve public URLs while anderson-hub is primary. Promote procedure documented in memory. 2026-06-04: v5 fluxuum-poller-shadow code synced from anderson-hub and deployed; new API bundle (feature/temp-probe) deployed; systemd unit installed + daemon reloaded — service not yet enabled+started (session paused before final step). v4 poller service still present. 2026-06-24: app.py / recipe-book parity drift closed — forward-synced anderson-hub→hub-backup, both Pis byte-identical (app.py sha256 904a35d1)."
     },
     {
       "id": "fluxuum-anderson-drift",
@@ -545,6 +545,58 @@
       "desc": "Operator viewer for harvest dossiers. Index (filter/sort by building/shift/date/status) → drill-in detail: per-metric tabs (pH/EC/VWC/Solus/Environment), an All / full-scope view (deviation heatmap + small multiples on a shared day-of-cycle axis + a Normalize %-of-target overlay for divergence-spotting), ≤3-room Compare, collapsible run-log, raw-records table. Runs & runoff kept distinct, S1/S2/S3 shown equally (never ranked), tooltips on every point. Live in the Observatory web root on anderson-hub.",
       "tech": "Claude Design standalone (Observatory design system) · Chart.js · self-contained HTML, reads ./dossiers/ via symlink · served by nginx on anderson-hub · harvest-archive.html (primary) + harvest-archive-v2.html",
       "notes": "2026-06-18: Claude Design viewer LIVE — /observatory/harvest-archive.html (primary, repointed from the old single-file v1 which is backed up on Pi) + harvest-archive-v2.html. Division of labor: Claude Design owns the LOOK (their file, never edited by code); Claude Code wires/deploys/verifies. Round-trips this session: raw-records table export bug reported→fixed; collapsible run-log (1 row/cycle-day, click to expand). Normalize overlay is a DUMB VISUAL — correlation math stays in Observatory (/api/analysis/ec-ph-correlation). Pipeline verified end-to-end: CannaMax mark-harvested → build_dossier.py → manifest → viewer; fires on Monday harvests."
+    },
+    {
+      "id": "broken-pump",
+      "label": "Broken-Pump\nReconcile",
+      "cat": "app",
+      "sz": 16,
+      "x": 0.72,
+      "y": 0.7,
+      "type": "Detector (read-only)",
+      "status": "live",
+      "desc": "Phase-1 detector inside FacilityCheck. When a dosing pump dies and the ingredient is moved to a working port, it traces the displaced ingredient to its new live port, flags stale dead-port doses still in the active recipe, and reports. Recipe-anchored (ignores pumps not in the recipe), convention-first matcher (Drip+letter resolves with no alias), ambiguity flags rather than guesses. Read-only — zero recipe writes in Phase 1.",
+      "tech": "Python · recipe_drift.broken_pump (classify/resolve/detect/report/notify/state) · reuses name_normalize · ntfy via urllib · 70 tests",
+      "notes": "2026-06-25: built TDD, merged to main (origin/main e39a199), armed into FacilityCheck (~/.zshrc). Pushes to the recipe tripwire topic ONLY when the drift set changes (signature dedup — no 15-min spam). First live run: 5 MIGRATE (AB Drip B 5→16, AB Balance 1→12, EF Drip B 19→20, GH Balance 3→13, GH Drip B 4→6) + 1 RETIRE flag (AB Athena Balance #2). deep-verify-eyes PASS — zero recipe_book.db writes. Phase 2 (auto-fix writes) not yet enabled."
+    },
+    {
+      "id": "facility-check",
+      "label": "FacilityCheck\nSweep",
+      "cat": "app",
+      "sz": 17,
+      "x": 0.3,
+      "y": 0.36,
+      "type": "Audit sweep + ntfy listener",
+      "status": "live",
+      "desc": "5-step facility sweep on the Mac (recipe-defs scrape, irrigation audit, recipe-drift ingest, Pi sync, hardware scrape) plus the broken-pump detector. Runs via launchd (~15 min) or on-demand when a phone publishes to the trigger topic. Result digest — changes / flagged-for-review, 7-day forecast (harvests + phase changes), broken-pump — is pushed back to the recipe tripwire topic.",
+      "tech": "zsh FacilityCheck() (~/.zshrc) · facility-check-listener.sh (launchd) · facility-digest.py · ntfy (trigger: hark-facility-check-… / result: recipe tripwire)",
+      "notes": "2026-06-25: wired the Pixel-10 Termux 'FacilityCheck' button (was a no-op — the shortcut backgrounded its curl and Termux:Widget reaped it before it sent; now publishes synchronously). Listener now pushes a section-accurate result digest to the recipe tripwire topic, forwarding FacilityCheck's own section titles + forecast dates verbatim (fixed an early 'HARVEST TODAY' mislabel of 7-day-forecast data)."
+    },
+    {
+      "id": "recipe-tripwire",
+      "label": "Recipe-Change\nTripwire",
+      "cat": "app",
+      "sz": 14,
+      "x": 0.86,
+      "y": 0.7,
+      "type": "Cron detector (read-only)",
+      "status": "live",
+      "desc": "Phones Max when a controller recipe changes (dose / name / port / EC / pH). Reads the recipe_changes table (Arc Chart's source) read-only and pushes a dedicated ntfy topic. anderson-hub only (hub-backup would double-ping). No Qwen in the path — deterministic copy only.",
+      "tech": "Python on anderson-hub · cron 10,40 · recipe_changes table · ntfy gacx-recipe-tripwire-5d6cd9b5236c · Pacific times",
+      "notes": "2026-06-24: LIVE on anderson-hub. Fed by FacilityCheck's scraper; read-only (respects the Recipe-Book-protected rule). Shares its ntfy topic with the broken-pump detector — the facility tripwire channel."
+    },
+    {
+      "id": "facility-drift",
+      "label": "Facility Drift\nDashboard",
+      "cat": "display",
+      "sz": 15,
+      "x": 0.85,
+      "y": 0.96,
+      "type": "Übersicht widget + cron poller",
+      "status": "live",
+      "desc": "Real-time 24-room temp vs Recipe-Book phase target across AB/EF/GH (incl. AB7). ≥5°F = critical → immediate ntfy then a 30-min digest. Mac desktop widget plus a phone-shareable HTML dashboard.",
+      "tech": "Übersicht widget (Mac) · facility-drift-poll.py on anderson-hub (cron/min) · /observatory/facility-drift.json (Funnel) · ntfy gacx-power-y2k7q9pmx3 (shared w/ facility-watch)",
+      "notes": "2026-06-20: LIVE. anderson-hub hosts the poller + JSON feed (anderson-hub-only). RH/CO2 alerts parked for later tuning."
     }
   ],
   "edges": [
@@ -1171,7 +1223,103 @@
       "t": "harvest-archive",
       "label": "serves viewer",
       "pulse": false
+    },
+    {
+      "s": "pixel-10",
+      "t": "facility-check",
+      "label": "button trigger (ntfy)",
+      "pulse": true
+    },
+    {
+      "s": "anderson",
+      "t": "facility-check",
+      "label": "scraped: defs + hardware",
+      "pulse": true
+    },
+    {
+      "s": "facility-check",
+      "t": "recipe-book",
+      "label": "drift ingest + sync",
+      "pulse": true
+    },
+    {
+      "s": "facility-check",
+      "t": "broken-pump",
+      "label": "runs detector",
+      "pulse": true
+    },
+    {
+      "s": "facility-check",
+      "t": "pi",
+      "label": "syncs to anderson-hub",
+      "pulse": false
+    },
+    {
+      "s": "facility-check",
+      "t": "ntfy",
+      "label": "result digest → tripwire",
+      "pulse": true
+    },
+    {
+      "s": "recipe-book",
+      "t": "broken-pump",
+      "label": "active recipe + journal",
+      "pulse": false
+    },
+    {
+      "s": "anderson",
+      "t": "broken-pump",
+      "label": "pumper labels",
+      "pulse": false
+    },
+    {
+      "s": "broken-pump",
+      "t": "ntfy",
+      "label": "drift alert → tripwire (on change)",
+      "pulse": true
+    },
+    {
+      "s": "recipe-book",
+      "t": "recipe-tripwire",
+      "label": "recipe_changes feed",
+      "pulse": true
+    },
+    {
+      "s": "recipe-tripwire",
+      "t": "ntfy",
+      "label": "alert → tripwire topic",
+      "pulse": true
+    },
+    {
+      "s": "pi",
+      "t": "recipe-tripwire",
+      "label": "hosts cron 10,40",
+      "pulse": false
+    },
+    {
+      "s": "infinium",
+      "t": "facility-drift",
+      "label": "live temp",
+      "pulse": true
+    },
+    {
+      "s": "recipe-book",
+      "t": "facility-drift",
+      "label": "phase targets",
+      "pulse": false
+    },
+    {
+      "s": "facility-drift",
+      "t": "ntfy",
+      "label": "≥5°F critical alert",
+      "pulse": true
+    },
+    {
+      "s": "pi",
+      "t": "facility-drift",
+      "label": "hosts poller cron",
+      "pulse": false
     }
   ],
-  "_saved": "2026-06-19T13:12:49.866Z"
+  "_saved": "2026-06-25T07:31:23.244807-07:00"
 }
