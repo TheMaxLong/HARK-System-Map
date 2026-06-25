@@ -570,7 +570,7 @@
       "status": "live",
       "desc": "5-step facility sweep on the Mac (recipe-defs scrape, irrigation audit, recipe-drift ingest, Pi sync, hardware scrape) plus the broken-pump detector. Runs via launchd (~15 min) or on-demand when a phone publishes to the trigger topic. Result digest — changes / flagged-for-review, 7-day forecast (harvests + phase changes), broken-pump — is pushed back to the recipe tripwire topic.",
       "tech": "zsh FacilityCheck() (~/.zshrc) · facility-check-listener.sh (launchd) · facility-digest.py · ntfy (trigger: hark-facility-check-… / result: recipe tripwire)",
-      "notes": "2026-06-25: wired the Pixel-10 Termux 'FacilityCheck' button (was a no-op — the shortcut backgrounded its curl and Termux:Widget reaped it before it sent; now publishes synchronously). Listener now pushes a section-accurate result digest to the recipe tripwire topic, forwarding FacilityCheck's own section titles + forecast dates verbatim (fixed an early 'HARVEST TODAY' mislabel of 7-day-forecast data)."
+      "notes": "2026-06-25: wired the Pixel-10 Termux 'FacilityCheck' button (was a no-op — the shortcut backgrounded its curl and Termux:Widget reaped it before it sent; now publishes synchronously). Listener now pushes a section-accurate result digest to the recipe tripwire topic, forwarding FacilityCheck's own section titles + forecast dates verbatim (fixed an early 'HARVEST TODAY' mislabel of 7-day-forecast data). 2026-06-25: phone button now triggers FacilityCheckPeek (READ-ONLY) — scrapes the controllers and shows the week's changes (program progressions, doses, hardware) but saves/ingests/syncs NOTHING, so it never consumes the Mac's diff baseline. The Mac's full FacilityCheck stays the single authoritative audit that captures + journals. Verified: peek wrote nothing (hash-identical before/after)."
     },
     {
       "id": "recipe-tripwire",
@@ -1321,5 +1321,5 @@
       "pulse": false
     }
   ],
-  "_saved": "2026-06-25T07:31:23.244807-07:00"
+  "_saved": "2026-06-25T08:53:03.070993-07:00"
 }
