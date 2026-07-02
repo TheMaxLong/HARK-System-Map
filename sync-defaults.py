@@ -40,6 +40,7 @@ def build_dn_de(data):
             f"desc:'{esc(n.get('desc',''))}'",
             f"tech:'{esc(n.get('tech',''))}'",
             f"notes:'{esc(n.get('notes',''))}'",
+            f"dated:{'null' if n.get('dated') is None else chr(39)+esc(n.get('dated'))+chr(39)}",
         ]
         dn.append('  {' + ','.join(parts) + '},')
     dn.append('];')
