@@ -76,7 +76,7 @@
       "status": "live",
       "desc": "Irrigation telemetry. pH/EC/flow/gal per zone, 136 reads/hr. Anomaly alerts via Resend email. v5 ESM rewrite (Alexandria-native) is now the sole production poller on anderson-hub (v4.3 stopped 2026-06-04).",
       "tech": "TypeScript · Express 5 · PostgreSQL · React · Resend · OpenAI · pnpm monorepo",
-      "notes": "2026-05-30: v5 Alexandria-native ESM rewrite of poller landed on origin/main (commits 17d8b45 plan, 4673bd9 impl, a8748df heartbeat-fix). 12/12 golden byte-equivalence tests green. 2026-06-04: v4.3 poller stopped + disabled; fluxuum-poller-shadow (v5) is now the sole production poller on anderson-hub. Temp probe Phase 1+2 shipped (branch feature/temp-probe): anderson_probe_readings table created, schema + extractor in source (commit 6645990); DRY_RUN=1 (logs only, no DB writes yet). /api/runs/latest-by-building widget route recovered after it went missing from new bundle (commit ed282b9). /api/anderson-probe/import endpoint in source but old bundle still rolled back — pending new bundle SCP to flip DRY_RUN=0. GET /api/runs/latest-by-building route recovered (commit ed282b9). /api/runs is a rolling ~28-day window — the harvest-dossier archive (archive_runs.py) appends from it into a never-rolling runs.db so long crops survive after the live feed forgets their early weeks."
+      "notes": "2026-05-30: v5 Alexandria-native ESM rewrite of poller landed on origin/main (commits 17d8b45 plan, 4673bd9 impl, a8748df heartbeat-fix). 12/12 golden byte-equivalence tests green. 2026-06-04: v4.3 poller stopped + disabled; fluxuum-poller-shadow (v5) is now the sole production poller on anderson-hub. Temp probe Phase 1+2 shipped (branch feature/temp-probe): anderson_probe_readings table created, schema + extractor in source (commit 6645990); DRY_RUN=1 (logs only, no DB writes yet). /api/runs/latest-by-building widget route recovered after it went missing from new bundle (commit ed282b9). /api/anderson-probe/import endpoint in source but old bundle still rolled back — pending new bundle SCP to flip DRY_RUN=0. GET /api/runs/latest-by-building route recovered (commit ed282b9). /api/runs is a rolling ~28-day window — the harvest-dossier archive (archive_runs.py) appends from it into a never-rolling runs.db so long crops survive after the live feed forgets their early weeks.  2026-06-16: AI-prompt cycle-length correction + anderson_probe_readings extractor (phase 1, dry-run)."
     },
     {
       "id": "alexandria",
@@ -167,7 +167,7 @@
       "status": "live",
       "desc": "Anderson-hub Pi is the production primary again as of 2026-05-28 22:31 PT (identity-only restore on new microSD after the 5/27 SD-card death; 51-sec failover-back from hub-backup). Hosts Fluxuum:3001, Facility-Tracker:8080, recipe-book:5050, CannaMax:3031, FRD:3035, infinium-bridge. At facility LAN; reaches 10.10.13.x controllers directly. Always-on.",
       "tech": "Pi 5 · 8GB · Pi OS 64-bit · systemd · Tailscale Serve · PostgreSQL 17 · Node 24 · infinium-bridge",
-      "notes": "2026-05-30: drift detector cron enabled (*/15 min, writes change_events). FT web/ rsync deploy 08:44 PT brought isLightsOn AB2+EF4 fix + D14-42=1150W wattage update live. 2026-05-28 22:31 PT: primary flipped BACK to anderson-hub; hub-backup now standby with 5-min sync. Off-site backup syncs hourly to Neon Postgres. 2026-06-04: v4.3 poller stopped + disabled; fluxuum-poller-shadow (v5) is now sole production poller. anderson_probe_readings table created (empty; DRY_RUN=1). New API bundle built (feature/temp-probe) with recovered widget route + probe endpoint; bundle deployed to service. facility-watch now on anderson-hub (was hub-backup). 2026-06-09+: also hosts Observatory dashboard /observatory. 2026-06-14: hosts harvest-dossier capture (build_dossier.py) + permanent run archive /home/pi/observatory-lake/runs.db (cron 5,35) + dossier store /home/pi/harvest-dossiers/ symlinked into the Observatory web root. 2026-06-20→25: anderson-hub now also hosts the facility-drift poller (cron/min) and the recipe-change tripwire (cron 10,40); the broken-pump detector runs from the Mac FacilityCheck. These are anderson-hub-only by design."
+      "notes": "2026-05-30: drift detector cron enabled (*/15 min, writes change_events). FT web/ rsync deploy 08:44 PT brought isLightsOn AB2+EF4 fix + D14-42=1150W wattage update live. 2026-05-28 22:31 PT: primary flipped BACK to anderson-hub; hub-backup now standby with 5-min sync. Off-site backup syncs hourly to Neon Postgres. 2026-06-04: v4.3 poller stopped + disabled; fluxuum-poller-shadow (v5) is now sole production poller. anderson_probe_readings table created (empty; DRY_RUN=1). New API bundle built (feature/temp-probe) with recovered widget route + probe endpoint; bundle deployed to service. facility-watch now on anderson-hub (was hub-backup). 2026-06-09+: also hosts Observatory dashboard /observatory. 2026-06-14: hosts harvest-dossier capture (build_dossier.py) + permanent run archive /home/pi/observatory-lake/runs.db (cron 5,35) + dossier store /home/pi/harvest-dossiers/ symlinked into the Observatory web root. 2026-06-20→25: anderson-hub now also hosts the facility-drift poller (cron/min) and the recipe-change tripwire (cron 10,40); the broken-pump detector runs from the Mac FacilityCheck. These are anderson-hub-only by design.  2026-07-01: fail2ban enabled; secrets moved to .hark-secrets; facility-health-scanner deployed (systemd */30)."
     },
     {
       "id": "tailscale",
@@ -401,7 +401,7 @@
       "status": "live",
       "desc": "Pi data mirrored to Neon cloud Postgres hourly. 6 tables live: recipes, recipe_phases, recipe_doses, runoff_readings, cycles, fluxuum_runs. Pi is source of truth; Neon is off-site backup + cloud-queryable.",
       "tech": "Neon (managed Postgres 17, aws-us-east-1) · psycopg2 · cron · org-blue-frog-30334610 · project gentle-star-35848479",
-      "notes": "2026-05-28: SHIPPED. Sync script at /home/pi/neon_sync.py on hub-backup, hourly via cron. First pass: 10 recipes, 46 phases, 345 doses, 335 runoff readings, 25 cycles, 1403 fluxuum_runs. 10-day rolling window for fluxuum_runs; all history for cycles/recipes. Duplicate project raspy-bar-42114503 deleted."
+      "notes": "2026-05-28: SHIPPED. Sync script at /home/pi/neon_sync.py on hub-backup, hourly via cron. First pass: 10 recipes, 46 phases, 345 doses, 335 runoff readings, 25 cycles, 1403 fluxuum_runs. 10-day rolling window for fluxuum_runs; all history for cycles/recipes. Duplicate project raspy-bar-42114503 deleted.  2026-07-01: offsite freshness now watched by facility-health-scanner (neon-ok.stamp); neon_sync Postgres credential moved out of the script into .hark-secrets."
     },
     {
       "id": "facility-watch",
@@ -440,7 +440,7 @@
       "status": "live",
       "desc": "Standby/mesh-peer Pi at Max's condo (home WiFi, no direct controller access). Full mirror of anderson-hub services; flipped to primary on 5/27 during anderson-hub SD-card death and ran production for ~24h. Flipped back to standby 5/28 22:31 PT. Watcher + 5-min sync from anderson-hub keep it warm.",
       "tech": "Pi 5 · 8GB · Pi OS 64-bit · systemd · Tailscale · PostgreSQL 17 · Node 24",
-      "notes": "Spare microSD complete 2026-05-29 05:30 PT — services enabled but stopped. Hosts widget-URL nginx proxy + Tailscale Funnel to preserve public URLs while anderson-hub is primary. Promote procedure documented in memory. 2026-06-04: v5 fluxuum-poller-shadow code synced from anderson-hub and deployed; new API bundle (feature/temp-probe) deployed; systemd unit installed + daemon reloaded — service not yet enabled+started (session paused before final step). v4 poller service still present. 2026-06-24: app.py / recipe-book parity drift closed — forward-synced anderson-hub→hub-backup, both Pis byte-identical (app.py sha256 904a35d1)."
+      "notes": "Spare microSD complete 2026-05-29 05:30 PT — services enabled but stopped. Hosts widget-URL nginx proxy + Tailscale Funnel to preserve public URLs while anderson-hub is primary. Promote procedure documented in memory. 2026-06-04: v5 fluxuum-poller-shadow code synced from anderson-hub and deployed; new API bundle (feature/temp-probe) deployed; systemd unit installed + daemon reloaded — service not yet enabled+started (session paused before final step). v4 poller service still present. 2026-06-24: app.py / recipe-book parity drift closed — forward-synced anderson-hub→hub-backup, both Pis byte-identical (app.py sha256 904a35d1).  2026-07-01: failover-watcher re-armed after ~1 month silently dead (stale PROMOTED_AT) — ping-OR-http + 20-fail anti-flapping; fail2ban enabled; secrets moved to .hark-secrets; config-snapshot script deployed; now serves Fluxuum web + harvest dossiers (nginx default disabled). facility-health-scanner deployed (12 checks */30 + weekly test-restore Sun 03:00 PT)."
     },
     {
       "id": "fluxuum-anderson-drift",
@@ -623,6 +623,19 @@
       "desc": "New 'Drench' tab in Recipe Book, laid out like Ingredients, for the foliars / teas / drenches / KNF ferments applied alongside the drip feed. Drench rows live in the ingredients table behind section='drench' so they never leak into the Ingredient grid, Arc Chart, doses, or drift detection, and reuse the existing detail modal.",
       "tech": "Python · Flask · SQLite (section column) · DRENCH_BACKFILL durable seed · shared detail modal",
       "notes": "2026-06-30: SKELETON on isolated branch feat/drench-library — 9 shell tiles, /api/drenches route, startup idempotent backfill, self-heal hidden column. Excludes Ful-Power + Hygrozyme. Content build-out (B30 / Coco-Cat names, FFJ-split) pending research + facility details. NOT pushed / NOT deployed to either Pi. Durable seed = edit DRENCH_BACKFILL. Research drafts in docs/drench-research/."
+    },
+    {
+      "id": "facility-health-scanner",
+      "label": "Facility Health\n+ Security Scanner",
+      "cat": "infra",
+      "sz": 16,
+      "x": 0.37,
+      "y": 0.86,
+      "type": "Health + Security Watchdog",
+      "status": "live",
+      "desc": "Self-contained DR-readiness + security-posture watchdog on both Pis. 12 checks every 30 min via systemd timer; plain-language ntfy alerts; silence = healthy.",
+      "tech": "Python 3 stdlib · systemd timers · ntfy · urllib",
+      "notes": "2026-07-01: built + deployed BOTH Pis (deep-verify-eyes PASS 10/10). 12 checks */30 — failover armed, mirror fresh, weekly test-restore, cron/job success, neon offsite fresh, disk/SD health, detector roll-up, fail2ban, secrets-not-reinlined, SSH posture, listener audit, external-scan reminder. Red-green proven on the real path (forced CRIT → phone buzz → recovery). Caught + fixed an inline Postgres password left in neon_sync.py on its first run. Topic hark-facility-health-ae3f198eee31. Weekly test-restore Sun 03:00 PT on hub-backup into throwaway DBs (never touches live). repo main c3d508e."
     }
   ],
   "edges": [
@@ -1376,7 +1389,53 @@
       "label": "drench tab (branch)",
       "pulse": false,
       "dash": true
+    },
+    {
+      "s": "pi",
+      "t": "facility-health-scanner",
+      "label": "runs on both Pis (systemd */30)",
+      "pulse": false
+    },
+    {
+      "s": "hub-backup",
+      "t": "facility-health-scanner",
+      "label": "standby + weekly test-restore (Sun 03:00 PT)",
+      "pulse": false
+    },
+    {
+      "s": "facility-health-scanner",
+      "t": "ntfy",
+      "label": "plain-language alerts · silence=healthy",
+      "pulse": true
+    },
+    {
+      "s": "facility-health-scanner",
+      "t": "neon-hark",
+      "label": "offsite freshness check",
+      "pulse": true,
+      "dash": true
+    },
+    {
+      "s": "facility-health-scanner",
+      "t": "postgres",
+      "label": "weekly test-restore (throwaway DBs)",
+      "pulse": true,
+      "dash": true
+    },
+    {
+      "s": "facility-health-scanner",
+      "t": "facility-watch",
+      "label": "detector health roll-up",
+      "pulse": false,
+      "dash": true
+    },
+    {
+      "s": "facility-health-scanner",
+      "t": "facility-drift",
+      "label": "detector health roll-up",
+      "pulse": false,
+      "dash": true
     }
   ],
-  "_saved": "2026-07-01T02:01:48.246720-07:00"
+  "_saved": "2026-07-02T01:49:47.084089-07:00"
 }
