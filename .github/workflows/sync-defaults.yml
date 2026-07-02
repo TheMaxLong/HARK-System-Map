@@ -9,6 +9,9 @@ on:
 jobs:
   sync:
     runs-on: ubuntu-latest
+    # Allow the bot to push its auto-sync commit back to main
+    permissions:
+      contents: write
     # Don't re-trigger on the bot's own sync commit
     if: github.actor != 'github-actions[bot]'
 
