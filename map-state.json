@@ -635,7 +635,7 @@
       "status": "live",
       "desc": "Self-contained DR-readiness + security-posture watchdog on both Pis. 12 checks every 30 min via systemd timer; plain-language ntfy alerts; silence = healthy.",
       "tech": "Python 3 stdlib · systemd timers · ntfy · urllib",
-      "notes": "2026-07-01: built + deployed BOTH Pis (deep-verify-eyes PASS 10/10). 12 checks */30 — failover armed, mirror fresh, weekly test-restore, cron/job success, neon offsite fresh, disk/SD health, detector roll-up, fail2ban, secrets-not-reinlined, SSH posture, listener audit, external-scan reminder. Red-green proven on the real path (forced CRIT → phone buzz → recovery). Caught + fixed an inline Postgres password left in neon_sync.py on its first run. Topic hark-facility-health-ae3f198eee31. Weekly test-restore Sun 03:00 PT on hub-backup into throwaway DBs (never touches live). repo main c3d508e."
+      "notes": "2026-07-01: built + deployed BOTH Pis (deep-verify-eyes PASS 10/10). 12 checks */30 — failover armed, mirror fresh, weekly test-restore, cron/job success, neon offsite fresh, disk/SD health, detector roll-up, fail2ban, secrets-not-reinlined, SSH posture, listener audit, external-scan reminder. Red-green proven on the real path (forced CRIT → phone buzz → recovery). Caught + fixed an inline Postgres password left in neon_sync.py on its first run. Topic hark-facility-health-ae3f198eee31. Weekly test-restore Sun 03:00 PT on hub-backup into throwaway DBs (never touches live). repo main c3d508e. 2026-07-02: CI DN/DE auto-sync permission verified (sync-defaults bot pushes index.html)."
     }
   ],
   "edges": [
@@ -1437,5 +1437,5 @@
       "dash": true
     }
   ],
-  "_saved": "2026-07-02T01:49:47.084089-07:00"
+  "_saved": "2026-07-02T02:11:40.902132-07:00"
 }
