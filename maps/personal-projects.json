@@ -11,7 +11,8 @@
       "status": "live",
       "desc": "The cultivation OS. Drift detection, change feed, real-time pH/EC/flow per zone. Everything else feeds into this.",
       "tech": "TypeScript · Express 5 · Drizzle · Zod · Alexandria adapters · SQLite",
-      "notes": "*Idea* -Add a \"Copy Infinium to All Room\" button to update Environmentals for all 24 rooms all at once"
+      "notes": "*Idea* -Add a \"Copy Infinium to All Room\" button to update Environmentals for all 24 rooms all at once\n\n2026-07-04: Fluxuum-vs-Anderson drift alerts now display run times in Pacific (fmtPT, 12 sites) instead of raw UTC slices — deployed both Pis, cannamax-server restarted; commit 3eb0da9.",
+      "dated": "2026-07-04"
     },
     {
       "id": "facility-tracker",
@@ -76,7 +77,8 @@
       "status": "live",
       "desc": "Irrigation telemetry. pH/EC/flow/gal per zone, 136 reads/hr. Anomaly alerts via Resend email.",
       "tech": "TypeScript · Express 5 · PostgreSQL · React · Resend · OpenAI · pnpm monorepo",
-      "notes": ""
+      "notes": "2026-07-04: Big hardening day, all deployed BOTH Pis with read-backs + independent eyes passes. (1) Live Monitor 'current program' card fixed at the root — latest-by-building now sorts on recorded_at (controller time), not created_at (insert time), so backfills/restarts can't hijack tiles; built from feature/temp-probe lineage (origin/main was stale — NEVER build Pi deploys from it). (2) 38 settling rows (first ≤10s of the 22 recovered 01:49-02:45 runs) deleted from readings per Max's ruling; snapshots ×3; run averages moved ≤0.04 pH, gallons unchanged; derived run starts shifted +9-15s (disclosed). (3) Poller runBackfill imports now tagged source=poller_reconnect_backfill + pre-engage guard v2 (drops counter-reset settling points; red-green proven 6/6 on real deleted values). (4) POST-failure spool live on anderson shadow poller since 06:35. Recovery source of truth: GitHub branch deploy/20260704-recordedat-fix-on-temp-probe (Pis are not checkouts).",
+      "dated": "2026-07-04"
     },
     {
       "id": "alexandria",
@@ -115,7 +117,8 @@
       "status": "live",
       "desc": "Home screen widget. Live pH/EC/flow per building. 5-second polling, staleness detection.",
       "tech": "Flutter · Dart · Kotlin · Jetpack Glance · Tailscale",
-      "notes": ""
+      "notes": "2026-07-04: Sole consumer of /api/readings/latest-by-building — benefits directly from today's recorded_at ordering fix (card can no longer show a stale zone after backfills). No widget code change needed; Max visually confirmed correct.",
+      "dated": "2026-07-04"
     },
     {
       "id": "incident-log",
@@ -167,7 +170,8 @@
       "status": "live",
       "desc": "anderson-hub PRIMARY again as of 2026-05-28 22:31 PT — identity-only restore on new microSD after 2026-05-27 SD-card death; flipped back from hub-backup after 51-sec outage. Hosts Fluxuum:3001, Facility-Tracker:8080, recipe-book:5050 (HydroZ trial active on AB), CannaMax:3031, FRD:3035, LoRax:8085, infinium-bridge. Facility LAN; reaches 10.10.x.x controllers directly.",
       "tech": "Pi 5 · 8GB · Pi OS 64-bit · new microSD (2026-05-28) · systemd · Tailscale Serve · PostgreSQL 17 · Node 24",
-      "notes": "2026-06-01: Recipe-book sync 832b111 pushed to GitHub + Mac→Pi JSONs deployed (SHA-verified). 2026-05-31 22:40 PT — failover-watcher auto-promoted hub-backup briefly; manual demote pending."
+      "notes": "2026-06-01: Recipe-book sync 832b111 pushed to GitHub + Mac→Pi JSONs deployed (SHA-verified). 2026-05-31 22:40 PT — failover-watcher auto-promoted hub-backup briefly; manual demote pending.\n\n2026-07-04: fluxuum-api restarted onto recorded_at fix (dist sha 99c656e5…); shadow poller on guard v2 + source tagging (PID cycle clean, 3/3 controllers <1s); :5001 heartbeat fixed — now probes localhost:3001 + host-aware poller unit + fluxuum-api check (was probing dead Fluxuum Cloud and retired units; page truthful again).",
+      "dated": "2026-07-04"
     },
     {
       "id": "hub-backup",
@@ -180,7 +184,8 @@
       "status": "live",
       "desc": "STANDBY Pi as of 2026-05-28 22:31 PT (anderson-hub primary identity restored). Runs sync-from-primary.sh cron (5min pulls of dumps from anderson-hub) + failover-watcher.sh (auto-promote on 6 consecutive ping/health fails). Replicated stack idle but warm: Fluxuum/Facility-Tracker/recipe-book/CannaMax/FRD/LoRax/infinium-bridge. PROMOTE_RUNBOOK.md on-device.",
       "tech": "Pi 5 · Pi OS 64-bit · systemd · Tailscale · PostgreSQL 17 · Node 24 · failover-watcher · promote-to-primary",
-      "notes": "2026-05-31 22:40 PT — auto-promoted briefly when anderson-hub failed 6 consecutive checks; demote is MANUAL and still pending (split-brain since). 2026-06-01: matched JSONs to anderson-hub. Currently both Pis show identical recipe data (SHA-verified). Snapshot of crontab + systemd + ~/bin scripts in TheMaxLong/infra-checkpoints subdir 2026-06-01_post-recipe-sync."
+      "notes": "2026-05-31 22:40 PT — auto-promoted briefly when anderson-hub failed 6 consecutive checks; demote is MANUAL and still pending (split-brain since). 2026-06-01: matched JSONs to anderson-hub. Currently both Pis show identical recipe data (SHA-verified). Snapshot of crontab + systemd + ~/bin scripts in TheMaxLong/infra-checkpoints subdir 2026-06-01_post-recipe-sync.\n\n2026-07-04: Mirrored all of today's deploys: fluxuum-api recorded_at fix, classic poller got source tagging + pre-engage guard v2, CannaMax PT display, :5001 heartbeat fix. Note: classic poller unit still has NO spool protection (shadow code with spool is mirrored on disk but its unit stays inactive here) — open architecture decision.",
+      "dated": "2026-07-04"
     },
     {
       "id": "tailscale",
@@ -310,7 +315,8 @@
       "status": "retiring",
       "desc": "fluxuum.replit.app — the old cloud host. Pi mirror is live. Being retired. Kept warm as rollback.",
       "tech": "Replit · retiring → Pi takes over",
-      "notes": ""
+      "notes": "2026-07-04: Last remaining consumer removed — the :5001 heartbeat probed fluxuum.replit.app until today (source of the perpetual 404). Nothing on either Pi references the cloud app anymore.",
+      "dated": "2026-07-04"
     },
     {
       "id": "hark-controller",
