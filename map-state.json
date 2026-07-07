@@ -102,7 +102,7 @@
       "status": "live",
       "desc": "Daily runoff log OCR. Claude Vision parses handwritten AM log sheets into structured data. The daily-AM app is never touched by the PM backfill clone.",
       "tech": "React 19 · Express 5 · PostgreSQL · Claude Vision (Opus 4.8) · Anthropic SDK",
-      "notes": "2026-06-26: PDF input accepted in the daily runoff app (additive) + upgraded to Opus 4.8. 2026-06-29: OCR runoff parser rewrite — new-format autodetect (new FLOWER sheet drops light-% cols, splits IN→IN PH / IN EC) + RULE B position-based EC (stacked cell TOP=pen / BOTTOM=Solus, read by POSITION not digit-count) + anomaly checker. 2026-06-30: anomaly-check adopted the CONFIRMED 2026-06-30 flower env LAW as its range bands (additive; merge 6166e01a). Deployed both Pis; RULE B proven byte-identical vs the backfill service (deep-verify PASS)."
+      "notes": "2026-06-26: PDF input accepted in the daily runoff app (additive) + upgraded to Opus 4.8. 2026-06-29: OCR runoff parser rewrite — new-format autodetect (new FLOWER sheet drops light-% cols, splits IN→IN PH / IN EC) + RULE B position-based EC (stacked cell TOP=pen / BOTTOM=Solus, read by POSITION not digit-count) + anomaly checker. 2026-06-30: anomaly-check adopted the CONFIRMED 2026-06-30 flower env LAW as its range bands (additive; merge 6166e01a). Deployed both Pis; RULE B proven byte-identical vs the backfill service (deep-verify PASS). 2026-07-06: Veg log sheet added to the daily runoff OCR — single-row veg sheet → :3035. 5 veg rooms EFV1/EFV2/GHV1/GHV2/ABV1 added to VALID_ROOMS, room regex widened [A-Z]{2}→{2,3}; no-IN layout, stations=S1/S2/S3 (VWC + RULE A/B stacked pen/Solus EC), DAY 1=transplant; daily keeps single Temp/Hum/CO2 (no leaf/date). Extraction-only (no DB/cannamax/harvest wiring). Deployed + structurally verified both Pis, deep-verify-eyes PASS; real filled-sheet extraction still Max's to prove."
     },
     {
       "id": "flux-widget",
@@ -609,7 +609,7 @@
       "status": "live",
       "desc": "Standalone clone of Flower-Room-Display that OCRs a FULL runoff log sheet (every dated row, not just today) and pushes all days through the existing CannaMax → Recipe Book → Observatory pipeline — to catch up the 12 PM rooms (AB5-8, EF5-8, GH1-4). Emits one text line per (room,day) carrying the sheet date as a // DATE token; the daily-AM app is never touched.",
       "tech": "React · Vite · TypeScript · Express · Anthropic SDK (Opus 4.8) · PostgreSQL · Drizzle · PDF input · nginx→node:8091",
-      "notes": "2026-06-26: shipped + deployed — clone LIVE at anderson-hub:3036 (nginx → node:8091), both Pis. Full-page prompt extracts every (room,day) row + emits // DATE; editable date in the review UI; PDF upload; AM/PM env; streaming. report_date = the row's sheet date, day_of_cycle = the sheet DAY (never recomputed — immune to stale PM cycle load_date). Steps 1/2/4 LIVE; step 3 (lake push) staged. 2026-06-29/30: OCR parser gained new-format autodetect + RULE B (position EC) + anomaly checker (6-30 flower law bands), kept byte-identical with the daily FRD service. Lake push HELD until Max says go."
+      "notes": "2026-06-26: shipped + deployed — clone LIVE at anderson-hub:3036 (nginx → node:8091), both Pis. Full-page prompt extracts every (room,day) row + emits // DATE; editable date in the review UI; PDF upload; AM/PM env; streaming. report_date = the row's sheet date, day_of_cycle = the sheet DAY (never recomputed — immune to stale PM cycle load_date). Steps 1/2/4 LIVE; step 3 (lake push) staged. 2026-06-29/30: OCR parser gained new-format autodetect + RULE B (position EC) + anomaly checker (6-30 flower law bands), kept byte-identical with the daily FRD service. Lake push HELD until Max says go. 2026-07-06: Veg log sheet added to the backfill OCR — full-page veg sheet → :3036. Adds AM/PM LEAF TEMP (veg-only editable leaf input; emits // LEAF + AM/PM + DATE); same 5 veg rooms + widened regex; ignores RACK / OH LIGHT % / HUMIDIFIER. Extraction-only. Deployed + verified both Pis (deep-verify-eyes PASS 2026-07-06); real filled-sheet extraction pending Max's test."
     },
     {
       "id": "drench-library",
@@ -1491,5 +1491,5 @@
       "dash": true
     }
   ],
-  "_saved": "2026-07-05T11:31:16.595Z"
+  "_saved": "2026-07-07T04:20:37.628Z"
 }
