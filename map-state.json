@@ -662,6 +662,32 @@
       "desc": "Persistent task board + agent workspace for the commercial-bridge track (app.bridgemind.ai). BridgeSpace/BridgeVoice/BridgeShot desktop apps.",
       "tech": "MCP · app.bridgemind.ai",
       "notes": "2026-07-02: adopted as the durable project board for Alexandria × Fluxuum — survives sessions so the track never goes dormant. BridgeVoice = daily dictation (replaced the retired VoxMax)."
+    },
+    {
+      "id": "local-vision",
+      "label": "Qwen3-VL-8B\n(local OCR)",
+      "cat": "future",
+      "sz": 13,
+      "x": 0.3,
+      "y": 0.74,
+      "type": "Local Vision Model · Mac",
+      "status": "planned",
+      "desc": "Offline vision-LLM path for the runoff OCR — a cost + internet-outage resilience alternative to the Claude API. Runs on Max's 24GB MacBook Air via LM Studio (MLX). Promoted to primary only after the bake-off proves it holds accuracy on real sheets; otherwise stays an offline fallback. MiniCPM-V is the backup local model.",
+      "tech": "Qwen3-VL-8B · MLX 4-bit · LM Studio (127.0.0.1:1234) · MiniCPM-V (backup) · Tailscale",
+      "notes": "2026-07-12: chosen after cost review found both OCRs on Opus 4.8 ($5/$25 per Mtok). Awaiting accuracy validation via the bake-off."
+    },
+    {
+      "id": "ocr-bakeoff",
+      "label": "OCR Model\nBake-off",
+      "cat": "future",
+      "sz": 12,
+      "x": 0.42,
+      "y": 0.46,
+      "type": "Eval Harness",
+      "status": "wip",
+      "desc": "Offline harness that runs the SAME OCR prompt + each real sheet through Opus 4.8 / Sonnet / Haiku / Qwen3-VL / MiniCPM, scoring accuracy (stacked pen/Solus, circled voids, ambiguous digits, pipe-format fidelity) AND real $/sheet from token counts. Picks the cheapest model that holds Max's accuracy bar. Zero Pi contact.",
+      "tech": "Node (zero-dep, raw fetch) · Anthropic Messages API · LM Studio OpenAI API · ~/Documents/ocr-model-bakeoff",
+      "notes": "2026-07-12: built + smoke-verified offline; awaits AB8/EF8/GH8 harvest sheets + local models downloaded in LM Studio."
     }
   ],
   "edges": [
@@ -1489,7 +1515,32 @@
       "label": "tracks",
       "pulse": false,
       "dash": true
+    },
+    {
+      "s": "local-vision",
+      "t": "flower-room",
+      "label": "planned local OCR"
+    },
+    {
+      "s": "local-vision",
+      "t": "pm-backfill",
+      "label": "planned local OCR"
+    },
+    {
+      "s": "ocr-bakeoff",
+      "t": "local-vision",
+      "label": "evaluates"
+    },
+    {
+      "s": "ocr-bakeoff",
+      "t": "claude-api",
+      "label": "vs cloud tiers"
+    },
+    {
+      "s": "flower-room",
+      "t": "ocr-bakeoff",
+      "label": "prompt + sheets"
     }
   ],
-  "_saved": "2026-07-07T15:58:52.480Z"
+  "_saved": "2026-07-12T15:48:41.948Z"
 }
