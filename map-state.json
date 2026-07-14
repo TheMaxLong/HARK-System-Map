@@ -688,6 +688,19 @@
       "desc": "Offline harness that runs the SAME OCR prompt + each real sheet through Opus 4.8 / Sonnet / Haiku / Qwen3-VL / MiniCPM, scoring accuracy (stacked pen/Solus, circled voids, ambiguous digits, pipe-format fidelity) AND real $/sheet from token counts. Picks the cheapest model that holds Max's accuracy bar. Zero Pi contact.",
       "tech": "Node (zero-dep, raw fetch) · Anthropic Messages API · LM Studio OpenAI API · ~/Documents/ocr-model-bakeoff",
       "notes": "2026-07-12: built + smoke-verified offline; awaits AB8/EF8/GH8 harvest sheets + local models downloaded in LM Studio."
+    },
+    {
+      "id": "cyclops",
+      "label": "Cyclops\nOCR",
+      "cat": "app",
+      "sz": 16,
+      "x": 0.45,
+      "y": 0.52,
+      "type": "Runoff OCR Engine · $0/Local",
+      "status": "building",
+      "desc": "Next-gen $0/fully-local runoff-log OCR for Max's handwritten sheets — the production engine that grew out of the OCR Bake-off. Multi-reader cross-check panel (many local eyes), faithful recognition (every square incl. empties, no filler), NO ranges, human-final-gate. Exists to end personal spend on paid-API OCR.",
+      "tech": "Python · OpenCV · local Qwen3.5-VL via LM Studio · pytest · ~/Documents/Cyclops",
+      "notes": "2026-07-14: Engine v1 BUILT + reviewed (private GitHub TheMaxLong/cyclops-ocr; 15 commits, 50/50 tests, per-task + whole-branch reviewed). Per-cell (padded grid-for-identity) + per-row fallback both wired to one crosscheck; fail-loud 64k-context assert. Proven root-cause fixes: per-row isolation kills whole-sheet copy-down; <think></think> prefill stops empty Qwen output; 4x upscale. '88%' RETIRED as a claim (2-row lab number that swung to 10%) — accuracy is judged by Max's END-TO-END TIME on real sheets vs a 15-min baseline; no model trusted (Qwen included) until it clears that bar. Zero Pi contact. PENDING: Max's human acceptance run + localhost upload UI. Working codename."
     }
   ],
   "edges": [
@@ -1540,7 +1553,28 @@
       "s": "flower-room",
       "t": "ocr-bakeoff",
       "label": "prompt + sheets"
+    },
+    {
+      "s": "flower-room",
+      "t": "cyclops",
+      "label": "runoff sheets",
+      "pulse": false,
+      "dash": true
+    },
+    {
+      "s": "cyclops",
+      "t": "local-vision",
+      "label": "local Qwen VLM",
+      "pulse": false,
+      "dash": true
+    },
+    {
+      "s": "cyclops",
+      "t": "cannamax",
+      "label": "runoff → review → send",
+      "pulse": false,
+      "dash": true
     }
   ],
-  "_saved": "2026-07-13T15:38:48.631Z"
+  "_saved": "2026-07-14T16:19:33.594Z"
 }
