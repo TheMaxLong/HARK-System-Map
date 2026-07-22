@@ -167,7 +167,7 @@
       "status": "live",
       "desc": "Anderson-hub Pi is the production primary again as of 2026-05-28 22:31 PT (identity-only restore on new microSD after the 5/27 SD-card death; 51-sec failover-back from hub-backup). Hosts Fluxuum:3001, Facility-Tracker:8080, recipe-book:5050, CannaMax:3031, FRD:3035, infinium-bridge. At facility LAN; reaches 10.10.13.x controllers directly. Always-on.",
       "tech": "Pi 5 · 8GB · Pi OS 64-bit · systemd · Tailscale Serve · PostgreSQL 17 · Node 24 · infinium-bridge",
-      "notes": "2026-05-30: drift detector cron enabled (*/15 min, writes change_events). FT web/ rsync deploy 08:44 PT brought isLightsOn AB2+EF4 fix + D14-42=1150W wattage update live. 2026-05-28 22:31 PT: primary flipped BACK to anderson-hub; hub-backup now standby with 5-min sync. Off-site backup syncs hourly to Neon Postgres. 2026-06-04: v4.3 poller stopped + disabled; fluxuum-poller-shadow (v5) is now sole production poller. anderson_probe_readings table created (empty; DRY_RUN=1). New API bundle built (feature/temp-probe) with recovered widget route + probe endpoint; bundle deployed to service. facility-watch now on anderson-hub (was hub-backup). 2026-06-09+: also hosts Observatory dashboard /observatory. 2026-06-14: hosts harvest-dossier capture (build_dossier.py) + permanent run archive /home/pi/observatory-lake/runs.db (cron 5,35) + dossier store /home/pi/harvest-dossiers/ symlinked into the Observatory web root. 2026-06-20→25: anderson-hub now also hosts the facility-drift poller (cron/min) and the recipe-change tripwire (cron 10,40); the broken-pump detector runs from the Mac FacilityCheck. These are anderson-hub-only by design.  2026-07-01: fail2ban enabled; secrets moved to .hark-secrets; facility-health-scanner deployed (systemd */30)."
+      "notes": "2026-05-30: drift detector cron enabled (*/15 min, writes change_events). FT web/ rsync deploy 08:44 PT brought isLightsOn AB2+EF4 fix + D14-42=1150W wattage update live. 2026-05-28 22:31 PT: primary flipped BACK to anderson-hub; hub-backup now standby with 5-min sync. Off-site backup syncs hourly to Neon Postgres. 2026-06-04: v4.3 poller stopped + disabled; fluxuum-poller-shadow (v5) is now sole production poller. anderson_probe_readings table created (empty; DRY_RUN=1). New API bundle built (feature/temp-probe) with recovered widget route + probe endpoint; bundle deployed to service. facility-watch now on anderson-hub (was hub-backup). 2026-06-09+: also hosts Observatory dashboard /observatory. 2026-06-14: hosts harvest-dossier capture (build_dossier.py) + permanent run archive /home/pi/observatory-lake/runs.db (cron 5,35) + dossier store /home/pi/harvest-dossiers/ symlinked into the Observatory web root. 2026-06-20→25: anderson-hub now also hosts the facility-drift poller (cron/min) and the recipe-change tripwire (cron 10,40); the broken-pump detector runs from the Mac FacilityCheck. These are anderson-hub-only by design.  2026-07-01: fail2ban enabled; secrets moved to .hark-secrets; facility-health-scanner deployed (systemd */30). 2026-07-20: the 79C hot-running was traced NOT to resident services but to the Mac Ubersicht flux-widget polling /api/readings/latest-by-building every 2s (~66 req/min) -- six seq-scans over a 64MB unindexed readings table per call. Mac-side fix only (refresh 2s->7s + widget to main screen only) dropped it to ~60-62C @ ~14 req/min; nothing written to the Pi. STILL OPEN: the endpoint is unindexed -- needs a created_at / functional index or a ranked-CTE rewrite. Neither Pi has an active cooler (passive only)."
     },
     {
       "id": "tailscale",
@@ -375,7 +375,7 @@
       "status": "live",
       "desc": "Max's primary phone. Hosts Drift Report widget, FacilityCheck, Hub-Status, Read-Cycle, ntfy listener. On Tailscale at 100.75.250.48.",
       "tech": "Pixel 10 · Termux · Termux:API · termux-job-scheduler · Tailscale",
-      "notes": "2026-05-28: Drift Report widget rewritten — voice → Whisper pipeline. Fixed Hub-Status and Read-Cycle to point to hub-backup (anderson-hub dead). Old widget backup at ~/.shortcuts-backups/. 2026-06-25: Termux 'FacilityCheck' home-screen button wired — publishes to the trigger topic; Mac runs the sweep and returns a result digest on the recipe tripwire topic."
+      "notes": "2026-05-28: Drift Report widget rewritten — voice → Whisper pipeline. Fixed Hub-Status and Read-Cycle to point to hub-backup (anderson-hub dead). Old widget backup at ~/.shortcuts-backups/. 2026-06-25: Termux 'FacilityCheck' home-screen button wired — publishes to the trigger topic; Mac runs the sweep and returns a result digest on the recipe tripwire topic. 2026-07-20: the three personas (Tia / Sensei / Habibi) had been serving canned FALLBACK -- two faults fixed: the shared LM Studio :1234 was down 13h (see LM Studio Watchdog node) AND qwen3.5-9b is a reasoning model that returned empty content until reasoning_effort:none was set (the mandatory fix; /no_think and enable_thinking:false do not work). Google STT deafness (the mic blinking on then off) was not repaired but REPLACED by a hold-to-talk app (Pocket -- Whisper on the Mac at :9090, ~3s release-to-speech, proven on Max real speech). STILL OPEN: STT below the app layer; button redesign + a home-screen hold-to-talk widget."
     },
     {
       "id": "whisper-mac",
@@ -440,7 +440,7 @@
       "status": "live",
       "desc": "Standby/mesh-peer Pi at Max's condo (home WiFi, no direct controller access). Full mirror of anderson-hub services; flipped to primary on 5/27 during anderson-hub SD-card death and ran production for ~24h. Flipped back to standby 5/28 22:31 PT. Watcher + 5-min sync from anderson-hub keep it warm.",
       "tech": "Pi 5 · 8GB · Pi OS 64-bit · systemd · Tailscale · PostgreSQL 17 · Node 24",
-      "notes": "Spare microSD complete 2026-05-29 05:30 PT — services enabled but stopped. Hosts widget-URL nginx proxy + Tailscale Funnel to preserve public URLs while anderson-hub is primary. Promote procedure documented in memory. 2026-06-04: v5 fluxuum-poller-shadow code synced from anderson-hub and deployed; new API bundle (feature/temp-probe) deployed; systemd unit installed + daemon reloaded — service not yet enabled+started (session paused before final step). v4 poller service still present. 2026-06-24: app.py / recipe-book parity drift closed — forward-synced anderson-hub→hub-backup, both Pis byte-identical (app.py sha256 904a35d1).  2026-07-01: failover-watcher re-armed after ~1 month silently dead (stale PROMOTED_AT) — ping-OR-http + 20-fail anti-flapping; fail2ban enabled; secrets moved to .hark-secrets; config-snapshot script deployed; now serves Fluxuum web + harvest dossiers (nginx default disabled). facility-health-scanner deployed (12 checks */30 + weekly test-restore Sun 03:00 PT)."
+      "notes": "Spare microSD complete 2026-05-29 05:30 PT — services enabled but stopped. Hosts widget-URL nginx proxy + Tailscale Funnel to preserve public URLs while anderson-hub is primary. Promote procedure documented in memory. 2026-06-04: v5 fluxuum-poller-shadow code synced from anderson-hub and deployed; new API bundle (feature/temp-probe) deployed; systemd unit installed + daemon reloaded — service not yet enabled+started (session paused before final step). v4 poller service still present. 2026-06-24: app.py / recipe-book parity drift closed — forward-synced anderson-hub→hub-backup, both Pis byte-identical (app.py sha256 904a35d1).  2026-07-01: failover-watcher re-armed after ~1 month silently dead (stale PROMOTED_AT) — ping-OR-http + 20-fail anti-flapping; fail2ban enabled; secrets moved to .hark-secrets; config-snapshot script deployed; now serves Fluxuum web + harvest dossiers (nginx default disabled). facility-health-scanner deployed (12 checks */30 + weekly test-restore Sun 03:00 PT). 2026-07-20: now protected OFF-SITE -- a daily 03:00 launchd job on the Mac (see Off-Site Archive Backup node) streams this Pi fluxuum deep archive to the Mac + Google Drive (30-day retention, verified), closing the single-SD-card exposure for the 2026-05-19 to 06-20 span that existed nowhere else. Card still degrading; anderson-hub own DBs remain SD-card-only (hourly, 7-day)."
     },
     {
       "id": "fluxuum-anderson-drift",
@@ -596,7 +596,7 @@
       "status": "live",
       "desc": "Real-time 24-room temp vs Recipe-Book phase target across AB/EF/GH (incl. AB7). ≥5°F = critical → immediate ntfy then a 30-min digest. Mac desktop widget plus a phone-shareable HTML dashboard.",
       "tech": "Übersicht widget (Mac) · facility-drift-poll.py on anderson-hub (cron/min) · /observatory/facility-drift.json (Funnel) · ntfy gacx-power-y2k7q9pmx3 (shared w/ facility-watch)",
-      "notes": "2026-06-20: LIVE. anderson-hub hosts the poller + JSON feed (anderson-hub-only). RH/CO2 alerts parked for later tuning."
+      "notes": "2026-06-20: LIVE. anderson-hub hosts the poller + JSON feed (anderson-hub-only). RH/CO2 alerts parked for later tuning. 2026-07-20: card-bleed bug FIXED (deep-verify-eyes PASS both Pis) -- the poller split only matched the plain card class, so 12 card-veg / card-preload cards bled into the preceding room and published a neighbour reading (AB1 showed AB2 62F against AB1 80F target, direction-inverted; 21 of 30 rooms parsed). Now splits on the full card class, raises CardBleedError on any multi-room chunk (bails without overwriting the JSON), pre-load rooms forced to severity unknown so they never alert, room floor 20->28. Verification recipe persisted as the verify-facility-drift skill. PENDING: rewire the page off HTML-scraping onto CannaMax resolved readings (reuse facility-watch.ts; do NOT reimplement the resolver)."
     },
     {
       "id": "pm-backfill",
@@ -701,6 +701,32 @@
       "desc": "Next-gen $0/fully-local runoff-log OCR for Max's handwritten sheets — the production engine that grew out of the OCR Bake-off. Multi-reader cross-check panel (many local eyes), faithful recognition (every square incl. empties, no filler), NO ranges, human-final-gate. Exists to end personal spend on paid-API OCR.",
       "tech": "Python · OpenCV · local Qwen3.5-VL via LM Studio · pytest · ~/Documents/Cyclops",
       "notes": "2026-07-14: Engine v1 BUILT + reviewed (private GitHub TheMaxLong/cyclops-ocr; 15 commits, 50/50 tests, per-task + whole-branch reviewed). Per-cell (padded grid-for-identity) + per-row fallback both wired to one crosscheck; fail-loud 64k-context assert. Proven root-cause fixes: per-row isolation kills whole-sheet copy-down; <think></think> prefill stops empty Qwen output; 4x upscale. '88%' RETIRED as a claim (2-row lab number that swung to 10%) — accuracy is judged by Max's END-TO-END TIME on real sheets vs a 15-min baseline; no model trusted (Qwen included) until it clears that bar. Zero Pi contact. PENDING: Max's human acceptance run + localhost upload UI. Working codename. 2026-07-15/19: the local app build (Cyclops-app-build, branch cyclops-app) advanced to engine v1 -- per-cell Qwen reader (ee41c67), TrOCR handwriting-specialist trainer (d366d6d), FRD-formatter parity keystone (967df62), editable review UI with self-recovery (c87332e, e1e4aaf), and a machine API /api/extract with room detection (7dded11); an opt-in CannaMax poster added safety-first (48c255d). 25 commits 2026-07-15 to 2026-07-19. Still gated on Max END-TO-END acceptance; zero Pi contact."
+    },
+    {
+      "id": "offsite-archive-backup",
+      "label": "Off-Site Archive Backup",
+      "cat": "infra",
+      "sz": 12,
+      "x": 0.14,
+      "y": 0.8,
+      "type": "Off-Site Backup · launchd (Mac)",
+      "status": "live",
+      "desc": "Daily 03:00 launchd job on the Mac (com.max.facility-archive-backup) -- pg_dump of hub-backup fluxuum DB streamed over SSH (never written to the SD card) to the Mac + Google Drive, 30-day retention, gzip-t + row-floor verified before the Drive copy.",
+      "tech": "launchd · pg_dump over SSH · gzip · Google Drive",
+      "notes": "2026-07-20: built + live-tested -- 12M, 471420 readings rows, span 2026-05-19 to 07-20, local + Drive both ok. Closes the single-SD-card gap in the hot-primary / deep-archive split (hub-backup held May19-Jun20 nowhere else). Pull model (no cron or credentials on the Pi); atomic tmp then mv so Drive never syncs a half file; local copy verified FIRST. NOTE neon_sync is NOT a backup (aggregated fluxuum_runs only, 10-day rolling DELETE). NOT yet covered: anderson-hub own fluxuum/cannamax DBs (a one-line add when wanted)."
+    },
+    {
+      "id": "lms-watchdog",
+      "label": "LM Studio Watchdog",
+      "cat": "infra",
+      "sz": 11,
+      "x": 0.22,
+      "y": 0.6,
+      "type": "Local LLM Supervisor · Mac",
+      "status": "live",
+      "desc": "Guards the shared LM Studio server on :1234 (qwen/qwen3.5-9b at 64k ctx) that feeds facility OCR (3035/3036/Cyclops) and the Pixel personas. LaunchAgent com.themaxlong.hark.lms-server.",
+      "tech": "bash · lms load · run_with_timeout · launchd",
+      "notes": "2026-07-20: fixed a 13h SILENT outage (Jul 19 9:11pm to Jul 20 10:20am) -- MODEL pointed at the deleted qwen/qwen3-8b, so lms load dropped into an interactive model picker and blocked the loop forever while the LaunchAgent stayed green and :1234 was dead. Three guards added, all required: correct model qwen/qwen3.5-9b; -y plus input redirect from /dev/null; a run_with_timeout helper; also -c 65536 so ctx is right immediately. RED-before-GREEN proven (the old path now exits code 1 in 2s). STILL OPEN: nothing monitors :1234 LIVENESS -- the pileup and 64k guards check pileup/context, not is-it-answering."
     }
   ],
   "edges": [
@@ -1572,6 +1598,26 @@
       "s": "cyclops",
       "t": "cannamax",
       "label": "runoff → review → send",
+      "pulse": false,
+      "dash": true
+    },
+    {
+      "s": "hub-backup",
+      "t": "offsite-archive-backup",
+      "label": "daily off-site dump",
+      "pulse": false
+    },
+    {
+      "s": "lms-watchdog",
+      "t": "cyclops",
+      "label": "local Qwen :1234",
+      "pulse": false,
+      "dash": true
+    },
+    {
+      "s": "lms-watchdog",
+      "t": "pixel-10",
+      "label": "persona LLM :1234",
       "pulse": false,
       "dash": true
     }
