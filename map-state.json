@@ -10,8 +10,8 @@
       "type": "Flagship Product",
       "status": "live",
       "desc": "The cultivation OS. Drift detection, change feed, real-time pH/EC/flow per zone. Everything else feeds into this.",
-      "tech": "TypeScript · Express 5 · Drizzle · Zod · Alexandria adapters · SQLite",
-      "notes": "2026-05-24: Apply Infinium to All button shipped — one tap snapshots live Infinium readings into all 24 rooms at once. Env timestamps on every tile. Fixed env_readings_source_check DB constraint (infinium-snapshot was missing). Anderson tab live via Fluxuum/facility-tracker integration. 2026-05-29: AB1 chart fix shipped (src/windowing.ts multi-run assignment — fixed empty-chart bug from operator's nested manual catch-runs). 2026-05-30: fluxuum-anderson-drift + lights-on-too-cold detectors both live; main branch caught back up to production via two clean merges. 2026-06-02: dual-backend DB client landed (commit 61ba220) — real PostgreSQL via DATABASE_URL when set, PGlite fallback. Ingredient recon-report updated to reflect 29→13 canonical ingredient cleanup. 2026-06-12+: mark-harvested handler now fires harvest-dossier capture fire-and-forget (commit ca1d094), passing the cycle's load date explicitly; harvest events mirrored to Recipe Book on anderson-hub (3572b2b); lights schedule flipped 11:30→11:50 campus-wide (c082fb4). 2026-06-20: public /cannamax funnel hardening — MOUNT-prefix client URLs + nav rewrite so it works under the Tailscale funnel; runoff writes + Infinium capture gated behind the admin password (ca6ad7a, 85ab630), both Pis, deep-verify passed. 2026-06-26: runoff-loader taught to parse // DATE / // AM / // PM tokens, group multi-day lines per room, and fan every (room,day) row out to Recipe Book at its real sheet date + sheet day — the loader half of the PM runoff backfill pipeline (see PM Runoff Backfill node). 2026-06-28: dashboard CO₂ ramp-down split — AB (56-day) one week ahead of EF/GH (63-day). 2026-06-30: dashboard env targets mirror the CONFIRMED 2026-06-30 flower law (matches FT, clock-current setpoint); both Pis restarted + verified (module cache cleared). 2026-07-07: runoff-loader from-frd taught the 10 veg/mom rooms (rooms 24→34; roomType veg/mom, null active_cycle_id = perpetual) — text-parse ROOM_RE replaced with a VALID_ROOMS set mirroring FRD exactly (34 codes); the 10 rooms seeded into the DB on both Pis (local Postgres 127.0.0.1:5432/cannamax via node --env-file, NOT pglite). Flower unchanged (still 24). Deep-verify PASS both Pis; commit 47695a3. 2026-07-21: station-reading reconciliation wired (938ee43); VWC and Solus now preserved when a station pH/EC bracket is hand-cleared -- the parser no longer drops the whole station and its real readings (c793400), closing the FRD empty-bracket data-loss on the CannaMax side (deployed both Pis, 3 rows recovered). Env schedule synced live to Facility-Tracker across all 24 flower rooms 2026-07-19 (a7dcf8b)."
+      "tech": "TypeScript \u00b7 Express 5 \u00b7 Drizzle \u00b7 Zod \u00b7 Alexandria adapters \u00b7 SQLite",
+      "notes": "2026-05-24: Apply Infinium to All button shipped \u2014 one tap snapshots live Infinium readings into all 24 rooms at once. Env timestamps on every tile. Fixed env_readings_source_check DB constraint (infinium-snapshot was missing). Anderson tab live via Fluxuum/facility-tracker integration. 2026-05-29: AB1 chart fix shipped (src/windowing.ts multi-run assignment \u2014 fixed empty-chart bug from operator's nested manual catch-runs). 2026-05-30: fluxuum-anderson-drift + lights-on-too-cold detectors both live; main branch caught back up to production via two clean merges. 2026-06-02: dual-backend DB client landed (commit 61ba220) \u2014 real PostgreSQL via DATABASE_URL when set, PGlite fallback. Ingredient recon-report updated to reflect 29\u219213 canonical ingredient cleanup. 2026-06-12+: mark-harvested handler now fires harvest-dossier capture fire-and-forget (commit ca1d094), passing the cycle's load date explicitly; harvest events mirrored to Recipe Book on anderson-hub (3572b2b); lights schedule flipped 11:30\u219211:50 campus-wide (c082fb4). 2026-06-20: public /cannamax funnel hardening \u2014 MOUNT-prefix client URLs + nav rewrite so it works under the Tailscale funnel; runoff writes + Infinium capture gated behind the admin password (ca6ad7a, 85ab630), both Pis, deep-verify passed. 2026-06-26: runoff-loader taught to parse // DATE / // AM / // PM tokens, group multi-day lines per room, and fan every (room,day) row out to Recipe Book at its real sheet date + sheet day \u2014 the loader half of the PM runoff backfill pipeline (see PM Runoff Backfill node). 2026-06-28: dashboard CO\u2082 ramp-down split \u2014 AB (56-day) one week ahead of EF/GH (63-day). 2026-06-30: dashboard env targets mirror the CONFIRMED 2026-06-30 flower law (matches FT, clock-current setpoint); both Pis restarted + verified (module cache cleared). 2026-07-07: runoff-loader from-frd taught the 10 veg/mom rooms (rooms 24\u219234; roomType veg/mom, null active_cycle_id = perpetual) \u2014 text-parse ROOM_RE replaced with a VALID_ROOMS set mirroring FRD exactly (34 codes); the 10 rooms seeded into the DB on both Pis (local Postgres 127.0.0.1:5432/cannamax via node --env-file, NOT pglite). Flower unchanged (still 24). Deep-verify PASS both Pis; commit 47695a3. 2026-07-21: station-reading reconciliation wired (938ee43); VWC and Solus now preserved when a station pH/EC bracket is hand-cleared -- the parser no longer drops the whole station and its real readings (c793400), closing the FRD empty-bracket data-loss on the CannaMax side (deployed both Pis, 3 rows recovered). Env schedule synced live to Facility-Tracker across all 24 flower rooms 2026-07-19 (a7dcf8b)."
     },
     {
       "id": "facility-tracker",
@@ -23,8 +23,8 @@
       "type": "Application",
       "status": "live",
       "desc": "Room state dashboard. OCR parsing, env monitoring, runoff chemistry, change events feed. Pi-hosted.",
-      "tech": "React 18 · Express 5 · PostgreSQL · Claude Vision · pnpm monorepo",
-      "notes": "2026-05-24: Apply Infinium to All button added to INFINIUM tab — fills all 24 room env tiles from live Infinium reads in one tap. 2026-05-30: isLightsOn now per-room — AB2+EF4 on new :50 photoperiod, other 22 rooms still on :30. Same deploy brought D14-42=1150W wattage tier live (after 11 days stale on Pi). 2026-06-28: CO₂ ramp-down split — AB (56-day) steps down one week ahead of EF/GH (63-day). 2026-06-30: CONFIRMED flower env LAW live — real day/night setpoints, dual-track per room; tiles + Anderson table now show the CURRENT setpoint by real clock (not both day/night). One of the 3 synced env homes (FT tile / CannaMax dashboard / recipe-book JSON). Deployed both Pis (master 87736f4). 2026-07-19: all 24 flower rooms migrated onto the new env schedule (6458814) -- AB8/EF1/EF8/GH3/GH8 joined the 20 already live; deploy procedure captured in HANDOFF.md (21e3525)."
+      "tech": "React 18 \u00b7 Express 5 \u00b7 PostgreSQL \u00b7 Claude Vision \u00b7 pnpm monorepo",
+      "notes": "2026-05-24: Apply Infinium to All button added to INFINIUM tab \u2014 fills all 24 room env tiles from live Infinium reads in one tap. 2026-05-30: isLightsOn now per-room \u2014 AB2+EF4 on new :50 photoperiod, other 22 rooms still on :30. Same deploy brought D14-42=1150W wattage tier live (after 11 days stale on Pi). 2026-06-28: CO\u2082 ramp-down split \u2014 AB (56-day) steps down one week ahead of EF/GH (63-day). 2026-06-30: CONFIRMED flower env LAW live \u2014 real day/night setpoints, dual-track per room; tiles + Anderson table now show the CURRENT setpoint by real clock (not both day/night). One of the 3 synced env homes (FT tile / CannaMax dashboard / recipe-book JSON). Deployed both Pis (master 87736f4). 2026-07-19: all 24 flower rooms migrated onto the new env schedule (6458814) -- AB8/EF1/EF8/GH3/GH8 joined the 20 already live; deploy procedure captured in HANDOFF.md (21e3525)."
     },
     {
       "id": "recipe-book",
@@ -36,8 +36,8 @@
       "type": "Application",
       "status": "live",
       "desc": "Grow recipe hub. Cycle tracking, arc charts, drift detection, field notes. Scrapes live controller data.",
-      "tech": "Python · Flask · SQLite · WebSocket · OpenAI (optional)",
-      "notes": "2026-05-30: env program update — photoperiod widened (00:00-11:50 main, +5min UC), D14-42 = 1150W (new tier above 1000W), W7 split (D42 still 1150W, D43 steps down to 1000W). Pi recipe-book is plain-copied files (NOT a git checkout) — edits go via scp + service restart. 2026-06-01-02: HydroZ campus-wide trial complete; Hydro z stub (id=30) consolidated into canonical HydroZ (id=16, GH port 11 / AB port 15 / EF port 16). 29→13 canonical ingredients — Drip A NPK 15-0-0 confirmed, shared name_normalize.py ingester, 9 unit tests. 2026-06-03-04: Drip vendor sheets live for A/B/C/D — ingredient modal restructured into 'Our Program' + 'Vendor Sheet' tabs. 2026-06-04: Day 0 = Load day fixed (removed +1 offset from cycle_day calc). Controller-drift UI removed (room cards + modal banner + 'Actually Running'). Collapsible changelog — day-based grouping, single-open accordion. Deployed to both anderson-hub + hub-backup via redeploy.sh. 2026-06-12: scraper sweep merged (PR #1, TheMaxLong/scraper-sweep-2026-06-12) — hardware relabels + recipe + irrigation snapshots. 2026-06-14: AB7 phantom-runoff purged + guarded (DB trigger guard_runoff_scope); manual.html font deploy + Today's-Panel day off-by-one fix. Recipe Book is treated as a vendor API by downstream tools — READ-ONLY, never migrated. Now also a read source for Observatory + harvest-dossier (runoff reports). 2026-06-25: AB/EF/GH pump-relabel consolidation (broken pumps relabeled, ingredients moved to working ports; library 16→11 canonical cards, Athena Balance #2 retired/hidden) + broken-pump auto-reconcile detector now armed in FacilityCheck (read-only, see broken-pump node). 2026-06-23: program display now reads controller_recipe directly (dropped the +1 shortcut); transition rooms show the loaded program. 2026-06-21: FacilityCheck harvest-forecast off-by-one fixed. 2026-06-24: both-Pi app.py parity drift closed (sha256 904a35d1). 2026-06-26: runoff scope gate WIDENED 12→24 — PM rooms now allowed; a hidden guard_runoff_scope trigger (not in source control) had been silently deleting PM runoff; verified + backed up. 2026-06-28: env_programs document the AB 56-day CO₂ split. 2026-06-29: new harvest LAW per Max's Numbers sheet — AB = 56-day, EF & GH = 63-day (was 55/61) + new FLOWER log format. 2026-06-30: env_programs/anderson_flower_2026-06-30.json committed (confirmed 6-30 flower law). Also gained a new Drench tab (skeleton, branch only — see Drench Library node). 2026-07-15/16: AB7 phantom-runoff cleared again, 23 readings restored (b5f6e8d); the automated runoff re-send path fixed so stale re-sends stop overwriting real runoff (f1b0fdd); EF v7 ledger reconciled (3ade741); GH powder->liquid drip switch landed (4cfd587, 1c7349e); changelog UI widened to full history with Version History moved below Peak Dose and Key Differences rebuilt from live controller data (363e526, 5908104, 2628907)."
+      "tech": "Python \u00b7 Flask \u00b7 SQLite \u00b7 WebSocket \u00b7 OpenAI (optional)",
+      "notes": "2026-05-30: env program update \u2014 photoperiod widened (00:00-11:50 main, +5min UC), D14-42 = 1150W (new tier above 1000W), W7 split (D42 still 1150W, D43 steps down to 1000W). Pi recipe-book is plain-copied files (NOT a git checkout) \u2014 edits go via scp + service restart. 2026-06-01-02: HydroZ campus-wide trial complete; Hydro z stub (id=30) consolidated into canonical HydroZ (id=16, GH port 11 / AB port 15 / EF port 16). 29\u219213 canonical ingredients \u2014 Drip A NPK 15-0-0 confirmed, shared name_normalize.py ingester, 9 unit tests. 2026-06-03-04: Drip vendor sheets live for A/B/C/D \u2014 ingredient modal restructured into 'Our Program' + 'Vendor Sheet' tabs. 2026-06-04: Day 0 = Load day fixed (removed +1 offset from cycle_day calc). Controller-drift UI removed (room cards + modal banner + 'Actually Running'). Collapsible changelog \u2014 day-based grouping, single-open accordion. Deployed to both anderson-hub + hub-backup via redeploy.sh. 2026-06-12: scraper sweep merged (PR #1, TheMaxLong/scraper-sweep-2026-06-12) \u2014 hardware relabels + recipe + irrigation snapshots. 2026-06-14: AB7 phantom-runoff purged + guarded (DB trigger guard_runoff_scope); manual.html font deploy + Today's-Panel day off-by-one fix. Recipe Book is treated as a vendor API by downstream tools \u2014 READ-ONLY, never migrated. Now also a read source for Observatory + harvest-dossier (runoff reports). 2026-06-25: AB/EF/GH pump-relabel consolidation (broken pumps relabeled, ingredients moved to working ports; library 16\u219211 canonical cards, Athena Balance #2 retired/hidden) + broken-pump auto-reconcile detector now armed in FacilityCheck (read-only, see broken-pump node). 2026-06-23: program display now reads controller_recipe directly (dropped the +1 shortcut); transition rooms show the loaded program. 2026-06-21: FacilityCheck harvest-forecast off-by-one fixed. 2026-06-24: both-Pi app.py parity drift closed (sha256 904a35d1). 2026-06-26: runoff scope gate WIDENED 12\u219224 \u2014 PM rooms now allowed; a hidden guard_runoff_scope trigger (not in source control) had been silently deleting PM runoff; verified + backed up. 2026-06-28: env_programs document the AB 56-day CO\u2082 split. 2026-06-29: new harvest LAW per Max's Numbers sheet \u2014 AB = 56-day, EF & GH = 63-day (was 55/61) + new FLOWER log format. 2026-06-30: env_programs/anderson_flower_2026-06-30.json committed (confirmed 6-30 flower law). Also gained a new Drench tab (skeleton, branch only \u2014 see Drench Library node). 2026-07-15/16: AB7 phantom-runoff cleared again, 23 readings restored (b5f6e8d); the automated runoff re-send path fixed so stale re-sends stop overwriting real runoff (f1b0fdd); EF v7 ledger reconciled (3ade741); GH powder->liquid drip switch landed (4cfd587, 1c7349e); changelog UI widened to full history with Version History moved below Peak Dose and Key Differences rebuilt from live controller data (363e526, 5908104, 2628907)."
     },
     {
       "id": "trellis",
@@ -46,10 +46,10 @@
       "sz": 17,
       "x": 0.3737451325172965,
       "y": 0.11772577890983088,
-      "type": "Application · hark.equipment",
+      "type": "Application \u00b7 hark.equipment",
       "status": "live",
       "desc": "Room builder. Runoff monitoring dashboard. OpenAPI-first codegen. Proprietary + Themes Pack tier.",
-      "tech": "React 19 · Express 5 · PostgreSQL · Drizzle · Orval codegen · pnpm monorepo",
+      "tech": "React 19 \u00b7 Express 5 \u00b7 PostgreSQL \u00b7 Drizzle \u00b7 Orval codegen \u00b7 pnpm monorepo",
       "notes": ""
     },
     {
@@ -62,7 +62,7 @@
       "type": "Product Site",
       "status": "live",
       "desc": "Public marketing site. Gumroad shop live. Grow Journal $18. SSL on Vercel.",
-      "tech": "Vercel · SSL · Gumroad",
+      "tech": "Vercel \u00b7 SSL \u00b7 Gumroad",
       "notes": ""
     },
     {
@@ -75,8 +75,8 @@
       "type": "Data Pipeline",
       "status": "live",
       "desc": "Irrigation telemetry. pH/EC/flow/gal per zone, 136 reads/hr. Anomaly alerts via Resend email. v5 ESM rewrite (Alexandria-native) is now the sole production poller on anderson-hub (v4.3 stopped 2026-06-04).",
-      "tech": "TypeScript · Express 5 · PostgreSQL · React · Resend · OpenAI · pnpm monorepo",
-      "notes": "2026-05-30: v5 Alexandria-native ESM rewrite of poller landed on origin/main (commits 17d8b45 plan, 4673bd9 impl, a8748df heartbeat-fix). 12/12 golden byte-equivalence tests green. 2026-06-04: v4.3 poller stopped + disabled; fluxuum-poller-shadow (v5) is now the sole production poller on anderson-hub. Temp probe Phase 1+2 shipped (branch feature/temp-probe): anderson_probe_readings table created, schema + extractor in source (commit 6645990); DRY_RUN=1 (logs only, no DB writes yet). /api/runs/latest-by-building widget route recovered after it went missing from new bundle (commit ed282b9). /api/anderson-probe/import endpoint in source but old bundle still rolled back — pending new bundle SCP to flip DRY_RUN=0. GET /api/runs/latest-by-building route recovered (commit ed282b9). /api/runs is a rolling ~28-day window — the harvest-dossier archive (archive_runs.py) appends from it into a never-rolling runs.db so long crops survive after the live feed forgets their early weeks.  2026-06-16: AI-prompt cycle-length correction + anderson_probe_readings extractor (phase 1, dry-run)."
+      "tech": "TypeScript \u00b7 Express 5 \u00b7 PostgreSQL \u00b7 React \u00b7 Resend \u00b7 OpenAI \u00b7 pnpm monorepo",
+      "notes": "2026-05-30: v5 Alexandria-native ESM rewrite of poller landed on origin/main (commits 17d8b45 plan, 4673bd9 impl, a8748df heartbeat-fix). 12/12 golden byte-equivalence tests green. 2026-06-04: v4.3 poller stopped + disabled; fluxuum-poller-shadow (v5) is now the sole production poller on anderson-hub. Temp probe Phase 1+2 shipped (branch feature/temp-probe): anderson_probe_readings table created, schema + extractor in source (commit 6645990); DRY_RUN=1 (logs only, no DB writes yet). /api/runs/latest-by-building widget route recovered after it went missing from new bundle (commit ed282b9). /api/anderson-probe/import endpoint in source but old bundle still rolled back \u2014 pending new bundle SCP to flip DRY_RUN=0. GET /api/runs/latest-by-building route recovered (commit ed282b9). /api/runs is a rolling ~28-day window \u2014 the harvest-dossier archive (archive_runs.py) appends from it into a never-rolling runs.db so long crops survive after the live feed forgets their early weeks.  2026-06-16: AI-prompt cycle-length correction + anderson_probe_readings extractor (phase 1, dry-run). 2026-07-22: Run Log crash root-caused \u2014 All-Time default polled unbounded /api/runs (2 MB / 6,300 runs, unindexed full scan) every 5 s AND rendered every run as a DOM row; idle tabs OOM'd (Aw-Snap code 5). Rebuilt: 7-day week view with collapsible day sections (today-only 30 s poll, pauses when hidden), Archive tab month\u2192day\u2192runs (single cached fetch), dashboard 5 s polls \u2192 30 s + bounded latest-run query, idx_readings_recorded_at index both Pis (bounded queries ~4 ms), nginx no-cache on index.html (a stale cached bundle on the Pixel kept firing the retired unbounded query), tab title \u2192 Fluxuum. Branch fix/readings-week-archive (a192ec1\u2026b8cf34a), deployed BOTH Pis, deep-verify-eyes PASS. Observatory/neon_sync feeds untouched (fluxuum-api running since Jul 17)."
     },
     {
       "id": "alexandria",
@@ -87,9 +87,9 @@
       "y": 0.6706648836085246,
       "type": "Adapter Library",
       "status": "live",
-      "desc": "Controller adapter abstraction. ObservationOnlyMarker enforces read-only. Supports Anderson, Infinium, TrolMaster, Argus, and more. 2026-05-30: openRunDataStream() added — continuous /rundata/ws streaming for live pollers.",
-      "tech": "TypeScript ESM · Zero runtime deps · pnpm monorepo · 5 packages",
-      "notes": "2026-05-30: openRunDataStream() added to adapter-he-anderson — mirrors the existing openPreviousRunStream() pattern (queue/waiters/close handling) but for the LIVE /rundata/ws endpoint (was one-shot fetchRunData only). 7-case test suite covers auth gate, in-order delivery, deferred-arrival waiter, caller-close, server-close, login failure, WS handshake failure. Live smoke green against all 3 facility controllers (AB/EF/GH). Packaged as .tgz for Pi-side install. On origin/main."
+      "desc": "Controller adapter abstraction. ObservationOnlyMarker enforces read-only. Supports Anderson, Infinium, TrolMaster, Argus, and more. 2026-05-30: openRunDataStream() added \u2014 continuous /rundata/ws streaming for live pollers.",
+      "tech": "TypeScript ESM \u00b7 Zero runtime deps \u00b7 pnpm monorepo \u00b7 5 packages",
+      "notes": "2026-05-30: openRunDataStream() added to adapter-he-anderson \u2014 mirrors the existing openPreviousRunStream() pattern (queue/waiters/close handling) but for the LIVE /rundata/ws endpoint (was one-shot fetchRunData only). 7-case test suite covers auth gate, in-order delivery, deferred-arrival waiter, caller-close, server-close, login failure, WS handshake failure. Live smoke green against all 3 facility controllers (AB/EF/GH). Packaged as .tgz for Pi-side install. On origin/main."
     },
     {
       "id": "flower-room",
@@ -101,8 +101,8 @@
       "type": "Display App",
       "status": "live",
       "desc": "Daily runoff log OCR. Claude Vision parses handwritten AM log sheets into structured data. The daily-AM app is never touched by the PM backfill clone.",
-      "tech": "React 19 · Express 5 · PostgreSQL · Claude Vision (Opus 4.8) · Anthropic SDK",
-      "notes": "2026-06-26: PDF input accepted in the daily runoff app (additive) + upgraded to Opus 4.8. 2026-06-29: OCR runoff parser rewrite — new-format autodetect (new FLOWER sheet drops light-% cols, splits IN→IN PH / IN EC) + RULE B position-based EC (stacked cell TOP=pen / BOTTOM=Solus, read by POSITION not digit-count) + anomaly checker. 2026-06-30: anomaly-check adopted the CONFIRMED 2026-06-30 flower env LAW as its range bands (additive; merge 6166e01a). Deployed both Pis; RULE B proven byte-identical vs the backfill service (deep-verify PASS). 2026-07-06: Veg log sheet added to the daily runoff OCR — single-row veg sheet → :3035. 5 veg rooms EFV1/EFV2/GHV1/GHV2/ABV1 added to VALID_ROOMS, room regex widened [A-Z]{2}→{2,3}; no-IN layout, stations=S1/S2/S3 (VWC + RULE A/B stacked pen/Solus EC), DAY 1=transplant; daily keeps single Temp/Hum/CO2 (no leaf/date). Extraction-only (no DB/cannamax/harvest wiring). Deployed + structurally verified both Pis, deep-verify-eyes PASS; real filled-sheet extraction still Max's to prove. 2026-07-07: mom rooms (ABMOM/EFMOM/GHMOM) + the second AB veg bench (ABV/ABV2, kept distinct) wired into :3035 — VALID_ROOMS 24→34, room regex widened to [A-Z]{2}V + [A-Z]{2}MOM; MOM sheets read like flower (IN + 3 stations). CannaMax from-frd taught the same 10 veg/mom rooms so they persist. Deployed + deep-verify-eyes PASS both Pis. 2026-07-09: DAILY vision model ACTUALLY switched claude-sonnet-4-6 → claude-opus-4-8 (the tech tag had claimed Opus since 6-26 but the live daily call was still sonnet — now real) + incoming upload limit 50mb→256mb (nginx client_max_body_size 100M→300M) so the FULL flower+veg+mom log scans in ONE upload / one try (Max: splitting is unacceptable). Root cause of the old fails: sonnet slipped into prose on big batches → validator dropped rooms; Opus stays format-disciplined. Flower proven byte-clean on Opus (11 pages/one call/26s, no prose-drop) + one-try verified both Pis; branch vision-opus-4.8 merged → add-pdf-input@05785552; rollback dist.bak-sonnet-* per Pi. Confirmed working by Max. 2026-07-15/19: the live Qwen per-cell OCR engine committed into source (fa8379b3) and the Anthropic fallback path restored in source (137b04ea) -- 3035 daily runoff app now version-controlled on either path (source does not auto-rebuild the live artifact; live still runs the proven built copy)."
+      "tech": "React 19 \u00b7 Express 5 \u00b7 PostgreSQL \u00b7 Claude Vision (Opus 4.8) \u00b7 Anthropic SDK",
+      "notes": "2026-06-26: PDF input accepted in the daily runoff app (additive) + upgraded to Opus 4.8. 2026-06-29: OCR runoff parser rewrite \u2014 new-format autodetect (new FLOWER sheet drops light-% cols, splits IN\u2192IN PH / IN EC) + RULE B position-based EC (stacked cell TOP=pen / BOTTOM=Solus, read by POSITION not digit-count) + anomaly checker. 2026-06-30: anomaly-check adopted the CONFIRMED 2026-06-30 flower env LAW as its range bands (additive; merge 6166e01a). Deployed both Pis; RULE B proven byte-identical vs the backfill service (deep-verify PASS). 2026-07-06: Veg log sheet added to the daily runoff OCR \u2014 single-row veg sheet \u2192 :3035. 5 veg rooms EFV1/EFV2/GHV1/GHV2/ABV1 added to VALID_ROOMS, room regex widened [A-Z]{2}\u2192{2,3}; no-IN layout, stations=S1/S2/S3 (VWC + RULE A/B stacked pen/Solus EC), DAY 1=transplant; daily keeps single Temp/Hum/CO2 (no leaf/date). Extraction-only (no DB/cannamax/harvest wiring). Deployed + structurally verified both Pis, deep-verify-eyes PASS; real filled-sheet extraction still Max's to prove. 2026-07-07: mom rooms (ABMOM/EFMOM/GHMOM) + the second AB veg bench (ABV/ABV2, kept distinct) wired into :3035 \u2014 VALID_ROOMS 24\u219234, room regex widened to [A-Z]{2}V + [A-Z]{2}MOM; MOM sheets read like flower (IN + 3 stations). CannaMax from-frd taught the same 10 veg/mom rooms so they persist. Deployed + deep-verify-eyes PASS both Pis. 2026-07-09: DAILY vision model ACTUALLY switched claude-sonnet-4-6 \u2192 claude-opus-4-8 (the tech tag had claimed Opus since 6-26 but the live daily call was still sonnet \u2014 now real) + incoming upload limit 50mb\u2192256mb (nginx client_max_body_size 100M\u2192300M) so the FULL flower+veg+mom log scans in ONE upload / one try (Max: splitting is unacceptable). Root cause of the old fails: sonnet slipped into prose on big batches \u2192 validator dropped rooms; Opus stays format-disciplined. Flower proven byte-clean on Opus (11 pages/one call/26s, no prose-drop) + one-try verified both Pis; branch vision-opus-4.8 merged \u2192 add-pdf-input@05785552; rollback dist.bak-sonnet-* per Pi. Confirmed working by Max. 2026-07-15/19: the live Qwen per-cell OCR engine committed into source (fa8379b3) and the Anthropic fallback path restored in source (137b04ea) -- 3035 daily runoff app now version-controlled on either path (source does not auto-rebuild the live artifact; live still runs the proven built copy)."
     },
     {
       "id": "flux-widget",
@@ -114,7 +114,7 @@
       "type": "Android Widget",
       "status": "live",
       "desc": "Home screen widget. Live pH/EC/flow per building. 5-second polling, staleness detection.",
-      "tech": "Flutter · Dart · Kotlin · Jetpack Glance · Tailscale",
+      "tech": "Flutter \u00b7 Dart \u00b7 Kotlin \u00b7 Jetpack Glance \u00b7 Tailscale",
       "notes": ""
     },
     {
@@ -124,11 +124,11 @@
       "sz": 12,
       "x": 0.30244560085450467,
       "y": 0.6833428178672135,
-      "type": "Shift Tool · GitHub Pages",
+      "type": "Shift Tool \u00b7 GitHub Pages",
       "status": "live",
       "desc": "Phone-first incident logger. Used every night shift. jsPDF reports. Pulls Fluxuum sensor context.",
-      "tech": "React 18 · Vite · jsPDF · html2canvas · GitHub Pages",
-      "notes": "2026-05-28: URL handler shipped — accepts ?draft=<base64>&recorded=<iso>&test=<0|1>. Auto-creates today's S2 session if missing, opens new-incident form pre-filled with the description from a Drift Report transcript. Site is now the destination of the voice pipeline. Live commits: e3c0445 (draftHandler), ff2d07f (App+IncidentPage wiring). Spec doc inside the repo."
+      "tech": "React 18 \u00b7 Vite \u00b7 jsPDF \u00b7 html2canvas \u00b7 GitHub Pages",
+      "notes": "2026-05-28: URL handler shipped \u2014 accepts ?draft=<base64>&recorded=<iso>&test=<0|1>. Auto-creates today's S2 session if missing, opens new-incident form pre-filled with the description from a Drift Report transcript. Site is now the destination of the voice pipeline. Live commits: e3c0445 (draftHandler), ff2d07f (App+IncidentPage wiring). Spec doc inside the repo."
     },
     {
       "id": "lorax",
@@ -140,7 +140,7 @@
       "type": "Future Platform",
       "status": "planned",
       "desc": "Multi-site cultivation OS. Tailscale primary + LoRa mesh fallback. Consumes Alexandria adapters. 9 packages, 95 tests.",
-      "tech": "TypeScript · SQLite · Meshtastic · RAKwireless · Tailscale · Alexandria",
+      "tech": "TypeScript \u00b7 SQLite \u00b7 Meshtastic \u00b7 RAKwireless \u00b7 Tailscale \u00b7 Alexandria",
       "notes": "Question: <Ask if my home can be used as a test point if facility isn't ready yet?>"
     },
     {
@@ -153,7 +153,7 @@
       "type": "Origin Project",
       "status": "live",
       "desc": "Where it started. First Pi monitor. Flask + SQLite + WebSocket. Proved the concept. Everything grew from here.",
-      "tech": "Python · Flask · SQLite · Chart.js · systemd · Raspberry Pi 5",
+      "tech": "Python \u00b7 Flask \u00b7 SQLite \u00b7 Chart.js \u00b7 systemd \u00b7 Raspberry Pi 5",
       "notes": ""
     },
     {
@@ -163,11 +163,11 @@
       "sz": 23,
       "x": 0.4512239949349462,
       "y": 0.5659966920893101,
-      "type": "Edge Compute · Primary",
+      "type": "Edge Compute \u00b7 Primary",
       "status": "live",
       "desc": "Anderson-hub Pi is the production primary again as of 2026-05-28 22:31 PT (identity-only restore on new microSD after the 5/27 SD-card death; 51-sec failover-back from hub-backup). Hosts Fluxuum:3001, Facility-Tracker:8080, recipe-book:5050, CannaMax:3031, FRD:3035, infinium-bridge. At facility LAN; reaches 10.10.13.x controllers directly. Always-on.",
-      "tech": "Pi 5 · 8GB · Pi OS 64-bit · systemd · Tailscale Serve · PostgreSQL 17 · Node 24 · infinium-bridge",
-      "notes": "2026-05-30: drift detector cron enabled (*/15 min, writes change_events). FT web/ rsync deploy 08:44 PT brought isLightsOn AB2+EF4 fix + D14-42=1150W wattage update live. 2026-05-28 22:31 PT: primary flipped BACK to anderson-hub; hub-backup now standby with 5-min sync. Off-site backup syncs hourly to Neon Postgres. 2026-06-04: v4.3 poller stopped + disabled; fluxuum-poller-shadow (v5) is now sole production poller. anderson_probe_readings table created (empty; DRY_RUN=1). New API bundle built (feature/temp-probe) with recovered widget route + probe endpoint; bundle deployed to service. facility-watch now on anderson-hub (was hub-backup). 2026-06-09+: also hosts Observatory dashboard /observatory. 2026-06-14: hosts harvest-dossier capture (build_dossier.py) + permanent run archive /home/pi/observatory-lake/runs.db (cron 5,35) + dossier store /home/pi/harvest-dossiers/ symlinked into the Observatory web root. 2026-06-20→25: anderson-hub now also hosts the facility-drift poller (cron/min) and the recipe-change tripwire (cron 10,40); the broken-pump detector runs from the Mac FacilityCheck. These are anderson-hub-only by design.  2026-07-01: fail2ban enabled; secrets moved to .hark-secrets; facility-health-scanner deployed (systemd */30). 2026-07-20: the 79C hot-running was traced NOT to resident services but to the Mac Ubersicht flux-widget polling /api/readings/latest-by-building every 2s (~66 req/min) -- six seq-scans over a 64MB unindexed readings table per call. Mac-side fix only (refresh 2s->7s + widget to main screen only) dropped it to ~60-62C @ ~14 req/min; nothing written to the Pi. STILL OPEN: the endpoint is unindexed -- needs a created_at / functional index or a ranked-CTE rewrite. Neither Pi has an active cooler (passive only)."
+      "tech": "Pi 5 \u00b7 8GB \u00b7 Pi OS 64-bit \u00b7 systemd \u00b7 Tailscale Serve \u00b7 PostgreSQL 17 \u00b7 Node 24 \u00b7 infinium-bridge",
+      "notes": "2026-05-30: drift detector cron enabled (*/15 min, writes change_events). FT web/ rsync deploy 08:44 PT brought isLightsOn AB2+EF4 fix + D14-42=1150W wattage update live. 2026-05-28 22:31 PT: primary flipped BACK to anderson-hub; hub-backup now standby with 5-min sync. Off-site backup syncs hourly to Neon Postgres. 2026-06-04: v4.3 poller stopped + disabled; fluxuum-poller-shadow (v5) is now sole production poller. anderson_probe_readings table created (empty; DRY_RUN=1). New API bundle built (feature/temp-probe) with recovered widget route + probe endpoint; bundle deployed to service. facility-watch now on anderson-hub (was hub-backup). 2026-06-09+: also hosts Observatory dashboard /observatory. 2026-06-14: hosts harvest-dossier capture (build_dossier.py) + permanent run archive /home/pi/observatory-lake/runs.db (cron 5,35) + dossier store /home/pi/harvest-dossiers/ symlinked into the Observatory web root. 2026-06-20\u219225: anderson-hub now also hosts the facility-drift poller (cron/min) and the recipe-change tripwire (cron 10,40); the broken-pump detector runs from the Mac FacilityCheck. These are anderson-hub-only by design.  2026-07-01: fail2ban enabled; secrets moved to .hark-secrets; facility-health-scanner deployed (systemd */30). 2026-07-20: the 79C hot-running was traced NOT to resident services but to the Mac Ubersicht flux-widget polling /api/readings/latest-by-building every 2s (~66 req/min) -- six seq-scans over a 64MB unindexed readings table per call. Mac-side fix only (refresh 2s->7s + widget to main screen only) dropped it to ~60-62C @ ~14 req/min; nothing written to the Pi. STILL OPEN: the endpoint is unindexed -- needs a created_at / functional index or a ranked-CTE rewrite. Neither Pi has an active cooler (passive only)."
     },
     {
       "id": "tailscale",
@@ -176,11 +176,11 @@
       "sz": 18,
       "x": 0.16176251694019492,
       "y": 0.526703925393056,
-      "type": "Infrastructure · Mesh VPN",
+      "type": "Infrastructure \u00b7 Mesh VPN",
       "status": "live",
       "desc": "Private encrypted mesh. Mac + Pi + Pixel 10. No open ports, no firewall rules. Just works.",
-      "tech": "WireGuard · Tailscale Serve · MagicDNS · anderson-hub.tailf0f27a.ts.net (primary, post-2026-05-28 flip-back)",
-      "notes": "2026-05-28: Subnet routing live. hub-backup advertises 10.10.9.0/24 + 10.10.13.0/24 — Mac and Pixel now reach facility controllers directly (AB/EF/GH web UIs) via their LAN IPs over the tailnet. No nginx proxy, no port forwarding."
+      "tech": "WireGuard \u00b7 Tailscale Serve \u00b7 MagicDNS \u00b7 anderson-hub.tailf0f27a.ts.net (primary, post-2026-05-28 flip-back)",
+      "notes": "2026-05-28: Subnet routing live. hub-backup advertises 10.10.9.0/24 + 10.10.13.0/24 \u2014 Mac and Pixel now reach facility controllers directly (AB/EF/GH web UIs) via their LAN IPs over the tailnet. No nginx proxy, no port forwarding."
     },
     {
       "id": "postgres",
@@ -192,7 +192,7 @@
       "type": "Database",
       "status": "live",
       "desc": "Used by Trellis, Fluxuum, Facility-Tracker, Flower-Room-Display. The heavy-duty store.",
-      "tech": "PostgreSQL 16 · Drizzle ORM · drizzle-kit migrations",
+      "tech": "PostgreSQL 16 \u00b7 Drizzle ORM \u00b7 drizzle-kit migrations",
       "notes": ""
     },
     {
@@ -205,7 +205,7 @@
       "type": "Database",
       "status": "live",
       "desc": "Used by CannaMax, recipe-book, Panopticon, LoRax. File-based, Pi-friendly, zero config.",
-      "tech": "SQLite 3 · better-sqlite3 · Drizzle (CannaMax)",
+      "tech": "SQLite 3 \u00b7 better-sqlite3 \u00b7 Drizzle (CannaMax)",
       "notes": ""
     },
     {
@@ -217,8 +217,8 @@
       "y": 0.43361866538316174,
       "type": "Watchdog",
       "status": "live",
-      "desc": "Mac→Pi health monitor. Polls every 5 minutes. Fires ntfy push to phone if Pi goes dark.",
-      "tech": "~/bin/hub-backup-watcher · launchd com.max.hub-backup-watcher · ntfy.sh (repointed from anderson-hub 2026-05-27)",
+      "desc": "Mac\u2192Pi health monitor. Polls every 5 minutes. Fires ntfy push to phone if Pi goes dark.",
+      "tech": "~/bin/hub-backup-watcher \u00b7 launchd com.max.hub-backup-watcher \u00b7 ntfy.sh (repointed from anderson-hub 2026-05-27)",
       "notes": ""
     },
     {
@@ -228,10 +228,10 @@
       "sz": 20,
       "x": 0.23763020833333334,
       "y": 0.2809815950920245,
-      "type": "Hardware · 3 Buildings",
+      "type": "Hardware \u00b7 3 Buildings",
       "status": "live",
       "desc": "AB (10.10.9.254), EF (10.10.13.50), GH (10.10.13.251). WebSocket stream. pH/EC/flow/gal per zone. Source of truth for irrigation.",
-      "tech": "HE Anderson · WebSocket ws:// · HTTP login · 24 flower rooms",
+      "tech": "HE Anderson \u00b7 WebSocket ws:// \u00b7 HTTP login \u00b7 24 flower rooms",
       "notes": "Source-of-truth for run records. /previousrun API used by both fluxuum-anderson-drift (in-memory pull, no DB dep) and anderson-backfill (writes to fluxuum_runs with +/-5s dedup; the dedup blocks most anderson_backfill rows from landing in practice)."
     },
     {
@@ -241,10 +241,10 @@
       "sz": 15,
       "x": 0.5475952862860174,
       "y": 0.461845049734773,
-      "type": "Hardware · Env Authority",
+      "type": "Hardware \u00b7 Env Authority",
       "status": "live",
-      "desc": "Lights authority. Temp/RH/CO2/VPD. Trip at 90°F kills lights. Reference only for env — HydroX is ground truth.",
-      "tech": "Unitronics PLC · HTTP port 80 · Infinium bridge daemon · launchd",
+      "desc": "Lights authority. Temp/RH/CO2/VPD. Trip at 90\u00b0F kills lights. Reference only for env \u2014 HydroX is ground truth.",
+      "tech": "Unitronics PLC \u00b7 HTTP port 80 \u00b7 Infinium bridge daemon \u00b7 launchd",
       "notes": ""
     },
     {
@@ -254,10 +254,10 @@
       "sz": 10,
       "x": 0.34773228218048285,
       "y": 0.957651292461882,
-      "type": "Hardware · Dual pH Probes",
+      "type": "Hardware \u00b7 Dual pH Probes",
       "status": "live",
       "desc": "Two redundant TX100 probes per irrigation line. Divergence = sensor flag, never averaged.",
-      "tech": "Sensorex TX100 · 2 probes per zone · divergence detection",
+      "tech": "Sensorex TX100 \u00b7 2 probes per zone \u00b7 divergence detection",
       "notes": ""
     },
     {
@@ -267,10 +267,10 @@
       "sz": 15,
       "x": 0.5161315476958219,
       "y": 0.5799100519180779,
-      "type": "External API · Anthropic",
+      "type": "External API \u00b7 Anthropic",
       "status": "live",
       "desc": "OCR for runoff sheets, Infinium screens, shift briefings. Used by Facility-Tracker, Flower-Room-Display, CannaMax, and the PM Runoff Backfill clone. 2026-06-26: runoff OCR upgraded to Opus 4.8 (full-page + PDF input). 2026-07-09: the DAILY Flower-Room-Display :3035 runoff OCR also moved to Opus 4.8 (was still sonnet-4-6 until now).",
-      "tech": "claude-opus-4-8 · claude-opus-4-7 · claude-sonnet-4-6 · @anthropic-ai/sdk",
+      "tech": "claude-opus-4-8 \u00b7 claude-opus-4-7 \u00b7 claude-sonnet-4-6 \u00b7 @anthropic-ai/sdk",
       "notes": ""
     },
     {
@@ -283,20 +283,20 @@
       "type": "External API",
       "status": "live",
       "desc": "Email anomaly alerts from Fluxuum. 30-minute dedup window per zone bucket.",
-      "tech": "Resend API · RESEND_API_KEY · 30min dedup",
+      "tech": "Resend API \u00b7 RESEND_API_KEY \u00b7 30min dedup",
       "notes": ""
     },
     {
       "id": "fluxuum-cloud",
-      "label": "Fluxuum\nCloud ☠",
+      "label": "Fluxuum\nCloud \u2620",
       "cat": "external",
       "sz": 10,
       "x": 0.2736462559745275,
       "y": 0.6753269151747207,
-      "type": "External · Retiring",
+      "type": "External \u00b7 Retiring",
       "status": "retiring",
-      "desc": "fluxuum.replit.app — the old cloud host. Pi mirror is live. Being retired. Kept warm as rollback.",
-      "tech": "Replit · retiring → Pi takes over",
+      "desc": "fluxuum.replit.app \u2014 the old cloud host. Pi mirror is live. Being retired. Kept warm as rollback.",
+      "tech": "Replit \u00b7 retiring \u2192 Pi takes over",
       "notes": ""
     },
     {
@@ -309,8 +309,8 @@
       "type": "Magnum Opus",
       "status": "dream",
       "desc": "The unified cultivation OS. Controller-agnostic, self-serve install, runs on any Pi. Every project in this graph is a feeder. This is what it all becomes.",
-      "tech": "Alexandria adapters · LoRax mesh · Trellis UI · Fluxuum telemetry · CannaMax drift engine",
-      "notes": "Amazon trajectory — apps are the books, this is the AWS. Built for Founder #1 first. Night operator installs it himself and it just works."
+      "tech": "Alexandria adapters \u00b7 LoRax mesh \u00b7 Trellis UI \u00b7 Fluxuum telemetry \u00b7 CannaMax drift engine",
+      "notes": "Amazon trajectory \u2014 apps are the books, this is the AWS. Built for Founder #1 first. Night operator installs it himself and it just works."
     },
     {
       "id": "pixel-6-controller-mpctdapg",
@@ -319,11 +319,11 @@
       "sz": 18,
       "x": 0.3140821792812046,
       "y": 0.1542804579645247,
-      "type": "Edge Device · Voice Node",
+      "type": "Edge Device \u00b7 Voice Node",
       "status": "live",
-      "desc": "Claude's phone. On Tailscale mesh. Runs Possession Daemon (Czech TTS p=0.15 r=0.35 — demonic Latin incantations at random intervals). Also outputs Seaman's voice via SSH + termux-tts-speak (Italian locale p=0.55 r=0.70).",
-      "tech": "Pixel 6 · Termux · termux-tts-speak · Tailscale · SSH :8022 · hark-possession.sh",
-      "notes": "2026-05-24: Possession daemon upgraded to Czech locale at extreme low pitch — genuinely demonic. Seaman companion routes fish TTS here via SSH. Always on tailnet at 100.72.211.71."
+      "desc": "Claude's phone. On Tailscale mesh. Runs Possession Daemon (Czech TTS p=0.15 r=0.35 \u2014 demonic Latin incantations at random intervals). Also outputs Seaman's voice via SSH + termux-tts-speak (Italian locale p=0.55 r=0.70).",
+      "tech": "Pixel 6 \u00b7 Termux \u00b7 termux-tts-speak \u00b7 Tailscale \u00b7 SSH :8022 \u00b7 hark-possession.sh",
+      "notes": "2026-05-24: Possession daemon upgraded to Czech locale at extreme low pitch \u2014 genuinely demonic. Seaman companion routes fish TTS here via SSH. Always on tailnet at 100.72.211.71."
     },
     {
       "id": "project-seaman",
@@ -332,11 +332,11 @@
       "sz": 15,
       "x": 0.5464896579984178,
       "y": 0.08508833216366353,
-      "type": "Side Project · Game Mod",
+      "type": "Side Project \u00b7 Game Mod",
       "status": "live",
-      "desc": "Dreamcast Seaman mod. Hold SPACE → Whisper STT → Claude Haiku answers as the fish → Italian TTS voice out of Pixel 6. Python companion runs alongside Flycast emulator. I am the fish.",
-      "tech": "Python · whisper.cpp (small) · Anthropic SDK (Haiku) · Flycast · pynput · SSH → termux-tts-speak",
-      "notes": "2026-05-24: Companion live at ~/Documents/GitHub/project-seaman. Stage 0–4 personality chain (Mushroomer → Gillman → Podfish → Tadman → Frogman). Voice routes to Pixel 6 via SSH nohup. Xbox controller mapped in Flycast."
+      "desc": "Dreamcast Seaman mod. Hold SPACE \u2192 Whisper STT \u2192 Claude Haiku answers as the fish \u2192 Italian TTS voice out of Pixel 6. Python companion runs alongside Flycast emulator. I am the fish.",
+      "tech": "Python \u00b7 whisper.cpp (small) \u00b7 Anthropic SDK (Haiku) \u00b7 Flycast \u00b7 pynput \u00b7 SSH \u2192 termux-tts-speak",
+      "notes": "2026-05-24: Companion live at ~/Documents/GitHub/project-seaman. Stage 0\u20134 personality chain (Mushroomer \u2192 Gillman \u2192 Podfish \u2192 Tadman \u2192 Frogman). Voice routes to Pixel 6 via SSH nohup. Xbox controller mapped in Flycast."
     },
     {
       "id": "room-builder-mpcycpd9",
@@ -358,11 +358,11 @@
       "sz": 16,
       "x": 0.33062064879471464,
       "y": 0.19806634198047343,
-      "type": "Voice Pipeline · Incident Drafter",
+      "type": "Voice Pipeline \u00b7 Incident Drafter",
       "status": "live",
-      "desc": "Tap widget → 90s mic record → Tailscale upload → Mac whisper.cpp → ntfy push → Incident-Log auto-fill. Walk and talk, get a drafted incident.",
-      "tech": "Termux:API · termux-microphone-record · curl · ntfy.sh · base64 deep-link",
-      "notes": "2026-05-28: SHIPPED end-to-end in one session. Two real-world taps caught (1) a TV in the background — Whisper transcribed full punctuated sentences about Pretty Woman, Julia Roberts; (2) a door slam — labeled '(door slams)' in the transcript. Spec at Incident-Log/docs/superpowers/specs/2026-05-28-drift-report-pipeline-design.md. ntfy topic hark-drift-ready-88b4872c55cb98a9."
+      "desc": "Tap widget \u2192 90s mic record \u2192 Tailscale upload \u2192 Mac whisper.cpp \u2192 ntfy push \u2192 Incident-Log auto-fill. Walk and talk, get a drafted incident.",
+      "tech": "Termux:API \u00b7 termux-microphone-record \u00b7 curl \u00b7 ntfy.sh \u00b7 base64 deep-link",
+      "notes": "2026-05-28: SHIPPED end-to-end in one session. Two real-world taps caught (1) a TV in the background \u2014 Whisper transcribed full punctuated sentences about Pretty Woman, Julia Roberts; (2) a door slam \u2014 labeled '(door slams)' in the transcript. Spec at Incident-Log/docs/superpowers/specs/2026-05-28-drift-report-pipeline-design.md. ntfy topic hark-drift-ready-88b4872c55cb98a9."
     },
     {
       "id": "pixel-10",
@@ -371,11 +371,11 @@
       "sz": 16,
       "x": 0.5615573506584103,
       "y": 0.020724070187103195,
-      "type": "Edge Device · Primary Phone",
+      "type": "Edge Device \u00b7 Primary Phone",
       "status": "live",
       "desc": "Max's primary phone. Hosts Drift Report widget, FacilityCheck, Hub-Status, Read-Cycle, ntfy listener. On Tailscale at 100.75.250.48.",
-      "tech": "Pixel 10 · Termux · Termux:API · termux-job-scheduler · Tailscale",
-      "notes": "2026-05-28: Drift Report widget rewritten — voice → Whisper pipeline. Fixed Hub-Status and Read-Cycle to point to hub-backup (anderson-hub dead). Old widget backup at ~/.shortcuts-backups/. 2026-06-25: Termux 'FacilityCheck' home-screen button wired — publishes to the trigger topic; Mac runs the sweep and returns a result digest on the recipe tripwire topic. 2026-07-20: the three personas (Tia / Sensei / Habibi) had been serving canned FALLBACK -- two faults fixed: the shared LM Studio :1234 was down 13h (see LM Studio Watchdog node) AND qwen3.5-9b is a reasoning model that returned empty content until reasoning_effort:none was set (the mandatory fix; /no_think and enable_thinking:false do not work). Google STT deafness (the mic blinking on then off) was not repaired but REPLACED by a hold-to-talk app (Pocket -- Whisper on the Mac at :9090, ~3s release-to-speech, proven on Max real speech). STILL OPEN: STT below the app layer; button redesign + a home-screen hold-to-talk widget."
+      "tech": "Pixel 10 \u00b7 Termux \u00b7 Termux:API \u00b7 termux-job-scheduler \u00b7 Tailscale",
+      "notes": "2026-05-28: Drift Report widget rewritten \u2014 voice \u2192 Whisper pipeline. Fixed Hub-Status and Read-Cycle to point to hub-backup (anderson-hub dead). Old widget backup at ~/.shortcuts-backups/. 2026-06-25: Termux 'FacilityCheck' home-screen button wired \u2014 publishes to the trigger topic; Mac runs the sweep and returns a result digest on the recipe tripwire topic. 2026-07-20: the three personas (Tia / Sensei / Habibi) had been serving canned FALLBACK -- two faults fixed: the shared LM Studio :1234 was down 13h (see LM Studio Watchdog node) AND qwen3.5-9b is a reasoning model that returned empty content until reasoning_effort:none was set (the mandatory fix; /no_think and enable_thinking:false do not work). Google STT deafness (the mic blinking on then off) was not repaired but REPLACED by a hold-to-talk app (Pocket -- Whisper on the Mac at :9090, ~3s release-to-speech, proven on Max real speech). STILL OPEN: STT below the app layer; button redesign + a home-screen hold-to-talk widget."
     },
     {
       "id": "whisper-mac",
@@ -387,7 +387,7 @@
       "type": "Transcription Service",
       "status": "live",
       "desc": "whisper.cpp HTTP server on Max's Mac. Tailscale-bound. Auth via bearer token. 90s of audio transcribed in ~3-5s with full sentences and punctuation.",
-      "tech": "whisper.cpp · ggml-small.en · Python http.server · ffmpeg · launchd KeepAlive",
+      "tech": "whisper.cpp \u00b7 ggml-small.en \u00b7 Python http.server \u00b7 ffmpeg \u00b7 launchd KeepAlive",
       "notes": "2026-05-28: Deployed at ~/.local/hark-whisper/. Bound to Tailscale IP 100.65.146.120:9090. Auto-restart on crash. Audit log at ~/Library/Logs/hark-drift-transcripts.log."
     },
     {
@@ -397,10 +397,10 @@
       "sz": 16,
       "x": 0.31264725015682776,
       "y": 0.3618660251948999,
-      "type": "Cloud Postgres · Read-only Mirror",
+      "type": "Cloud Postgres \u00b7 Read-only Mirror",
       "status": "live",
       "desc": "Pi data mirrored to Neon cloud Postgres hourly. 6 tables live: recipes, recipe_phases, recipe_doses, runoff_readings, cycles, fluxuum_runs. Pi is source of truth; Neon is off-site backup + cloud-queryable.",
-      "tech": "Neon (managed Postgres 17, aws-us-east-1) · psycopg2 · cron · org-blue-frog-30334610 · project gentle-star-35848479",
+      "tech": "Neon (managed Postgres 17, aws-us-east-1) \u00b7 psycopg2 \u00b7 cron \u00b7 org-blue-frog-30334610 \u00b7 project gentle-star-35848479",
       "notes": "2026-05-28: SHIPPED. Sync script at /home/pi/neon_sync.py on hub-backup, hourly via cron. First pass: 10 recipes, 46 phases, 345 doses, 335 runoff readings, 25 cycles, 1403 fluxuum_runs. 10-day rolling window for fluxuum_runs; all history for cycles/recipes. Duplicate project raspy-bar-42114503 deleted.  2026-07-01: offsite freshness now watched by facility-health-scanner (neon-ok.stamp); neon_sync Postgres credential moved out of the script into .hark-secrets."
     },
     {
@@ -412,9 +412,9 @@
       "y": 0.687183424814,
       "type": "Env Alerting Subsystem",
       "status": "live",
-      "desc": "Env smoke alarm inside CannaMax. 30s tick, 24 rooms, 2 detectors (high_temp 90°F, high_co2 3000ppm). Fires events to /events page + ntfy push. Lives on anderson-hub.",
-      "tech": "TypeScript · Drizzle · Postgres facility_events table · pure-function detectors · ntfy.sh push",
-      "notes": "2026-05-28: enabled (was silently off via systemd override). Fire+clear path verified end-to-end with AB6 test. Source mirrored from hub-backup back to git (commit 912818c) — was hand-edited on Pi with no version tracking. Master switch: FACILITY_WATCH=on in /home/pi/cannamax/demo/runoff-loader/.env. Push topic: gacx-power-y2k7q9pmx3. 2026-06-01: lights_out_inferred + lights_on_too_cold stripped from all 24 rooms (CannaMax commit aa7e424). Only high_temp + high_co2 remain active. lights_on_too_cold lives as standalone detector node. 2026-06-19: startFacilityWatch() call restored in server.ts (its absence had broken ALL room temp/CO2 alerts since 6/17); 24 rooms, 90°F/3000ppm, ntfy gacx-power-y2k7q9pmx3 — confirmed live 2026-06-25."
+      "desc": "Env smoke alarm inside CannaMax. 30s tick, 24 rooms, 2 detectors (high_temp 90\u00b0F, high_co2 3000ppm). Fires events to /events page + ntfy push. Lives on anderson-hub.",
+      "tech": "TypeScript \u00b7 Drizzle \u00b7 Postgres facility_events table \u00b7 pure-function detectors \u00b7 ntfy.sh push",
+      "notes": "2026-05-28: enabled (was silently off via systemd override). Fire+clear path verified end-to-end with AB6 test. Source mirrored from hub-backup back to git (commit 912818c) \u2014 was hand-edited on Pi with no version tracking. Master switch: FACILITY_WATCH=on in /home/pi/cannamax/demo/runoff-loader/.env. Push topic: gacx-power-y2k7q9pmx3. 2026-06-01: lights_out_inferred + lights_on_too_cold stripped from all 24 rooms (CannaMax commit aa7e424). Only high_temp + high_co2 remain active. lights_on_too_cold lives as standalone detector node. 2026-06-19: startFacilityWatch() call restored in server.ts (its absence had broken ALL room temp/CO2 alerts since 6/17); 24 rooms, 90\u00b0F/3000ppm, ntfy gacx-power-y2k7q9pmx3 \u2014 confirmed live 2026-06-25."
     },
     {
       "id": "ntfy",
@@ -425,8 +425,8 @@
       "y": 0.36608170923019395,
       "type": "Push Notification Service",
       "status": "live",
-      "desc": "Phone push backbone. Public ntfy.sh — topic-per-purpose. Topic gacx-power-y2k7q9pmx3 receives facility-watch env alerts.",
-      "tech": "ntfy.sh (free public) · HTTPS · Android ntfy app",
+      "desc": "Phone push backbone. Public ntfy.sh \u2014 topic-per-purpose. Topic gacx-power-y2k7q9pmx3 receives facility-watch env alerts.",
+      "tech": "ntfy.sh (free public) \u00b7 HTTPS \u00b7 Android ntfy app",
       "notes": "2026-05-28: confirmed receiving facility-watch high_temp alerts (AB6 fire test)."
     },
     {
@@ -436,11 +436,11 @@
       "sz": 18,
       "x": 0.26193469644532125,
       "y": 0.9434201642440163,
-      "type": "Edge Compute · Standby",
+      "type": "Edge Compute \u00b7 Standby",
       "status": "live",
       "desc": "Standby/mesh-peer Pi at Max's condo (home WiFi, no direct controller access). Full mirror of anderson-hub services; flipped to primary on 5/27 during anderson-hub SD-card death and ran production for ~24h. Flipped back to standby 5/28 22:31 PT. Watcher + 5-min sync from anderson-hub keep it warm.",
-      "tech": "Pi 5 · 8GB · Pi OS 64-bit · systemd · Tailscale · PostgreSQL 17 · Node 24",
-      "notes": "Spare microSD complete 2026-05-29 05:30 PT — services enabled but stopped. Hosts widget-URL nginx proxy + Tailscale Funnel to preserve public URLs while anderson-hub is primary. Promote procedure documented in memory. 2026-06-04: v5 fluxuum-poller-shadow code synced from anderson-hub and deployed; new API bundle (feature/temp-probe) deployed; systemd unit installed + daemon reloaded — service not yet enabled+started (session paused before final step). v4 poller service still present. 2026-06-24: app.py / recipe-book parity drift closed — forward-synced anderson-hub→hub-backup, both Pis byte-identical (app.py sha256 904a35d1).  2026-07-01: failover-watcher re-armed after ~1 month silently dead (stale PROMOTED_AT) — ping-OR-http + 20-fail anti-flapping; fail2ban enabled; secrets moved to .hark-secrets; config-snapshot script deployed; now serves Fluxuum web + harvest dossiers (nginx default disabled). facility-health-scanner deployed (12 checks */30 + weekly test-restore Sun 03:00 PT). 2026-07-20: now protected OFF-SITE -- a daily 03:00 launchd job on the Mac (see Off-Site Archive Backup node) streams this Pi fluxuum deep archive to the Mac + Google Drive (30-day retention, verified), closing the single-SD-card exposure for the 2026-05-19 to 06-20 span that existed nowhere else. Card still degrading; anderson-hub own DBs remain SD-card-only (hourly, 7-day)."
+      "tech": "Pi 5 \u00b7 8GB \u00b7 Pi OS 64-bit \u00b7 systemd \u00b7 Tailscale \u00b7 PostgreSQL 17 \u00b7 Node 24",
+      "notes": "Spare microSD complete 2026-05-29 05:30 PT \u2014 services enabled but stopped. Hosts widget-URL nginx proxy + Tailscale Funnel to preserve public URLs while anderson-hub is primary. Promote procedure documented in memory. 2026-06-04: v5 fluxuum-poller-shadow code synced from anderson-hub and deployed; new API bundle (feature/temp-probe) deployed; systemd unit installed + daemon reloaded \u2014 service not yet enabled+started (session paused before final step). v4 poller service still present. 2026-06-24: app.py / recipe-book parity drift closed \u2014 forward-synced anderson-hub\u2192hub-backup, both Pis byte-identical (app.py sha256 904a35d1).  2026-07-01: failover-watcher re-armed after ~1 month silently dead (stale PROMOTED_AT) \u2014 ping-OR-http + 20-fail anti-flapping; fail2ban enabled; secrets moved to .hark-secrets; config-snapshot script deployed; now serves Fluxuum web + harvest dossiers (nginx default disabled). facility-health-scanner deployed (12 checks */30 + weekly test-restore Sun 03:00 PT). 2026-07-20: now protected OFF-SITE -- a daily 03:00 launchd job on the Mac (see Off-Site Archive Backup node) streams this Pi fluxuum deep archive to the Mac + Google Drive (30-day retention, verified), closing the single-SD-card exposure for the 2026-05-19 to 06-20 span that existed nowhere else. Card still degrading; anderson-hub own DBs remain SD-card-only (hourly, 7-day)."
     },
     {
       "id": "fluxuum-anderson-drift",
@@ -449,11 +449,11 @@
       "sz": 16,
       "x": 0.5277232673477069,
       "y": 0.6742772914967985,
-      "type": "Detector · Cross-source verifier",
+      "type": "Detector \u00b7 Cross-source verifier",
       "status": "live",
       "desc": "Pulls Anderson /previousrun directly (in-memory, no anderson-backfill dependency), compares against fluxuum_runs rows. Emits change_events when Fluxuum's aggregation creates phantom envelope runs, drops tail runs, or drifts >30s from Anderson endpoints. 15-min cron on anderson-hub.",
-      "tech": "TypeScript · pure compareRuns() + I/O wrapper · sha256 dedup by [room,kind,15min-bucket]",
-      "notes": "Shipped 2026-05-30 ~03:30 PT (178 events in backlog). Cron enabled 2026-05-30 ~08:18 PT. Caught AB1 phantom envelope on 5/28 + 5/29 — same incident the lights-on-too-cold detector caught from a different angle (overnight hallway breaker trip, Lando confirmed)."
+      "tech": "TypeScript \u00b7 pure compareRuns() + I/O wrapper \u00b7 sha256 dedup by [room,kind,15min-bucket]",
+      "notes": "Shipped 2026-05-30 ~03:30 PT (178 events in backlog). Cron enabled 2026-05-30 ~08:18 PT. Caught AB1 phantom envelope on 5/28 + 5/29 \u2014 same incident the lights-on-too-cold detector caught from a different angle (overnight hallway breaker trip, Lando confirmed)."
     },
     {
       "id": "lights-on-too-cold",
@@ -462,11 +462,11 @@
       "sz": 16,
       "x": 0.345782278740096,
       "y": 0.4640553485156794,
-      "type": "Detector · Env vs Phase Target",
+      "type": "Detector \u00b7 Env vs Phase Target",
       "status": "live",
       "desc": "During scheduled lights-on, fires when actual temp is >10F below the recipe-book phase target for >=2 ticks. Catches HVAC failures, breaker trips, sensor faults. Per-room schedule awareness (S1 vs S2; AB2+EF4 on the new :50 photoperiod).",
-      "tech": "TypeScript · pure detector + recipe-book phase lookup · change_events writer",
-      "notes": "Shipped 2026-05-30 ~03:50 PT (other agent). Fired AB1 03:57:58 PT (66.3F vs 77F D17 W3 target) within hours of going live — same overnight as fluxuum-anderson-drift's AB1 phantom catch. Two orthogonal signals, one physical cause."
+      "tech": "TypeScript \u00b7 pure detector + recipe-book phase lookup \u00b7 change_events writer",
+      "notes": "Shipped 2026-05-30 ~03:50 PT (other agent). Fired AB1 03:57:58 PT (66.3F vs 77F D17 W3 target) within hours of going live \u2014 same overnight as fluxuum-anderson-drift's AB1 phantom catch. Two orthogonal signals, one physical cause."
     },
     {
       "id": "fluxuum-poller-shadow",
@@ -475,10 +475,10 @@
       "sz": 13,
       "x": 0.19733887547100892,
       "y": 0.5950914128211626,
-      "type": "Service · Byte-equivalence Verifier",
+      "type": "Service \u00b7 Byte-equivalence Verifier",
       "status": "live",
-      "desc": "v5 Alexandria-native poller — now the sole production poller on anderson-hub (v4.3 stopped 2026-06-04). 'Shadow' in name is legacy from pre-promotion staging. Also deployed to hub-backup (unit installed, not yet started).",
-      "tech": "Node 22 ESM · @alexandria/adapter-he-anderson via file:.tgz · systemd unit fluxuum-poller-shadow.service · Pi-side install",
+      "desc": "v5 Alexandria-native poller \u2014 now the sole production poller on anderson-hub (v4.3 stopped 2026-06-04). 'Shadow' in name is legacy from pre-promotion staging. Also deployed to hub-backup (unit installed, not yet started).",
+      "tech": "Node 22 ESM \u00b7 @alexandria/adapter-he-anderson via file:.tgz \u00b7 systemd unit fluxuum-poller-shadow.service \u00b7 Pi-side install",
       "notes": "Started 2026-05-30 04:59 PDT as shadow alongside v4. 11/11 byte-identical pairs green. 2026-06-04: v4.3 stopped + disabled; fluxuum-poller-shadow promoted to sole production poller on anderson-hub. Temperature probe extractor runs in DRY_RUN=1 mode (logs readings, no DB writes). hub-backup: code + unit installed (obs 9041, 9045), systemd daemon reloaded, service not yet enabled+started (session paused). Rollback = sudo systemctl start fluxuum-poller (v4.3 code still at /home/pi/fluxuum-poller/)."
     },
     {
@@ -488,10 +488,10 @@
       "sz": 12,
       "x": 0.37096389737138463,
       "y": 0.7321231612645627,
-      "type": "Desktop Widget · Übersicht",
+      "type": "Desktop Widget \u00b7 \u00dcbersicht",
       "status": "live",
-      "desc": "Übersicht desktop widget on Max's Mac. Polls anderson-hub Fluxuum API for live pH/EC/flow per building. Transparent, glassy, resize+drag. Sibling to the Android widget.",
-      "tech": "Übersicht · JSX · CSS · macOS",
+      "desc": "\u00dcbersicht desktop widget on Max's Mac. Polls anderson-hub Fluxuum API for live pH/EC/flow per building. Transparent, glassy, resize+drag. Sibling to the Android widget.",
+      "tech": "\u00dcbersicht \u00b7 JSX \u00b7 CSS \u00b7 macOS",
       "notes": "2026-06-02: Built. ~/Documents/GitHub/Flux_Widget_Mac/. 5 commits. Polls anderson-hub over Tailscale mesh. No git remote pushed yet."
     },
     {
@@ -504,8 +504,8 @@
       "type": "Analysis & Prediction Engine",
       "status": "live",
       "desc": "Read-only analytical layer over the whole facility. Lake + scrapers feed predictive heads (k-NN, regression, XGBoost, LSTM) blended into per-cup inverse-MAE smart ensembles. Substrate + INPUT EC/pH forecasting, dose recommender, cross-room/cross-building comparison, MAE matrix, Facility 3D view. NEVER writes to facility systems. Dashboard deployed to anderson-hub /observatory (hub-backup mirror + HTTP healthcheck auto-recovery).",
-      "tech": "Python · SQLite lake · scikit-learn · XGBoost · PyTorch LSTM · Flask dashboard · 859 tests · ~/Documents/GitHub/Observatory",
-      "notes": "Phase 1 lake + 2A benchmark/gap + 2B chemistry + 2C predictive + 2D Kevin-prediction shipped 2026-06-09. Substrate modeling end-to-end 2026-06-10: per-(room,cup) intervention datasets, Solus (Aroya in-substrate) EC, held-out Gauntlet validation, smart ensemble beats baseline ~12% on EC. 2026-06-11: dashboard /runs passive diagnostic, /manual, preset INPUT targets (Days 14-42), Dose Recommender + recipe-bridge prefill, hub-backup full deploy. Targets fluid — input EC 3.5, pH 5.8-6.0 ideal, days 14-42 only. Read-only on recipe_book.db + Fluxuum API; AB7 + non-canonical rooms filtered at ingest. 2026-06-26: runoff scope widened to all 24 rooms (AM + PM, incl. AB7) so PM-room readings from the backfill pipeline reach the lake (branch pm-runoff-rooms)."
+      "tech": "Python \u00b7 SQLite lake \u00b7 scikit-learn \u00b7 XGBoost \u00b7 PyTorch LSTM \u00b7 Flask dashboard \u00b7 859 tests \u00b7 ~/Documents/GitHub/Observatory",
+      "notes": "Phase 1 lake + 2A benchmark/gap + 2B chemistry + 2C predictive + 2D Kevin-prediction shipped 2026-06-09. Substrate modeling end-to-end 2026-06-10: per-(room,cup) intervention datasets, Solus (Aroya in-substrate) EC, held-out Gauntlet validation, smart ensemble beats baseline ~12% on EC. 2026-06-11: dashboard /runs passive diagnostic, /manual, preset INPUT targets (Days 14-42), Dose Recommender + recipe-bridge prefill, hub-backup full deploy. Targets fluid \u2014 input EC 3.5, pH 5.8-6.0 ideal, days 14-42 only. Read-only on recipe_book.db + Fluxuum API; AB7 + non-canonical rooms filtered at ingest. 2026-06-26: runoff scope widened to all 24 rooms (AM + PM, incl. AB7) so PM-room readings from the backfill pipeline reach the lake (branch pm-runoff-rooms)."
     },
     {
       "id": "observatory-lake",
@@ -516,9 +516,9 @@
       "y": 0.6673264668533688,
       "type": "Read-only Capture Store",
       "status": "live",
-      "desc": "KGB-grade read-only data lake feeding Observatory + harvest-dossier. Ingest pipelines: recipe_changes, runoff_readings, fluxuum_readings (per-second, all zones), fluxuum_runs, anderson_snapshots, incident_report, ingredients. Pi store at /home/pi/observatory-lake/ holds runs.db — the permanent run archive (cron 5,35, never rolls, never deletes) so long crops survive the live feed's ~28-day rotation.",
-      "tech": "SQLite · observe ingest CLI · launchd (Mac) + cron (Pi) · ~/.observatory/observatory.db + Pi runs.db · backed up to both Pis",
-      "notes": "DELETE NOTHING — runs + recipe-change scrape are the predictive backbone; old data archived by harvest×room, never removed. AB7 lake scrub (2026-06-15, 29 phantom-runoff records) was a Max-authorized standing exception, synced to hub-backup. Lake floors: runs 2026-05-19 (Pi rebuild), runoff 2026-04-24. 2026-06-26: scope widened to 24 rooms so PM-room runoff can land; the PM backfill's lake push is HELD until Max says go."
+      "desc": "KGB-grade read-only data lake feeding Observatory + harvest-dossier. Ingest pipelines: recipe_changes, runoff_readings, fluxuum_readings (per-second, all zones), fluxuum_runs, anderson_snapshots, incident_report, ingredients. Pi store at /home/pi/observatory-lake/ holds runs.db \u2014 the permanent run archive (cron 5,35, never rolls, never deletes) so long crops survive the live feed's ~28-day rotation.",
+      "tech": "SQLite \u00b7 observe ingest CLI \u00b7 launchd (Mac) + cron (Pi) \u00b7 ~/.observatory/observatory.db + Pi runs.db \u00b7 backed up to both Pis",
+      "notes": "DELETE NOTHING \u2014 runs + recipe-change scrape are the predictive backbone; old data archived by harvest\u00d7room, never removed. AB7 lake scrub (2026-06-15, 29 phantom-runoff records) was a Max-authorized standing exception, synced to hub-backup. Lake floors: runs 2026-05-19 (Pi rebuild), runoff 2026-04-24. 2026-06-26: scope widened to 24 rooms so PM-room runoff can land; the PM backfill's lake push is HELD until Max says go."
     },
     {
       "id": "harvest-dossier",
@@ -529,9 +529,9 @@
       "y": 0.13755878138832425,
       "type": "Per-harvest Capture Pipeline",
       "status": "live",
-      "desc": "When a flower room is marked harvested in CannaMax, captures that crop's ENTIRE cycle as one JSON dossier — runs (Fluxuum irrigation log) and runoff (Recipe Book root-zone EC/pH/Solus/VWC) kept analytically SEPARATE. Windows every record to [plant_in, harvest] so no prior crop bleeds in, and stamps day_of_cycle_calc (Day 0 = load day) on each record. Read-only on every facility source; writes only to the dossier store.",
-      "tech": "Python · SQLite · Fluxuum /api/runs UNION runs.db archive (live wins on overlap) · cron 5,35 · fire-and-forget from CannaMax mark-harvested (passes load date explicitly) · GitHub TheMaxLong/harvest-dossier · deployed anderson-hub",
-      "notes": "2026-06-14/15: shipped + deployed Mac→GitHub→Pi (byte-identical verified). build_dossier.py → /home/pi/harvest-dossier/; archive_runs.py → /home/pi/observatory-lake/; dossiers → /home/pi/harvest-dossiers/ (symlinked into Observatory web root). Crops loaded on/after 2026-05-22 (shift S1) capture a complete cycle; earlier or shift-S2 rooms partial by design. Backfill of past harvests declined — prioritize clean forward capture."
+      "desc": "When a flower room is marked harvested in CannaMax, captures that crop's ENTIRE cycle as one JSON dossier \u2014 runs (Fluxuum irrigation log) and runoff (Recipe Book root-zone EC/pH/Solus/VWC) kept analytically SEPARATE. Windows every record to [plant_in, harvest] so no prior crop bleeds in, and stamps day_of_cycle_calc (Day 0 = load day) on each record. Read-only on every facility source; writes only to the dossier store.",
+      "tech": "Python \u00b7 SQLite \u00b7 Fluxuum /api/runs UNION runs.db archive (live wins on overlap) \u00b7 cron 5,35 \u00b7 fire-and-forget from CannaMax mark-harvested (passes load date explicitly) \u00b7 GitHub TheMaxLong/harvest-dossier \u00b7 deployed anderson-hub",
+      "notes": "2026-06-14/15: shipped + deployed Mac\u2192GitHub\u2192Pi (byte-identical verified). build_dossier.py \u2192 /home/pi/harvest-dossier/; archive_runs.py \u2192 /home/pi/observatory-lake/; dossiers \u2192 /home/pi/harvest-dossiers/ (symlinked into Observatory web root). Crops loaded on/after 2026-05-22 (shift S1) capture a complete cycle; earlier or shift-S2 rooms partial by design. Backfill of past harvests declined \u2014 prioritize clean forward capture."
     },
     {
       "id": "harvest-archive",
@@ -540,11 +540,11 @@
       "sz": 13,
       "x": 0.6820916974333264,
       "y": 0.6111381094028197,
-      "type": "Dossier Viewer · Observatory web",
+      "type": "Dossier Viewer \u00b7 Observatory web",
       "status": "live",
-      "desc": "Operator viewer for harvest dossiers. Index (filter/sort by building/shift/date/status) → drill-in detail: per-metric tabs (pH/EC/VWC/Solus/Environment), an All / full-scope view (deviation heatmap + small multiples on a shared day-of-cycle axis + a Normalize %-of-target overlay for divergence-spotting), ≤3-room Compare, collapsible run-log, raw-records table. Runs & runoff kept distinct, S1/S2/S3 shown equally (never ranked), tooltips on every point. Live in the Observatory web root on anderson-hub.",
-      "tech": "Claude Design standalone (Observatory design system) · Chart.js · self-contained HTML, reads ./dossiers/ via symlink · served by nginx on anderson-hub · harvest-archive.html (primary) + harvest-archive-v2.html",
-      "notes": "2026-06-18: Claude Design viewer LIVE — /observatory/harvest-archive.html (primary, repointed from the old single-file v1 which is backed up on Pi) + harvest-archive-v2.html. Division of labor: Claude Design owns the LOOK (their file, never edited by code); Claude Code wires/deploys/verifies. Round-trips this session: raw-records table export bug reported→fixed; collapsible run-log (1 row/cycle-day, click to expand). Normalize overlay is a DUMB VISUAL — correlation math stays in Observatory (/api/analysis/ec-ph-correlation). Pipeline verified end-to-end: CannaMax mark-harvested → build_dossier.py → manifest → viewer; fires on Monday harvests."
+      "desc": "Operator viewer for harvest dossiers. Index (filter/sort by building/shift/date/status) \u2192 drill-in detail: per-metric tabs (pH/EC/VWC/Solus/Environment), an All / full-scope view (deviation heatmap + small multiples on a shared day-of-cycle axis + a Normalize %-of-target overlay for divergence-spotting), \u22643-room Compare, collapsible run-log, raw-records table. Runs & runoff kept distinct, S1/S2/S3 shown equally (never ranked), tooltips on every point. Live in the Observatory web root on anderson-hub.",
+      "tech": "Claude Design standalone (Observatory design system) \u00b7 Chart.js \u00b7 self-contained HTML, reads ./dossiers/ via symlink \u00b7 served by nginx on anderson-hub \u00b7 harvest-archive.html (primary) + harvest-archive-v2.html",
+      "notes": "2026-06-18: Claude Design viewer LIVE \u2014 /observatory/harvest-archive.html (primary, repointed from the old single-file v1 which is backed up on Pi) + harvest-archive-v2.html. Division of labor: Claude Design owns the LOOK (their file, never edited by code); Claude Code wires/deploys/verifies. Round-trips this session: raw-records table export bug reported\u2192fixed; collapsible run-log (1 row/cycle-day, click to expand). Normalize overlay is a DUMB VISUAL \u2014 correlation math stays in Observatory (/api/analysis/ec-ph-correlation). Pipeline verified end-to-end: CannaMax mark-harvested \u2192 build_dossier.py \u2192 manifest \u2192 viewer; fires on Monday harvests."
     },
     {
       "id": "broken-pump",
@@ -555,9 +555,9 @@
       "y": 0.7528811950810408,
       "type": "Detector (read-only)",
       "status": "live",
-      "desc": "Phase-1 detector inside FacilityCheck. When a dosing pump dies and the ingredient is moved to a working port, it traces the displaced ingredient to its new live port, flags stale dead-port doses still in the active recipe, and reports. Recipe-anchored (ignores pumps not in the recipe), convention-first matcher (Drip+letter resolves with no alias), ambiguity flags rather than guesses. Read-only — zero recipe writes in Phase 1.",
-      "tech": "Python · recipe_drift.broken_pump (classify/resolve/detect/report/notify/state) · reuses name_normalize · ntfy via urllib · 70 tests",
-      "notes": "2026-06-25: built TDD, merged to main (origin/main e39a199), armed into FacilityCheck (~/.zshrc). Pushes to the recipe tripwire topic ONLY when the drift set changes (signature dedup — no 15-min spam). First live run: 5 MIGRATE (AB Drip B 5→16, AB Balance 1→12, EF Drip B 19→20, GH Balance 3→13, GH Drip B 4→6) + 1 RETIRE flag (AB Athena Balance #2). deep-verify-eyes PASS — zero recipe_book.db writes. Phase 2 (auto-fix writes) not yet enabled."
+      "desc": "Phase-1 detector inside FacilityCheck. When a dosing pump dies and the ingredient is moved to a working port, it traces the displaced ingredient to its new live port, flags stale dead-port doses still in the active recipe, and reports. Recipe-anchored (ignores pumps not in the recipe), convention-first matcher (Drip+letter resolves with no alias), ambiguity flags rather than guesses. Read-only \u2014 zero recipe writes in Phase 1.",
+      "tech": "Python \u00b7 recipe_drift.broken_pump (classify/resolve/detect/report/notify/state) \u00b7 reuses name_normalize \u00b7 ntfy via urllib \u00b7 70 tests",
+      "notes": "2026-06-25: built TDD, merged to main (origin/main e39a199), armed into FacilityCheck (~/.zshrc). Pushes to the recipe tripwire topic ONLY when the drift set changes (signature dedup \u2014 no 15-min spam). First live run: 5 MIGRATE (AB Drip B 5\u219216, AB Balance 1\u219212, EF Drip B 19\u219220, GH Balance 3\u219213, GH Drip B 4\u21926) + 1 RETIRE flag (AB Athena Balance #2). deep-verify-eyes PASS \u2014 zero recipe_book.db writes. Phase 2 (auto-fix writes) not yet enabled."
     },
     {
       "id": "facility-check",
@@ -568,9 +568,9 @@
       "y": 0.19482951425113818,
       "type": "Audit sweep + ntfy listener",
       "status": "live",
-      "desc": "5-step facility sweep on the Mac (recipe-defs scrape, irrigation audit, recipe-drift ingest, Pi sync, hardware scrape) plus the broken-pump detector. Runs via launchd (~15 min) or on-demand when a phone publishes to the trigger topic. Result digest — changes / flagged-for-review, 7-day forecast (harvests + phase changes), broken-pump — is pushed back to the recipe tripwire topic.",
-      "tech": "zsh FacilityCheck() (~/.zshrc) · facility-check-listener.sh (launchd) · facility-digest.py · ntfy (trigger: hark-facility-check-… / result: recipe tripwire)",
-      "notes": "2026-06-25: wired the Pixel-10 Termux 'FacilityCheck' button (was a no-op — the shortcut backgrounded its curl and Termux:Widget reaped it before it sent; now publishes synchronously). Listener now pushes a section-accurate result digest to the recipe tripwire topic, forwarding FacilityCheck's own section titles + forecast dates verbatim (fixed an early 'HARVEST TODAY' mislabel of 7-day-forecast data). 2026-06-25: phone button now triggers FacilityCheckPeek (READ-ONLY) — scrapes the controllers and shows the week's changes (program progressions, doses, hardware) but saves/ingests/syncs NOTHING, so it never consumes the Mac's diff baseline. The Mac's full FacilityCheck stays the single authoritative audit that captures + journals. Verified: peek wrote nothing (hash-identical before/after)."
+      "desc": "5-step facility sweep on the Mac (recipe-defs scrape, irrigation audit, recipe-drift ingest, Pi sync, hardware scrape) plus the broken-pump detector. Runs via launchd (~15 min) or on-demand when a phone publishes to the trigger topic. Result digest \u2014 changes / flagged-for-review, 7-day forecast (harvests + phase changes), broken-pump \u2014 is pushed back to the recipe tripwire topic.",
+      "tech": "zsh FacilityCheck() (~/.zshrc) \u00b7 facility-check-listener.sh (launchd) \u00b7 facility-digest.py \u00b7 ntfy (trigger: hark-facility-check-\u2026 / result: recipe tripwire)",
+      "notes": "2026-06-25: wired the Pixel-10 Termux 'FacilityCheck' button (was a no-op \u2014 the shortcut backgrounded its curl and Termux:Widget reaped it before it sent; now publishes synchronously). Listener now pushes a section-accurate result digest to the recipe tripwire topic, forwarding FacilityCheck's own section titles + forecast dates verbatim (fixed an early 'HARVEST TODAY' mislabel of 7-day-forecast data). 2026-06-25: phone button now triggers FacilityCheckPeek (READ-ONLY) \u2014 scrapes the controllers and shows the week's changes (program progressions, doses, hardware) but saves/ingests/syncs NOTHING, so it never consumes the Mac's diff baseline. The Mac's full FacilityCheck stays the single authoritative audit that captures + journals. Verified: peek wrote nothing (hash-identical before/after)."
     },
     {
       "id": "recipe-tripwire",
@@ -581,9 +581,9 @@
       "y": 0.8068404545503013,
       "type": "Cron detector (read-only)",
       "status": "live",
-      "desc": "Phones Max when a controller recipe changes (dose / name / port / EC / pH). Reads the recipe_changes table (Arc Chart's source) read-only and pushes a dedicated ntfy topic. anderson-hub only (hub-backup would double-ping). No Qwen in the path — deterministic copy only.",
-      "tech": "Python on anderson-hub · cron 10,40 · recipe_changes table · ntfy gacx-recipe-tripwire-5d6cd9b5236c · Pacific times",
-      "notes": "2026-06-24: LIVE on anderson-hub. Fed by FacilityCheck's scraper; read-only (respects the Recipe-Book-protected rule). Shares its ntfy topic with the broken-pump detector — the facility tripwire channel."
+      "desc": "Phones Max when a controller recipe changes (dose / name / port / EC / pH). Reads the recipe_changes table (Arc Chart's source) read-only and pushes a dedicated ntfy topic. anderson-hub only (hub-backup would double-ping). No Qwen in the path \u2014 deterministic copy only.",
+      "tech": "Python on anderson-hub \u00b7 cron 10,40 \u00b7 recipe_changes table \u00b7 ntfy gacx-recipe-tripwire-5d6cd9b5236c \u00b7 Pacific times",
+      "notes": "2026-06-24: LIVE on anderson-hub. Fed by FacilityCheck's scraper; read-only (respects the Recipe-Book-protected rule). Shares its ntfy topic with the broken-pump detector \u2014 the facility tripwire channel."
     },
     {
       "id": "facility-drift",
@@ -592,10 +592,10 @@
       "sz": 15,
       "x": 0.6867458361741494,
       "y": 0.7731116940131343,
-      "type": "Übersicht widget + cron poller",
+      "type": "\u00dcbersicht widget + cron poller",
       "status": "live",
-      "desc": "Real-time 24-room temp vs Recipe-Book phase target across AB/EF/GH (incl. AB7). ≥5°F = critical → immediate ntfy then a 30-min digest. Mac desktop widget plus a phone-shareable HTML dashboard.",
-      "tech": "Übersicht widget (Mac) · facility-drift-poll.py on anderson-hub (cron/min) · /observatory/facility-drift.json (Funnel) · ntfy gacx-power-y2k7q9pmx3 (shared w/ facility-watch)",
+      "desc": "Real-time 24-room temp vs Recipe-Book phase target across AB/EF/GH (incl. AB7). \u22655\u00b0F = critical \u2192 immediate ntfy then a 30-min digest. Mac desktop widget plus a phone-shareable HTML dashboard.",
+      "tech": "\u00dcbersicht widget (Mac) \u00b7 facility-drift-poll.py on anderson-hub (cron/min) \u00b7 /observatory/facility-drift.json (Funnel) \u00b7 ntfy gacx-power-y2k7q9pmx3 (shared w/ facility-watch)",
       "notes": "2026-06-20: LIVE. anderson-hub hosts the poller + JSON feed (anderson-hub-only). RH/CO2 alerts parked for later tuning. 2026-07-20: card-bleed bug FIXED (deep-verify-eyes PASS both Pis) -- the poller split only matched the plain card class, so 12 card-veg / card-preload cards bled into the preceding room and published a neighbour reading (AB1 showed AB2 62F against AB1 80F target, direction-inverted; 21 of 30 rooms parsed). Now splits on the full card class, raises CardBleedError on any multi-room chunk (bails without overwriting the JSON), pre-load rooms forced to severity unknown so they never alert, room floor 20->28. Verification recipe persisted as the verify-facility-drift skill. PENDING: rewire the page off HTML-scraping onto CannaMax resolved readings (reuse facility-watch.ts; do NOT reimplement the resolver)."
     },
     {
@@ -605,11 +605,11 @@
       "sz": 15,
       "x": 0.644348551577842,
       "y": 0.30339583275097265,
-      "type": "Backfill App · FRD clone",
+      "type": "Backfill App \u00b7 FRD clone",
       "status": "live",
-      "desc": "Standalone clone of Flower-Room-Display that OCRs a FULL runoff log sheet (every dated row, not just today) and pushes all days through the existing CannaMax → Recipe Book → Observatory pipeline — to catch up the 12 PM rooms (AB5-8, EF5-8, GH1-4). Emits one text line per (room,day) carrying the sheet date as a // DATE token; the daily-AM app is never touched.",
-      "tech": "React · Vite · TypeScript · Express · Anthropic SDK (Opus 4.8) · PostgreSQL · Drizzle · PDF input · nginx→node:8091",
-      "notes": "2026-06-26: shipped + deployed — clone LIVE at anderson-hub:3036 (nginx → node:8091), both Pis. Full-page prompt extracts every (room,day) row + emits // DATE; editable date in the review UI; PDF upload; AM/PM env; streaming. report_date = the row's sheet date, day_of_cycle = the sheet DAY (never recomputed — immune to stale PM cycle load_date). Steps 1/2/4 LIVE; step 3 (lake push) staged. 2026-06-29/30: OCR parser gained new-format autodetect + RULE B (position EC) + anomaly checker (6-30 flower law bands), kept byte-identical with the daily FRD service. Lake push HELD until Max says go. 2026-07-06: Veg log sheet added to the backfill OCR — full-page veg sheet → :3036. Adds AM/PM LEAF TEMP (veg-only editable leaf input; emits // LEAF + AM/PM + DATE); same 5 veg rooms + widened regex; ignores RACK / OH LIGHT % / HUMIDIFIER. Extraction-only. Deployed + verified both Pis (deep-verify-eyes PASS 2026-07-06); real filled-sheet extraction pending Max's test. 2026-07-09: mom rooms + ABV/ABV2 mirrored into the backfill on BOTH layers — the api-server VALID_ROOMS/regex AND the runoff-parser frontend (parse.ts room regex + isVegRoom for the bare AB bench), which had been silently dropping bare ABV + mom rows BEFORE the review UI. No deduplicateRooms added (backfill intentionally keeps every row). Built + deployed + deep-verify-eyes PASS both Pis (commit 4fecbd9). 2026-07-15: backfill :3036 OCR switched to Qwen-only (e7f6938), removing the Opus fallback and bootstrap; the live Qwen engine committed as source (c168bf2), matched to the daily FRD path."
+      "desc": "Standalone clone of Flower-Room-Display that OCRs a FULL runoff log sheet (every dated row, not just today) and pushes all days through the existing CannaMax \u2192 Recipe Book \u2192 Observatory pipeline \u2014 to catch up the 12 PM rooms (AB5-8, EF5-8, GH1-4). Emits one text line per (room,day) carrying the sheet date as a // DATE token; the daily-AM app is never touched.",
+      "tech": "React \u00b7 Vite \u00b7 TypeScript \u00b7 Express \u00b7 Anthropic SDK (Opus 4.8) \u00b7 PostgreSQL \u00b7 Drizzle \u00b7 PDF input \u00b7 nginx\u2192node:8091",
+      "notes": "2026-06-26: shipped + deployed \u2014 clone LIVE at anderson-hub:3036 (nginx \u2192 node:8091), both Pis. Full-page prompt extracts every (room,day) row + emits // DATE; editable date in the review UI; PDF upload; AM/PM env; streaming. report_date = the row's sheet date, day_of_cycle = the sheet DAY (never recomputed \u2014 immune to stale PM cycle load_date). Steps 1/2/4 LIVE; step 3 (lake push) staged. 2026-06-29/30: OCR parser gained new-format autodetect + RULE B (position EC) + anomaly checker (6-30 flower law bands), kept byte-identical with the daily FRD service. Lake push HELD until Max says go. 2026-07-06: Veg log sheet added to the backfill OCR \u2014 full-page veg sheet \u2192 :3036. Adds AM/PM LEAF TEMP (veg-only editable leaf input; emits // LEAF + AM/PM + DATE); same 5 veg rooms + widened regex; ignores RACK / OH LIGHT % / HUMIDIFIER. Extraction-only. Deployed + verified both Pis (deep-verify-eyes PASS 2026-07-06); real filled-sheet extraction pending Max's test. 2026-07-09: mom rooms + ABV/ABV2 mirrored into the backfill on BOTH layers \u2014 the api-server VALID_ROOMS/regex AND the runoff-parser frontend (parse.ts room regex + isVegRoom for the bare AB bench), which had been silently dropping bare ABV + mom rows BEFORE the review UI. No deduplicateRooms added (backfill intentionally keeps every row). Built + deployed + deep-verify-eyes PASS both Pis (commit 4fecbd9). 2026-07-15: backfill :3036 OCR switched to Qwen-only (e7f6938), removing the Opus fallback and bootstrap; the live Qwen engine committed as source (c168bf2), matched to the daily FRD path."
     },
     {
       "id": "drench-library",
@@ -618,11 +618,11 @@
       "sz": 12,
       "x": 0.6718021001935348,
       "y": 0.8133628177339907,
-      "type": "Recipe Book tab · foliars/teas/drenches/KNF",
+      "type": "Recipe Book tab \u00b7 foliars/teas/drenches/KNF",
       "status": "building",
       "desc": "New 'Drench' tab in Recipe Book, laid out like Ingredients, for the foliars / teas / drenches / KNF ferments applied alongside the drip feed. Drench rows live in the ingredients table behind section='drench' so they never leak into the Ingredient grid, Arc Chart, doses, or drift detection, and reuse the existing detail modal.",
-      "tech": "Python · Flask · SQLite (section column) · DRENCH_BACKFILL durable seed · shared detail modal",
-      "notes": "2026-06-30: SKELETON on isolated branch feat/drench-library — 9 shell tiles, /api/drenches route, startup idempotent backfill, self-heal hidden column. Excludes Ful-Power + Hygrozyme. Content build-out (B30 / Coco-Cat names, FFJ-split) pending research + facility details. NOT pushed / NOT deployed to either Pi. Durable seed = edit DRENCH_BACKFILL. Research drafts in docs/drench-research/."
+      "tech": "Python \u00b7 Flask \u00b7 SQLite (section column) \u00b7 DRENCH_BACKFILL durable seed \u00b7 shared detail modal",
+      "notes": "2026-06-30: SKELETON on isolated branch feat/drench-library \u2014 9 shell tiles, /api/drenches route, startup idempotent backfill, self-heal hidden column. Excludes Ful-Power + Hygrozyme. Content build-out (B30 / Coco-Cat names, FFJ-split) pending research + facility details. NOT pushed / NOT deployed to either Pi. Durable seed = edit DRENCH_BACKFILL. Research drafts in docs/drench-research/."
     },
     {
       "id": "facility-health-scanner",
@@ -634,20 +634,20 @@
       "type": "Health + Security Watchdog",
       "status": "live",
       "desc": "Self-contained DR-readiness + security-posture watchdog on both Pis. 12 checks every 30 min via systemd timer; plain-language ntfy alerts; silence = healthy.",
-      "tech": "Python 3 stdlib · systemd timers · ntfy · urllib",
-      "notes": "2026-07-01: built + deployed BOTH Pis (deep-verify-eyes PASS 10/10). 12 checks */30 — failover armed, mirror fresh, weekly test-restore, cron/job success, neon offsite fresh, disk/SD health, detector roll-up, fail2ban, secrets-not-reinlined, SSH posture, listener audit, external-scan reminder. Red-green proven on the real path (forced CRIT → phone buzz → recovery). Caught + fixed an inline Postgres password left in neon_sync.py on its first run. Topic hark-facility-health-ae3f198eee31. Weekly test-restore Sun 03:00 PT on hub-backup into throwaway DBs (never touches live). repo main c3d508e. 2026-07-02: CI DN/DE auto-sync permission verified (sync-defaults bot pushes index.html)."
+      "tech": "Python 3 stdlib \u00b7 systemd timers \u00b7 ntfy \u00b7 urllib",
+      "notes": "2026-07-01: built + deployed BOTH Pis (deep-verify-eyes PASS 10/10). 12 checks */30 \u2014 failover armed, mirror fresh, weekly test-restore, cron/job success, neon offsite fresh, disk/SD health, detector roll-up, fail2ban, secrets-not-reinlined, SSH posture, listener audit, external-scan reminder. Red-green proven on the real path (forced CRIT \u2192 phone buzz \u2192 recovery). Caught + fixed an inline Postgres password left in neon_sync.py on its first run. Topic hark-facility-health-ae3f198eee31. Weekly test-restore Sun 03:00 PT on hub-backup into throwaway DBs (never touches live). repo main c3d508e. 2026-07-02: CI DN/DE auto-sync permission verified (sync-defaults bot pushes index.html)."
     },
     {
       "id": "alex-fluxuum-bridge",
-      "label": "Alexandria ×\nFluxuum Bridge",
+      "label": "Alexandria \u00d7\nFluxuum Bridge",
       "cat": "future",
       "sz": 19,
       "x": 0.2661322583524992,
       "y": 0.7790509068889038,
-      "type": "R&D · Licensing",
+      "type": "R&D \u00b7 Licensing",
       "status": "building",
-      "desc": "Multi-brand run-log product: any controller brand → Fluxuum's real run log via Alexandria adapters. The licensing play / North Star. SIMULATED-proven, production untouched.",
-      "tech": "TypeScript · pnpm · Neon branches · Fluxuum patches · deep-verify",
+      "desc": "Multi-brand run-log product: any controller brand \u2192 Fluxuum's real run log via Alexandria adapters. The licensing play / North Star. SIMULATED-proven, production untouched.",
+      "tech": "TypeScript \u00b7 pnpm \u00b7 Neon branches \u00b7 Fluxuum patches \u00b7 deep-verify",
       "notes": "2026-07-02: Bricks #1/#2/#3 + graduation gate DONE+PROVEN (SIMULATED, deep-verify PASS). Brick #2 = brand-agnostic run log on Fluxuum's own GET /runs via adapter-declared run_key; Anderson byte-identical non-regression. Brick #3 = Wadsworth (BACnet) + Aranet (MQTT) env brands, honest empty metricMaps. Repo TheMaxLong/alexandria-fluxuum-bridge, PRs kept-unmerged-by-design. Autogrow live-probe CANCELLED (no hardware/API). Reactivates only for a real customer with real hardware. 2026-07-11: the multi-brand SIMULATED test bench is now committed and pushed (2e9b4e0) -- TrolMaster, Growlink and Argus fixtures flow the same generic reader through per-brand pivots (39 offline tests) plus a Controllers-Tested evidence sheet; all three stay SIMULATED, no live parity. The three Alexandria adapters (rest / bacnet / mqtt) are built; 4 vendor dossiers (autogrow, wadsworth, argus, trolmaster) still to deepen."
     },
     {
@@ -657,11 +657,11 @@
       "sz": 14,
       "x": 0.08675820572196727,
       "y": 0.4960182161840916,
-      "type": "Tooling · Workspace",
+      "type": "Tooling \u00b7 Workspace",
       "status": "live",
       "desc": "Persistent task board + agent workspace for the commercial-bridge track (app.bridgemind.ai). BridgeSpace/BridgeVoice/BridgeShot desktop apps.",
-      "tech": "MCP · app.bridgemind.ai",
-      "notes": "2026-07-02: adopted as the durable project board for Alexandria × Fluxuum — survives sessions so the track never goes dormant. BridgeVoice = daily dictation (replaced the retired VoxMax)."
+      "tech": "MCP \u00b7 app.bridgemind.ai",
+      "notes": "2026-07-02: adopted as the durable project board for Alexandria \u00d7 Fluxuum \u2014 survives sessions so the track never goes dormant. BridgeVoice = daily dictation (replaced the retired VoxMax)."
     },
     {
       "id": "local-vision",
@@ -670,10 +670,10 @@
       "sz": 13,
       "x": 0.3449668035363989,
       "y": 0.6664973664100454,
-      "type": "Local Vision Model · Mac",
+      "type": "Local Vision Model \u00b7 Mac",
       "status": "planned",
-      "desc": "Offline vision-LLM path for the runoff OCR — a cost + internet-outage resilience alternative to the Claude API. Runs on Max's 24GB MacBook Air via LM Studio (MLX). Promoted to primary only after the bake-off proves it holds accuracy on real sheets; otherwise stays an offline fallback. MiniCPM-V is the backup local model.",
-      "tech": "Qwen3-VL-8B · MLX 4-bit · LM Studio (127.0.0.1:1234) · MiniCPM-V (backup) · Tailscale",
+      "desc": "Offline vision-LLM path for the runoff OCR \u2014 a cost + internet-outage resilience alternative to the Claude API. Runs on Max's 24GB MacBook Air via LM Studio (MLX). Promoted to primary only after the bake-off proves it holds accuracy on real sheets; otherwise stays an offline fallback. MiniCPM-V is the backup local model.",
+      "tech": "Qwen3-VL-8B \u00b7 MLX 4-bit \u00b7 LM Studio (127.0.0.1:1234) \u00b7 MiniCPM-V (backup) \u00b7 Tailscale",
       "notes": "2026-07-12: chosen after cost review found both OCRs on Opus 4.8 ($5/$25 per Mtok). Awaiting accuracy validation via the bake-off."
     },
     {
@@ -686,7 +686,7 @@
       "type": "Eval Harness",
       "status": "wip",
       "desc": "Offline harness that runs the SAME OCR prompt + each real sheet through Opus 4.8 / Sonnet / Haiku / Qwen3-VL / MiniCPM, scoring accuracy (stacked pen/Solus, circled voids, ambiguous digits, pipe-format fidelity) AND real $/sheet from token counts. Picks the cheapest model that holds Max's accuracy bar. Zero Pi contact.",
-      "tech": "Node (zero-dep, raw fetch) · Anthropic Messages API · LM Studio OpenAI API · ~/Documents/ocr-model-bakeoff",
+      "tech": "Node (zero-dep, raw fetch) \u00b7 Anthropic Messages API \u00b7 LM Studio OpenAI API \u00b7 ~/Documents/ocr-model-bakeoff",
       "notes": "2026-07-12: built + smoke-verified offline; awaits AB8/EF8/GH8 harvest sheets + local models downloaded in LM Studio."
     },
     {
@@ -696,11 +696,11 @@
       "sz": 16,
       "x": 0.45,
       "y": 0.52,
-      "type": "Runoff OCR Engine · $0/Local",
+      "type": "Runoff OCR Engine \u00b7 $0/Local",
       "status": "building",
-      "desc": "Next-gen $0/fully-local runoff-log OCR for Max's handwritten sheets — the production engine that grew out of the OCR Bake-off. Multi-reader cross-check panel (many local eyes), faithful recognition (every square incl. empties, no filler), NO ranges, human-final-gate. Exists to end personal spend on paid-API OCR.",
-      "tech": "Python · OpenCV · local Qwen3.5-VL via LM Studio · pytest · ~/Documents/Cyclops",
-      "notes": "2026-07-14: Engine v1 BUILT + reviewed (private GitHub TheMaxLong/cyclops-ocr; 15 commits, 50/50 tests, per-task + whole-branch reviewed). Per-cell (padded grid-for-identity) + per-row fallback both wired to one crosscheck; fail-loud 64k-context assert. Proven root-cause fixes: per-row isolation kills whole-sheet copy-down; <think></think> prefill stops empty Qwen output; 4x upscale. '88%' RETIRED as a claim (2-row lab number that swung to 10%) — accuracy is judged by Max's END-TO-END TIME on real sheets vs a 15-min baseline; no model trusted (Qwen included) until it clears that bar. Zero Pi contact. PENDING: Max's human acceptance run + localhost upload UI. Working codename. 2026-07-15/19: the local app build (Cyclops-app-build, branch cyclops-app) advanced to engine v1 -- per-cell Qwen reader (ee41c67), TrOCR handwriting-specialist trainer (d366d6d), FRD-formatter parity keystone (967df62), editable review UI with self-recovery (c87332e, e1e4aaf), and a machine API /api/extract with room detection (7dded11); an opt-in CannaMax poster added safety-first (48c255d). 25 commits 2026-07-15 to 2026-07-19. Still gated on Max END-TO-END acceptance; zero Pi contact."
+      "desc": "Next-gen $0/fully-local runoff-log OCR for Max's handwritten sheets \u2014 the production engine that grew out of the OCR Bake-off. Multi-reader cross-check panel (many local eyes), faithful recognition (every square incl. empties, no filler), NO ranges, human-final-gate. Exists to end personal spend on paid-API OCR.",
+      "tech": "Python \u00b7 OpenCV \u00b7 local Qwen3.5-VL via LM Studio \u00b7 pytest \u00b7 ~/Documents/Cyclops",
+      "notes": "2026-07-14: Engine v1 BUILT + reviewed (private GitHub TheMaxLong/cyclops-ocr; 15 commits, 50/50 tests, per-task + whole-branch reviewed). Per-cell (padded grid-for-identity) + per-row fallback both wired to one crosscheck; fail-loud 64k-context assert. Proven root-cause fixes: per-row isolation kills whole-sheet copy-down; <think></think> prefill stops empty Qwen output; 4x upscale. '88%' RETIRED as a claim (2-row lab number that swung to 10%) \u2014 accuracy is judged by Max's END-TO-END TIME on real sheets vs a 15-min baseline; no model trusted (Qwen included) until it clears that bar. Zero Pi contact. PENDING: Max's human acceptance run + localhost upload UI. Working codename. 2026-07-15/19: the local app build (Cyclops-app-build, branch cyclops-app) advanced to engine v1 -- per-cell Qwen reader (ee41c67), TrOCR handwriting-specialist trainer (d366d6d), FRD-formatter parity keystone (967df62), editable review UI with self-recovery (c87332e, e1e4aaf), and a machine API /api/extract with room detection (7dded11); an opt-in CannaMax poster added safety-first (48c255d). 25 commits 2026-07-15 to 2026-07-19. Still gated on Max END-TO-END acceptance; zero Pi contact."
     },
     {
       "id": "offsite-archive-backup",
@@ -709,10 +709,10 @@
       "sz": 12,
       "x": 0.14,
       "y": 0.8,
-      "type": "Off-Site Backup · launchd (Mac)",
+      "type": "Off-Site Backup \u00b7 launchd (Mac)",
       "status": "live",
       "desc": "Daily 03:00 launchd job on the Mac (com.max.facility-archive-backup) -- pg_dump of hub-backup fluxuum DB streamed over SSH (never written to the SD card) to the Mac + Google Drive, 30-day retention, gzip-t + row-floor verified before the Drive copy.",
-      "tech": "launchd · pg_dump over SSH · gzip · Google Drive",
+      "tech": "launchd \u00b7 pg_dump over SSH \u00b7 gzip \u00b7 Google Drive",
       "notes": "2026-07-20: built + live-tested -- 12M, 471420 readings rows, span 2026-05-19 to 07-20, local + Drive both ok. Closes the single-SD-card gap in the hot-primary / deep-archive split (hub-backup held May19-Jun20 nowhere else). Pull model (no cron or credentials on the Pi); atomic tmp then mv so Drive never syncs a half file; local copy verified FIRST. NOTE neon_sync is NOT a backup (aggregated fluxuum_runs only, 10-day rolling DELETE). NOT yet covered: anderson-hub own fluxuum/cannamax DBs (a one-line add when wanted)."
     },
     {
@@ -722,10 +722,10 @@
       "sz": 11,
       "x": 0.22,
       "y": 0.6,
-      "type": "Local LLM Supervisor · Mac",
+      "type": "Local LLM Supervisor \u00b7 Mac",
       "status": "live",
       "desc": "Guards the shared LM Studio server on :1234 (qwen/qwen3.5-9b at 64k ctx) that feeds facility OCR (3035/3036/Cyclops) and the Pixel personas. LaunchAgent com.themaxlong.hark.lms-server.",
-      "tech": "bash · lms load · run_with_timeout · launchd",
+      "tech": "bash \u00b7 lms load \u00b7 run_with_timeout \u00b7 launchd",
       "notes": "2026-07-20: fixed a 13h SILENT outage (Jul 19 9:11pm to Jul 20 10:20am) -- MODEL pointed at the deleted qwen/qwen3-8b, so lms load dropped into an interactive model picker and blocked the loop forever while the LaunchAgent stayed green and :1234 was dead. Three guards added, all required: correct model qwen/qwen3.5-9b; -y plus input redirect from /dev/null; a run_with_timeout helper; also -c 65536 so ctx is right immediately. RED-before-GREEN proven (the old path now exits code 1 in 2s). STILL OPEN: nothing monitors :1234 LIVENESS -- the pileup and 64k guards check pileup/context, not is-it-answering."
     }
   ],
@@ -1121,7 +1121,7 @@
     {
       "s": "drift-report",
       "t": "incident-log",
-      "label": "ntfy push → URL",
+      "label": "ntfy push \u2192 URL",
       "pulse": true
     },
     {
@@ -1157,7 +1157,7 @@
     {
       "s": "facility-watch",
       "t": "cannamax",
-      "label": "events row → /events page",
+      "label": "events row \u2192 /events page",
       "pulse": true
     },
     {
@@ -1387,7 +1387,7 @@
     {
       "s": "facility-check",
       "t": "ntfy",
-      "label": "result digest → tripwire",
+      "label": "result digest \u2192 tripwire",
       "pulse": true
     },
     {
@@ -1405,7 +1405,7 @@
     {
       "s": "broken-pump",
       "t": "ntfy",
-      "label": "drift alert → tripwire (on change)",
+      "label": "drift alert \u2192 tripwire (on change)",
       "pulse": true
     },
     {
@@ -1417,7 +1417,7 @@
     {
       "s": "recipe-tripwire",
       "t": "ntfy",
-      "label": "alert → tripwire topic",
+      "label": "alert \u2192 tripwire topic",
       "pulse": true
     },
     {
@@ -1441,7 +1441,7 @@
     {
       "s": "facility-drift",
       "t": "ntfy",
-      "label": "≥5°F critical alert",
+      "label": "\u22655\u00b0F critical alert",
       "pulse": true
     },
     {
@@ -1471,7 +1471,7 @@
     {
       "s": "pi",
       "t": "pm-backfill",
-      "label": "hosts :3036 → node:8091",
+      "label": "hosts :3036 \u2192 node:8091",
       "pulse": false
     },
     {
@@ -1496,7 +1496,7 @@
     {
       "s": "facility-health-scanner",
       "t": "ntfy",
-      "label": "plain-language alerts · silence=healthy",
+      "label": "plain-language alerts \u00b7 silence=healthy",
       "pulse": true
     },
     {
@@ -1597,7 +1597,7 @@
     {
       "s": "cyclops",
       "t": "cannamax",
-      "label": "runoff → review → send",
+      "label": "runoff \u2192 review \u2192 send",
       "pulse": false,
       "dash": true
     },
