@@ -1,0 +1,29 @@
+HARK — PROPRIETARY AND CONFIDENTIAL
+Copyright © 2026 Steven "Max" Long. All rights reserved.
+
+This project is proprietary. It is NOT open source. No permission is granted
+to use, copy, modify, or distribute any part of it without a written agreement
+signed by the Owner. See the LICENSE file for the full, controlling terms.
+
+Contact for licensing inquiries: GoodGuyMax89@gmail.com
+
+------------------------------------------------------------------------------
+SOURCE-FILE HEADER (optional, recommended)
+------------------------------------------------------------------------------
+Paste the following at the top of important source files so the copyright
+claim travels with the code even if a single file is copied out of the repo.
+
+C-style files (.ts, .js, .mjs, .css):
+
+  /*
+   * HARK — Proprietary and Confidential
+   * Copyright © 2026 Steven "Max" Long. All rights reserved.
+   * Unauthorized copying, use, or distribution of this file, via any medium,
+   * is strictly prohibited. See LICENSE for terms.
+   */
+
+Hash-comment files (.py, .sh, .yml):
+
+  # HARK — Proprietary and Confidential
+  # Copyright © 2026 Steven "Max" Long. All rights reserved.
+  # Unauthorized copying, use, or distribution is prohibited. See LICENSE.
