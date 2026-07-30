@@ -1,7 +1,9 @@
 #!/data/data/com.termux/files/usr/bin/bash
 # watch-pi-health.sh — Checks BOTH Pis and their key services, independently.
 #
-# anderson-hub is the production primary; hub-backup is the standby at the condo.
+# anderson-hub is the production primary; hub-backup is the standby, at the same
+# facility but in a SEPARATE BUILDING (corrected 2026-07-30 — the map used to say
+# "Max's condo", which was wrong).
 # Each host is probed and alerted on separately, and every alert names the host it
 # came from. A healthy standby must never mask a dead primary.
 #
@@ -51,7 +53,7 @@ A_FT=unknown
 if [ "$A_ROOT" = "down" ]; then
   alert_throttled "anderson-root-down" "critical" "anderson-hub unreachable" \
     "PRIMARY anderson-hub is not responding via Tailscale."
-else
+elif ssh_ready "$ANDERSON_SSH"; then
   A_FLUX=$(svc_state "$ANDERSON_SSH" 3001)
   A_FT=$(svc_state "$ANDERSON_SSH" 8080)
 
@@ -63,6 +65,22 @@ else
     alert_throttled "anderson-ft-down" "warn" "Facility Tracker down (anderson-hub)" \
       "anderson-hub is reachable but :8080 is not responding."
   fi
+else
+  # Could not log in. That says nothing about the services, so do not claim they
+  # are down — leave both `unknown` and say why.
+  #
+  # Found the day this shipped, 2026-07-30: the phone's key to anderson-hub was
+  # being refused (Permission denied (publickey)), `svc_state` got empty output,
+  # and the watcher pushed "Fluxuum API down" and "Facility Tracker down" while
+  # both were fine — :3001 answering 404 and :8080 answering 200, checked by hand
+  # on the Pi itself. Two false alarms on its first run.
+  #
+  # The standby branch below already guarded with ssh_ready. The primary did not,
+  # which is exactly backwards: a false alarm about the PRIMARY is the one that
+  # gets someone out of bed. Digest, never a push — a watcher that cannot see is
+  # not an outage, and this project's rule is that alerts report facts, not guesses.
+  log_digest warn "$WATCHER" \
+    "cannot log in to anderson-hub over ssh — service checks parked as unknown (this is NOT a service outage)"
 fi
 
 # ---------- hub-backup (STANDBY / failover target) ----------
