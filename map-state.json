@@ -2,7 +2,7 @@
   "nodes": [
     {
       "id": "cannamax",
-      "label": "CannaMax\n/ HARK",
+      "label": "CannaMax\n/ anderson-hub",
       "cat": "flagship",
       "sz": 26,
       "x": 0.45515976402298336,
@@ -67,7 +67,7 @@
     },
     {
       "id": "fluxuum",
-      "label": "Fluxuum\nLogger",
+      "label": "Fluxuum Logger\n/ anderson-hub",
       "cat": "data",
       "sz": 22,
       "x": 0.38557624705863197,
@@ -764,7 +764,7 @@
     },
     {
       "id": "cannamax-template",
-      "label": "CannaMax\nCommercial Template",
+      "label": "CannaMax\n/ hark-box",
       "cat": "commercial",
       "sz": 21,
       "x": 0.055,
@@ -778,7 +778,7 @@
     },
     {
       "id": "fluxuum-template",
-      "label": "Fluxuum\nCommercial Template",
+      "label": "Fluxuum\n/ hark-box",
       "cat": "commercial",
       "sz": 21,
       "x": 0.062,
