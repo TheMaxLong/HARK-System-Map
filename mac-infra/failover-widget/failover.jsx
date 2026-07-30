@@ -226,21 +226,61 @@ export const render = ({ output, error }) => {
   const aDot = a.up !== "up" ? "bad" : stale ? "warn" : "ok";
   const bDot = (d.backup || {}).up === "up" ? "ok" : "bad";
 
-  // "Could not look" is not "the backups are gone" — the archive folders are
-  // TCC-protected and hand back an empty listing rather than an error. Only
-  // report red for a readable folder that genuinely holds nothing.
   const arch = d.archive || {};
+  const archBad = arch.count === 0 || arch.count === -1;
   const archStale = arch.age_h >= 0 && arch.age_h > 36;
-  const archDot =
-    arch.source === "unknown" ? "warn"
-    : arch.source === "disk" && arch.count === 0 ? "bad"
-    : archStale ? "warn"
-    : "ok";
+  const archDot = archBad ? "bad" : archStale ? "warn" : "ok";
   const archText =
-    arch.source === "unknown" ? "unreadable"
-    : arch.source === "receipt" ? `${arch.age_h}h old · receipt`
-    : arch.count === 0 ? "EMPTY"
-    : `${arch.count} · ${arch.age_h}h old`;
+    arch.count === -1 ? "folder missing" : arch.count === 0 ? "EMPTY" : `${arch.count} · ${arch.age_h}h old`;
+
+  // Assurance — what the prover last concluded, rather than this widget guessing.
+  //
+  // The states are the prover's, and `blocked` is deliberately NOT red. It means
+  // a check could not look, which is a different problem from something being
+  // broken, and colouring it red sends you hunting for a fault that does not
+  // exist. That confusion is what made the 09:00 archive alarm shout "backups
+  // gone" every morning while a 17MB backup sat in the folder.
+  // Drills first, because they decide whether anything below can be believed.
+  //
+  // If a drill that should go red came back green, the checks have stopped being
+  // able to fail — and a count of "proven" from checks that cannot fail is not
+  // good news, it is an unverified number. On 2026-07-29 every green tick on this
+  // machine came from exactly that. So a missed drill does not just colour its own
+  // row; it downgrades the promises row to UNVERIFIED regardless of the count.
+  const dr = d.drills || {};
+  const drMissed = (dr.missed || 0) > 0;
+  const drNever = !dr.state || dr.state === "never";
+  const drDot = drMissed ? "bad" : drNever ? "warn" : "ok";
+  const drText = drMissed
+    ? `${dr.missed} DID NOT FIRE`
+    : drNever
+      ? "never drilled"
+      : `${dr.passed}/${dr.passed} fire`;
+
+  const as = d.assurance || {};
+  const asFailed = (as.failed || 0) > 0;
+  const asBlocked = (as.blocked || 0) > 0;
+  const asDot = drMissed ? "bad" : asFailed ? "bad" : asBlocked ? "warn" : (as.proven || 0) > 0 ? "ok" : "warn";
+  const asText = drMissed
+    ? `${as.proven} proven — UNVERIFIED`
+    : asFailed
+      ? `${as.failed} broken`
+      : asBlocked
+        ? `${as.blocked} couldn't check`
+        : (as.proven || 0) > 0
+          ? `${as.proven} proven`
+          : "never run";
+
+  // Restorability is its own line because "the file exists" and "the data comes
+  // back" are different claims, and only the second one is a backup.
+  const rst = as.restore || "none";
+  const rstDot = rst === "proven" ? "ok" : rst === "failed" ? "bad" : "warn";
+  const rstText =
+    rst === "proven" ? "restores ✓"
+      : rst === "failed" ? "WILL NOT RESTORE"
+        : rst === "blocked" ? "couldn't test"
+          : rst === "unsupported" ? "due monthly"
+            : "never tested";
 
   window.setTimeout(armDrag, 0);
 
@@ -271,6 +311,22 @@ export const render = ({ output, error }) => {
       <div className="row">
         <span className="k"><span className={`dot ${archDot}`}></span>off-site archive</span>
         <span className="v">{archText}</span>
+      </div>
+      <div className="row">
+        <span className="k"><span className={`dot ${asDot}`}></span>promises</span>
+        <span className="v">{asText}</span>
+      </div>
+      <div className="row">
+        <span className="k"><span className={`dot ${rstDot}`}></span>restore drill</span>
+        <span className="v">{rstText}</span>
+      </div>
+      <div className="row">
+        <span className="k"><span className={`dot ${drDot}`}></span>alarms tested</span>
+        <span className="v">{drText}</span>
+      </div>
+      <div className="row">
+        <span className="k muted" style={{ paddingLeft: "12px" }}>checked</span>
+        <span className="v muted">{as.when || "never"}</span>
       </div>
 
       <div className="ft">

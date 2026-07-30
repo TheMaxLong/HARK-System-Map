@@ -12,13 +12,17 @@ export PATH="/usr/local/bin:/opt/homebrew/bin:/usr/bin:/bin:/usr/sbin:/sbin"
 
 # Where the Mac keeps the off-site archive. Override if yours lives elsewhere:
 #   export HARK_ARCHIVE_DIR="$HOME/path/to/archives"
-ARCHIVE_DIR="${HARK_ARCHIVE_DIR:-$HOME/Documents/facility-archives}"
-ARCHIVE_ALT="${HARK_ARCHIVE_ALT:-$HOME/Library/CloudStorage/GoogleDrive-max2k03@gmail.com/My Drive/facility-archives}"
+# 2026-07-30: this said `facility-archive`. The folder is `facility-archives`.
+# One missing letter, and the widget had been showing a red "folder missing" for
+# days while 16 archives sat in the real folder. It was written off as cosmetic.
+# It was a typo.
+ARCHIVE_DIR="${HARK_ARCHIVE_DIR:-$HOME/facility-archives}"
+
+# Where the assurance prover leaves its verdicts. The widget reads that summary
+# rather than re-deriving it, so the dot on screen and the thing that actually
+# checks your backups can never disagree.
+ASSURE_SUMMARY="${ASSURE_SUMMARY:-$HOME/facility-assurance/last-run.txt}"
 ARCHIVE_GLOB="hub-backup-fluxuum-*.sql.gz"
-# Written by facility-archive-backup.sh after each successful run. Lives under
-# ~/Library/Logs, which macOS does not gate, so it stays readable when the
-# archive folders themselves are not.
-ARCHIVE_RECEIPT="${HARK_ARCHIVE_RECEIPT:-$HOME/Library/Logs/facility-archive-last.txt}"
 
 SSH="ssh -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=accept-new"
 
@@ -29,25 +33,15 @@ A_AGE=-1
 
 if $SSH anderson-hub true 2>/dev/null; then
   A_UP=up
-  # Returns two epochs — the newest reading and the Pi's own clock — as
-  # "last|now" on psql's default separator. Ages are computed from the Pi's
-  # clock, so a skewed Mac clock cannot invent staleness.
-  #
-  # Two rules keep this parsable by macOS's /bin/bash 3.2, which Übersicht uses:
-  # the remote command is wrapped in SINGLE quotes so nothing needs escaping,
-  # and the SQL contains no quotes of its own (hence epochs here and formatting
-  # below, rather than to_char with a quoted format string). The earlier version
-  # nested escaped quotes inside $( ), which 3.2 mis-scans — it runs past the
-  # closing paren and dies on the next ")" it meets, at a baffling line number.
-  ROW=$($SSH anderson-hub 'timeout 20 sudo -u postgres psql -tAX -d fluxuum -c "select coalesce(extract(epoch from max(created_at))::bigint,0), extract(epoch from now())::bigint from readings;"' 2>/dev/null)
-  LAST_E="${ROW%%|*}"
-  NOW_E="${ROW##*|}"
-  case "$LAST_E" in ''|*[!0-9]*) LAST_E=0 ;; esac
-  case "$NOW_E" in ''|*[!0-9]*) NOW_E=0 ;; esac
-  if [ "$LAST_E" -gt 0 ] && [ "$NOW_E" -gt 0 ]; then
-    A_AGE=$(( NOW_E - LAST_E ))
-    [ "$A_AGE" -lt 0 ] && A_AGE=0
-    A_LAST=$(date -r "$LAST_E" '+%m-%d %H:%M' 2>/dev/null || echo "--")
+  # Single query returns both the clock time and its age, so this is one scan.
+  ROW=$($SSH anderson-hub "timeout 20 sudo -u postgres psql -tAX -F'|' -d fluxuum \
+    -c \"select to_char(max(created_at),'MM-DD HH24:MI'), \
+       coalesce(extract(epoch from now()-max(created_at))::int,-1) from readings;\"" 2>/dev/null)
+  if [ -n "$ROW" ]; then
+    A_LAST="${ROW%%|*}"
+    A_AGE="${ROW##*|}"
+    case "$A_AGE" in ''|*[!0-9-]*) A_AGE=-1 ;; esac
+    [ -z "$A_LAST" ] && A_LAST="--"
   fi
 fi
 
@@ -80,72 +74,73 @@ if $SSH hub-backup true 2>/dev/null; then
 fi
 
 # ---------- off-site archive (local, free) ----------
-# Both archive folders sit in TCC-protected locations (~/Documents and
-# ~/Library/CloudStorage). A scheduled or sandboxed job can stat them but gets
-# handed an EMPTY listing of their contents — so "no files" here means "could
-# not look", not "the backups are gone". Never report absence from that.
-#
-# Same ladder the staleness alarm uses: read the real folders when they are
-# readable, otherwise fall back to the receipt the backup job leaves behind.
-ARCH_N=-1
+ARCH_N=0
 ARCH_AGE=-1
-ARCH_SRC=unknown
 
-# read_dir DIR — echo "count|newest_mtime", or return 1 if it cannot be read.
-# A readable folder holding no archives returns "0|" — that is a real finding,
-# distinct from a blocked listing, and must stay distinguishable from it.
-read_dir() {
-  local d="$1" entries n newest
-  [ -d "$d" ] || return 1
-  entries=$(ls -A "$d" 2>/dev/null | wc -l | tr -d ' ')
-  # Zero visible entries is the signature of a blocked listing, not an empty
-  # folder — treat it as unreadable and let the receipt answer instead.
-  [ "${entries:-0}" -gt 0 ] || return 1
+if [ -d "$ARCHIVE_DIR" ]; then
   # shellcheck disable=SC2086
-  n=$(ls -1 "$d"/$ARCHIVE_GLOB 2>/dev/null | wc -l | tr -d ' ')
-  # shellcheck disable=SC2086
-  newest=$(ls -1t "$d"/$ARCHIVE_GLOB 2>/dev/null | head -1)
-  [ -n "$newest" ] || { echo "0|"; return 0; }
-  echo "${n}|$(stat -f %m "$newest")"
-}
-
-# Prefer a folder that actually holds archives. A readable-but-empty folder is
-# only reported once every location has been tried, so a blocked primary cannot
-# mask a healthy Drive copy.
-SAW_EMPTY=0
-for dir in "$ARCHIVE_DIR" "$ARCHIVE_ALT"; do
-  if HIT=$(read_dir "$dir"); then
-    MTIME="${HIT##*|}"
-    if [ -n "$MTIME" ]; then
-      ARCH_N="${HIT%%|*}"
-      ARCH_AGE=$(( ( $(date +%s) - MTIME ) / 3600 ))
-      ARCH_SRC=disk
-      break
-    fi
-    SAW_EMPTY=1
+  ARCH_N=$(ls -1 "$ARCHIVE_DIR"/$ARCHIVE_GLOB 2>/dev/null | wc -l | tr -d ' ')
+  NEWEST=$(ls -1t "$ARCHIVE_DIR"/$ARCHIVE_GLOB 2>/dev/null | head -1)
+  if [ -n "$NEWEST" ]; then
+    ARCH_AGE=$(( ( $(date +%s) - $(stat -f %m "$NEWEST") ) / 3600 ))
   fi
-done
-
-if [ "$ARCH_SRC" = unknown ] && [ "$SAW_EMPTY" = 1 ]; then
-  ARCH_N=0
-  ARCH_AGE=-1
-  ARCH_SRC=disk
+else
+  ARCH_N=-1
 fi
 
-if [ "$ARCH_SRC" = unknown ] && [ -r "$ARCHIVE_RECEIPT" ]; then
-  R_EPOCH=$(sed -n 's/^epoch=//p' "$ARCHIVE_RECEIPT" | head -1 | tr -d '[:space:]')
-  case "$R_EPOCH" in
-    ''|*[!0-9]*) ;;
-    *)
-      ARCH_AGE=$(( ( $(date +%s) - R_EPOCH ) / 3600 ))
-      ARCH_N=1
-      ARCH_SRC=receipt
-      ;;
-  esac
-fi
+# ---------- assurance: what the prover last concluded ----------
+# Counting words in a text file, deliberately. macOS ships /bin/bash 3.2 and a
+# previous version of this widget was rolled back for a shell syntax error, so
+# nothing here uses anything newer than 3.2 and there are no nested quotes.
+#
+# States come from the prover: proven / failed / blocked / unproven / unsupported.
+# `blocked` is NOT a failure — it means a check could not look. Keeping them apart
+# on screen is the whole point; a red dot that means "I could not see" sends you
+# hunting for a problem that does not exist.
+AS_PROVEN=0
+AS_FAILED=0
+AS_BLOCKED=0
+AS_RESTORE=none
+AS_WHEN=never
 
-printf '{"anderson":{"up":"%s","last":"%s","age":%s},"backup":{"up":"%s"},"promoted":"%s","watcher":{"active":"%s","enabled":"%s"},"archive":{"count":%s,"age_h":%s,"source":"%s"},"checked":"%s"}\n' \
+if [ -f "$ASSURE_SUMMARY" ]; then
+  AS_PROVEN=$(grep -c ' proven '  "$ASSURE_SUMMARY" 2>/dev/null)
+  AS_FAILED=$(grep -c ' failed '  "$ASSURE_SUMMARY" 2>/dev/null)
+  AS_BLOCKED=$(grep -c ' blocked ' "$ASSURE_SUMMARY" 2>/dev/null)
+  # Match the ROW NAME, not the word anywhere in the line. Grepping for
+  # "restores" matched five rows, because the integrity checks carry the note
+  # "does NOT prove it restores" — and five states joined by newlines produced
+  # invalid JSON and a blank widget. Anchor on the first field, take one.
+  AS_RESTORE=$(awk '$1 ~ /-restores$/ {print $2; exit}' "$ASSURE_SUMMARY" 2>/dev/null)
+  [ -z "$AS_RESTORE" ] && AS_RESTORE=none
+  AS_WHEN=$(stat -f %Sm -t '%m-%d %H:%M' "$ASSURE_SUMMARY" 2>/dev/null)
+  [ -z "$AS_WHEN" ] && AS_WHEN=never
+fi
+[ -z "$AS_PROVEN" ] && AS_PROVEN=0
+[ -z "$AS_FAILED" ] && AS_FAILED=0
+[ -z "$AS_BLOCKED" ] && AS_BLOCKED=0
+
+# ---------- drills: can the alarms still go red? ----------
+# This line qualifies every line above it. "19 proven" is only worth reading if
+# the checks that produced it are still capable of failing — and on 2026-07-29
+# every green tick on this machine came from a check that could not.
+DR_STATE=never
+DR_PASS=0
+DR_MISS=0
+DR_RECEIPT="$HOME/Library/Logs/facility-assurance-drills-last.txt"
+if [ -f "$DR_RECEIPT" ]; then
+  DR_STATE=$(sed -n 's/^state=//p' "$DR_RECEIPT" | head -1)
+  DR_PASS=$(sed -n 's/^passed=//p' "$DR_RECEIPT" | head -1)
+  DR_MISS=$(sed -n 's/^missed=//p' "$DR_RECEIPT" | head -1)
+fi
+[ -z "$DR_STATE" ] && DR_STATE=never
+[ -z "$DR_PASS" ] && DR_PASS=0
+[ -z "$DR_MISS" ] && DR_MISS=0
+
+printf '{"anderson":{"up":"%s","last":"%s","age":%s},"backup":{"up":"%s"},"promoted":"%s","watcher":{"active":"%s","enabled":"%s"},"archive":{"count":%s,"age_h":%s},"assurance":{"proven":%s,"failed":%s,"blocked":%s,"restore":"%s","when":"%s"},"drills":{"state":"%s","passed":%s,"missed":%s},"checked":"%s"}\n' \
   "$A_UP" "$A_LAST" "${A_AGE:--1}" \
   "$B_UP" "$PROMOTED" "$W_ACTIVE" "$W_ENABLED" \
-  "${ARCH_N:--1}" "${ARCH_AGE:--1}" "$ARCH_SRC" \
+  "${ARCH_N:--1}" "${ARCH_AGE:--1}" \
+  "$AS_PROVEN" "$AS_FAILED" "$AS_BLOCKED" "$AS_RESTORE" "$AS_WHEN" \
+  "$DR_STATE" "$DR_PASS" "$DR_MISS" \
   "$(date '+%H:%M')"

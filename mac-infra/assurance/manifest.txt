@@ -1,0 +1,80 @@
+# manifest — what must be true about the facility archives
+#
+# This file is the product. Everything else is machinery.
+#
+# `cannamax` went unprotected for months because nothing anywhere said it should
+# be protected. A promise nobody writes down cannot be broken and cannot be
+# checked. Adding a database means adding a line here — and a line with no
+# checker behind it reports `unproven`, which is itself the alert.
+#
+# Format:  id | check | argument | argument ...
+# Blank lines and lines starting with # are ignored.
+#
+# Checks available (see prove-archives.sh):
+#   receipt_fresh   <receipt-file> <max-age-hours>
+#       A backup job writes a receipt only AFTER its dump passes verification.
+#       Receipts live in ~/Library/Logs because a scheduled job on macOS cannot
+#       list ~/Documents — it is handed an EMPTY listing rather than an error,
+#       which is what made the 09:00 alarm shout "archive empty" while a 17MB
+#       backup sat in the folder.
+#
+#   file_pair       <basename-glob>
+#       The same archive exists in BOTH the local folder and Google Drive.
+#       One copy in one building is not off-site.
+#
+#   never_pruned    <basename-glob>
+#       This file must still exist. The deep archive was scheduled for deletion
+#       on 2026-08-19 by a 30-day rule that was right for nightly dumps and
+#       wrong for the only copy of May 19 - Jun 20.
+#
+#   integrity       <basename-glob>
+#       Newest matching archive passes gzip -t. Proves it is not truncated.
+#       Proves NOTHING about whether it restores — that is restore_drill.
+#
+#   restore_drill   <basename-glob>
+#       Restore the newest matching archive into a disposable database and read
+#       a real row back. An untested backup is not a backup, it is a hope.
+
+# --- the four databases ------------------------------------------------------
+hub-backup-fluxuum-fresh     | receipt_fresh | facility-archive-last.txt                       | 36
+hub-backup-cannamax-fresh    | receipt_fresh | facility-archive-cannamax-last.txt              | 36
+anderson-hub-fluxuum-fresh   | receipt_fresh | facility-archive-anderson-hub-fluxuum-last.txt  | 36
+anderson-hub-cannamax-fresh  | receipt_fresh | facility-archive-anderson-hub-cannamax-last.txt | 36
+
+# --- off-site really means off-machine ---------------------------------------
+hub-backup-fluxuum-offsite    | file_pair | hub-backup-fluxuum-*.sql.gz | facility-archive-last.txt
+hub-backup-cannamax-offsite   | file_pair | hub-backup-cannamax-*.sql.gz | facility-archive-cannamax-last.txt
+anderson-hub-fluxuum-offsite  | file_pair | anderson-hub-fluxuum-*.sql.gz | facility-archive-anderson-hub-fluxuum-last.txt
+anderson-hub-cannamax-offsite | file_pair | anderson-hub-cannamax-*.sql.gz | facility-archive-anderson-hub-cannamax-last.txt
+
+# --- the irreplaceable one ---------------------------------------------------
+deep-archive-kept     | never_pruned | hub-backup-fluxuum-DEEPARCHIVE-*.sql.gz
+deep-archive-offsite  | file_pair    | hub-backup-fluxuum-DEEPARCHIVE-*.sql.gz
+
+# --- not truncated -----------------------------------------------------------
+hub-backup-fluxuum-intact     | integrity | hub-backup-fluxuum-*.sql.gz
+hub-backup-cannamax-intact    | integrity | hub-backup-cannamax-*.sql.gz
+anderson-hub-fluxuum-intact   | integrity | anderson-hub-fluxuum-*.sql.gz
+anderson-hub-cannamax-intact  | integrity | anderson-hub-cannamax-*.sql.gz
+
+# --- and it actually comes back ----------------------------------------------
+# Tagged `monthly`: skipped by the daily run, and only checked when the monthly
+# job sets RUN_MONTHLY=1.
+#
+# Restoring is a monthly discipline, not a daily one, and the daily job must not
+# depend on Docker being open. If it did, every morning Docker happened to be
+# closed would produce "check could not run" — an alert that is technically true,
+# useless, and fires constantly. That is precisely how the 09:00 archive alarm
+# became something to scroll past. An alert nobody acts on is a defect.
+hub-backup-fluxuum-restores   | restore_drill | hub-backup-fluxuum-2*.sql.gz | monthly
+
+# --- third copy: the external drive ------------------------------------------
+# Two kinds of media, not just two folders on one disk. The drive is portable and
+# usually unplugged, so `external_copy` reports STANDBY when it is absent — never
+# failed. An alarm that fires every time a USB cable is out is an alarm you learn
+# to ignore, and that is the failure this whole system exists to prevent.
+hub-backup-fluxuum-external    | external_copy | hub-backup-fluxuum-*.sql.gz
+hub-backup-cannamax-external   | external_copy | hub-backup-cannamax-*.sql.gz
+anderson-hub-fluxuum-external  | external_copy | anderson-hub-fluxuum-*.sql.gz
+anderson-hub-cannamax-external | external_copy | anderson-hub-cannamax-*.sql.gz
+deep-archive-external          | external_copy | hub-backup-fluxuum-DEEPARCHIVE-*.sql.gz
