@@ -89,7 +89,8 @@
       "status": "live",
       "desc": "Controller adapter abstraction. ObservationOnlyMarker enforces read-only. Supports Anderson, Infinium, TrolMaster, Argus, and more. 2026-05-30: openRunDataStream() added \u2014 continuous /rundata/ws streaming for live pollers.",
       "tech": "TypeScript ESM \u00b7 Zero runtime deps \u00b7 pnpm monorepo \u00b7 5 packages",
-      "notes": "2026-05-30: openRunDataStream() added to adapter-he-anderson \u2014 mirrors the existing openPreviousRunStream() pattern (queue/waiters/close handling) but for the LIVE /rundata/ws endpoint (was one-shot fetchRunData only). 7-case test suite covers auth gate, in-order delivery, deferred-arrival waiter, caller-close, server-close, login failure, WS handshake failure. Live smoke green against all 3 facility controllers (AB/EF/GH). Packaged as .tgz for Pi-side install. On origin/main."
+      "notes": "2026-05-30: openRunDataStream() added to adapter-he-anderson \u2014 mirrors the existing openPreviousRunStream() pattern (queue/waiters/close handling) but for the LIVE /rundata/ws endpoint (was one-shot fetchRunData only). 7-case test suite covers auth gate, in-order delivery, deferred-arrival waiter, caller-close, server-close, login failure, WS handshake failure. Live smoke green against all 3 facility controllers (AB/EF/GH). Packaged as .tgz for Pi-side install. On origin/main.\n\n2026-07-29 (commercial): the HE Anderson adapter is what the HARK Box ships to read a customer's irrigation controller \u2014 vendored as a tarball so a box with no internet can install it. \u26d4 It also used to ship Max's 3 real controller IPs inside its dist/, arriving with npm install and invisible in git; that subsystem was removed and a bundle gate now checks the shipped artifact. There is still NO Infinium adapter anywhere.",
+      "dated": "2026-07-29"
     },
     {
       "id": "flower-room",
@@ -167,7 +168,8 @@
       "status": "live",
       "desc": "Anderson-hub Pi is the production primary again as of 2026-05-28 22:31 PT (identity-only restore on new microSD after the 5/27 SD-card death; 51-sec failover-back from hub-backup). Hosts Fluxuum:3001, Facility-Tracker:8080, recipe-book:5050, CannaMax:3031, FRD:3035, infinium-bridge. At facility LAN; reaches 10.10.13.x controllers directly. Always-on.",
       "tech": "Pi 5 \u00b7 8GB \u00b7 Pi OS 64-bit \u00b7 systemd \u00b7 Tailscale Serve \u00b7 PostgreSQL 17 \u00b7 Node 24 \u00b7 infinium-bridge",
-      "notes": "2026-05-30: drift detector cron enabled (*/15 min, writes change_events). FT web/ rsync deploy 08:44 PT brought isLightsOn AB2+EF4 fix + D14-42=1150W wattage update live. 2026-05-28 22:31 PT: primary flipped BACK to anderson-hub; hub-backup now standby with 5-min sync. Off-site backup syncs hourly to Neon Postgres. 2026-06-04: v4.3 poller stopped + disabled; fluxuum-poller-shadow (v5) is now sole production poller. anderson_probe_readings table created (empty; DRY_RUN=1). New API bundle built (feature/temp-probe) with recovered widget route + probe endpoint; bundle deployed to service. facility-watch now on anderson-hub (was hub-backup). 2026-06-09+: also hosts Observatory dashboard /observatory. 2026-06-14: hosts harvest-dossier capture (build_dossier.py) + permanent run archive /home/pi/observatory-lake/runs.db (cron 5,35) + dossier store /home/pi/harvest-dossiers/ symlinked into the Observatory web root. 2026-06-20\u219225: anderson-hub now also hosts the facility-drift poller (cron/min) and the recipe-change tripwire (cron 10,40); the broken-pump detector runs from the Mac FacilityCheck. These are anderson-hub-only by design.  2026-07-01: fail2ban enabled; secrets moved to .hark-secrets; facility-health-scanner deployed (systemd */30). 2026-07-20: the 79C hot-running was traced NOT to resident services but to the Mac Ubersicht flux-widget polling /api/readings/latest-by-building every 2s (~66 req/min) -- six seq-scans over a 64MB unindexed readings table per call. Mac-side fix only (refresh 2s->7s + widget to main screen only) dropped it to ~60-62C @ ~14 req/min; nothing written to the Pi. STILL OPEN: the endpoint is unindexed -- needs a created_at / functional index or a ranked-CTE rewrite. Neither Pi has an active cooler (passive only)."
+      "notes": "2026-05-30: drift detector cron enabled (*/15 min, writes change_events). FT web/ rsync deploy 08:44 PT brought isLightsOn AB2+EF4 fix + D14-42=1150W wattage update live. 2026-05-28 22:31 PT: primary flipped BACK to anderson-hub; hub-backup now standby with 5-min sync. Off-site backup syncs hourly to Neon Postgres. 2026-06-04: v4.3 poller stopped + disabled; fluxuum-poller-shadow (v5) is now sole production poller. anderson_probe_readings table created (empty; DRY_RUN=1). New API bundle built (feature/temp-probe) with recovered widget route + probe endpoint; bundle deployed to service. facility-watch now on anderson-hub (was hub-backup). 2026-06-09+: also hosts Observatory dashboard /observatory. 2026-06-14: hosts harvest-dossier capture (build_dossier.py) + permanent run archive /home/pi/observatory-lake/runs.db (cron 5,35) + dossier store /home/pi/harvest-dossiers/ symlinked into the Observatory web root. 2026-06-20\u219225: anderson-hub now also hosts the facility-drift poller (cron/min) and the recipe-change tripwire (cron 10,40); the broken-pump detector runs from the Mac FacilityCheck. These are anderson-hub-only by design.  2026-07-01: fail2ban enabled; secrets moved to .hark-secrets; facility-health-scanner deployed (systemd */30). 2026-07-20: the 79C hot-running was traced NOT to resident services but to the Mac Ubersicht flux-widget polling /api/readings/latest-by-building every 2s (~66 req/min) -- six seq-scans over a 64MB unindexed readings table per call. Mac-side fix only (refresh 2s->7s + widget to main screen only) dropped it to ~60-62C @ ~14 req/min; nothing written to the Pi. STILL OPEN: the endpoint is unindexed -- needs a created_at / functional index or a ranked-CTE rewrite. Neither Pi has an active cooler (passive only).\n\n2026-07-29: DIED. Fell off the network 12:05:50 PDT; Max power-cycled it, back 20:01:49. Public links (:8443, :10000) verified up over the real public path afterwards.\n\u26a0\ufe0f IT STOPPED COLLECTING AT 11:02:53 \u2014 a full hour before it dropped off, while still answering Tailscale (hour 10 = 96 rows, hour 11 = 184, hour 12 = 28, against a normal 300-900). The cause is UNRECOVERABLE: /var/log/journal was empty on BOTH Pis, so journald was never actually persistent. Set Storage=persistent or the next crash is equally unexplainable.\nIt now has a 7-hour hole (12:57 \u2192 20:01) worth backfilling, and its DB holds 11:02 \u2192 12:05 that hub-backup does not \u2014 merge that back BEFORE any demote or re-sync.\n\u26d4 The hardware watchdog was ON all along (RuntimeWatchdogUSec=1min, RebootWatchdogUSec=2min, PID 1 holds /dev/watchdog0) \u2014 an earlier claim that it was off came from reading a COMMENTED line in system.conf as config. Check systemctl show, never a commented default. And it could not have caught this anyway: a systemd watchdog only fires on a kernel or PID-1 freeze, and systemd was alive and correctly petting it. The real missing guard is a READINGS-STALENESS alarm (no new readings in N minutes), which still does not exist on either Pi.\nFull write-up: ~/Documents/INCIDENT-2026-07-29-anderson-hub-down.md",
+      "dated": "2026-07-29"
     },
     {
       "id": "tailscale",
@@ -219,7 +221,8 @@
       "status": "live",
       "desc": "Mac\u2192Pi health monitor. Polls every 5 minutes. Fires ntfy push to phone if Pi goes dark.",
       "tech": "~/bin/hub-backup-watcher \u00b7 launchd com.max.hub-backup-watcher \u00b7 ntfy.sh (repointed from anderson-hub 2026-05-27)",
-      "notes": ""
+      "notes": "2026-07-29: this watcher is only a 'the Pi went dark' alarm, and that is why the outage went unnoticed for an hour \u2014 anderson-hub stopped COLLECTING at 11:02:53 and kept answering the network until 12:05, so nothing here could have fired. \u26d4 The missing guard is a readings-staleness alarm (no new readings in N minutes). It does not exist on either Pi yet.\nDifferent thing from the on-Pi Failover Watcher, which spent 2026-07-29 restart-looping every 30 seconds and is now deliberately left disarmed.",
+      "dated": "2026-07-29"
     },
     {
       "id": "anderson",
@@ -245,7 +248,8 @@
       "status": "live",
       "desc": "Lights authority. Temp/RH/CO2/VPD. Trip at 90\u00b0F kills lights. Reference only for env \u2014 HydroX is ground truth.",
       "tech": "Unitronics PLC \u00b7 HTTP port 80 \u00b7 Infinium bridge daemon \u00b7 launchd",
-      "notes": ""
+      "notes": "2026-07-29 (commercial): \u26d4 the HARK Box CANNOT read an Infinium, but says it can. Its fingerprint table hardcodes 'adapter available', so the scan offers the Infiniums like anything else, and the heartbeat shows them 'up' \u2014 that is a TCP probe, alive is not read. No Infinium adapter exists in any HARK repo. The Pi's infinium-bridge is the proven reading method but it lives on the Pi and commercial work never touches the Pis, so the box cannot lean on it. This blocks the cross-controller room-deduction demo's 'second witness'.",
+      "dated": "2026-07-29"
     },
     {
       "id": "sensorex",
@@ -440,7 +444,8 @@
       "status": "live",
       "desc": "Standby/mesh-peer Pi at Max's condo (home WiFi, no direct controller access). Full mirror of anderson-hub services; flipped to primary on 5/27 during anderson-hub SD-card death and ran production for ~24h. Flipped back to standby 5/28 22:31 PT. Watcher + 5-min sync from anderson-hub keep it warm.",
       "tech": "Pi 5 \u00b7 8GB \u00b7 Pi OS 64-bit \u00b7 systemd \u00b7 Tailscale \u00b7 PostgreSQL 17 \u00b7 Node 24",
-      "notes": "Spare microSD complete 2026-05-29 05:30 PT \u2014 services enabled but stopped. Hosts widget-URL nginx proxy + Tailscale Funnel to preserve public URLs while anderson-hub is primary. Promote procedure documented in memory. 2026-06-04: v5 fluxuum-poller-shadow code synced from anderson-hub and deployed; new API bundle (feature/temp-probe) deployed; systemd unit installed + daemon reloaded \u2014 service not yet enabled+started (session paused before final step). v4 poller service still present. 2026-06-24: app.py / recipe-book parity drift closed \u2014 forward-synced anderson-hub\u2192hub-backup, both Pis byte-identical (app.py sha256 904a35d1).  2026-07-01: failover-watcher re-armed after ~1 month silently dead (stale PROMOTED_AT) \u2014 ping-OR-http + 20-fail anti-flapping; fail2ban enabled; secrets moved to .hark-secrets; config-snapshot script deployed; now serves Fluxuum web + harvest dossiers (nginx default disabled). facility-health-scanner deployed (12 checks */30 + weekly test-restore Sun 03:00 PT). 2026-07-20: now protected OFF-SITE -- a daily 03:00 launchd job on the Mac (see Off-Site Archive Backup node) streams this Pi fluxuum deep archive to the Mac + Google Drive (30-day retention, verified), closing the single-SD-card exposure for the 2026-05-19 to 06-20 span that existed nowhere else. Card still degrading; anderson-hub own DBs remain SD-card-only (hourly, 7-day)."
+      "notes": "Spare microSD complete 2026-05-29 05:30 PT \u2014 services enabled but stopped. Hosts widget-URL nginx proxy + Tailscale Funnel to preserve public URLs while anderson-hub is primary. Promote procedure documented in memory. 2026-06-04: v5 fluxuum-poller-shadow code synced from anderson-hub and deployed; new API bundle (feature/temp-probe) deployed; systemd unit installed + daemon reloaded \u2014 service not yet enabled+started (session paused before final step). v4 poller service still present. 2026-06-24: app.py / recipe-book parity drift closed \u2014 forward-synced anderson-hub\u2192hub-backup, both Pis byte-identical (app.py sha256 904a35d1).  2026-07-01: failover-watcher re-armed after ~1 month silently dead (stale PROMOTED_AT) \u2014 ping-OR-http + 20-fail anti-flapping; fail2ban enabled; secrets moved to .hark-secrets; config-snapshot script deployed; now serves Fluxuum web + harvest dossiers (nginx default disabled). facility-health-scanner deployed (12 checks */30 + weekly test-restore Sun 03:00 PT). 2026-07-20: now protected OFF-SITE -- a daily 03:00 launchd job on the Mac (see Off-Site Archive Backup node) streams this Pi fluxuum deep archive to the Mac + Google Drive (30-day retention, verified), closing the single-SD-card exposure for the 2026-05-19 to 06-20 span that existed nowhere else. Card still degrading; anderson-hub own DBs remain SD-card-only (hourly, 7-day).\n\n2026-07-29: carried the whole facility alone for ~8 hours, and the failover WORKED \u2014 promote-to-primary.sh fired 12:17:24-12:17:43, restored both DBs, restarted all 6 writer services, sent the urgent push. Collecting continuously since 12:57.\n\u26d4 3,774 readings (12:57 \u2192 20:01) now exist ONLY here; anderson-hub has zero of them. A promotion restores THIS Pi from anderson-hub's dump, which would destroy them \u2014 so the pre-drop safety guard is now the PRECONDITION for re-arming the failover, not an optional extra.\n\u26a0\ufe0f It also rebooted itself, unexplained, at 18:09:04 \u2014 while it was the only node up, on the degrading card.\n\u26a0\ufe0f A 1h54m hole (11:02:53 \u2192 12:57:31) was opened by the promote script's own dropdb + createdb + restore throwing away everything this Pi's poller had collected since the 11:05 dump. Check /home/pi/fluxuum-poller/spool for 12:05 \u2192 12:57 before anything drains it.\n\u26a0\ufe0f Poller asymmetry is deliberate and Max's call: this Pi runs fluxuum-poller (shadow disabled), anderson-hub runs fluxuum-poller-shadow (poller disabled). It contradicts keep-both-Pis-identical \u2014 do NOT 'fix' it silently.\n\u26a0\ufe0f Hour 21 has ZERO readings on all of the last 4 days. That is a habitually quiet hour, not a dead poller.\nSTANDING RISK: one Pi, a degrading SD card, irreplaceable readings, and no armed failover.",
+      "dated": "2026-07-29"
     },
     {
       "id": "fluxuum-anderson-drift",
@@ -713,7 +718,8 @@
       "status": "live",
       "desc": "Daily 03:00 launchd job on the Mac (com.max.facility-archive-backup) -- pg_dump of hub-backup fluxuum DB streamed over SSH (never written to the SD card) to the Mac + Google Drive, 30-day retention, gzip-t + row-floor verified before the Drive copy.",
       "tech": "launchd \u00b7 pg_dump over SSH \u00b7 gzip \u00b7 Google Drive",
-      "notes": "2026-07-20: built + live-tested -- 12M, 471420 readings rows, span 2026-05-19 to 07-20, local + Drive both ok. Closes the single-SD-card gap in the hot-primary / deep-archive split (hub-backup held May19-Jun20 nowhere else). Pull model (no cron or credentials on the Pi); atomic tmp then mv so Drive never syncs a half file; local copy verified FIRST. NOTE neon_sync is NOT a backup (aggregated fluxuum_runs only, 10-day rolling DELETE). NOT yet covered: anderson-hub own fluxuum/cannamax DBs (a one-line add when wanted)."
+      "notes": "2026-07-20: built + live-tested -- 12M, 471420 readings rows, span 2026-05-19 to 07-20, local + Drive both ok. Closes the single-SD-card gap in the hot-primary / deep-archive split (hub-backup held May19-Jun20 nowhere else). Pull model (no cron or credentials on the Pi); atomic tmp then mv so Drive never syncs a half file; local copy verified FIRST. NOTE neon_sync is NOT a backup (aggregated fluxuum_runs only, 10-day rolling DELETE). NOT yet covered: anderson-hub own fluxuum/cannamax DBs (a one-line add when wanted).\n\n2026-07-29: WAS DEAD SINCE JUL 26 \u2014 now fixed and proven. Root cause was NOT the sudo fault first suspected: launchd could not create its own log files under ~/Documents (macOS protects that folder), so the job died at spawn (exit 78) before the script ever ran. Fix = point only StandardOutPath/StandardErrorPath at ~/Library/Logs. No Full Disk Access needed.\nFresh dump 21:02 \u2014 17MB, all 20 tables (catalog says 20, so complete), readings 320,675 + readings_archive 232,648 = 553,323 rows, local + Google Drive.\n\u2705 The May 19 - Jun 20 deep archive is PROVEN INTACT in that dump; the earlier 'unproven' caveat is closed.\n21:35: the script no longer uses sudo at all \u2014 pg_read_all_data granted to the fluxuum role on BOTH Pis, and the connection string is resolved on the Pi so no password ever touches a command line. Note the two boxes differ in sudo config: anderson-hub has no stored sudo password yet sudo -u postgres works passwordless there.\nCompleteness bar hardened: the dump's table count must equal the live count, readings_archive must be present, total history must be at least 400k rows, and it never overwrites an existing file.\n\u2705 New daily 09:00 staleness alarm (com.max.facility-archive-staleness) pushes to ntfy if the newest archive is over 36h old, or the folder is empty or missing. Facts only.\n\ud83d\udc1b Three traps found writing this, all worth remembering: grep -q under pipefail sends SIGPIPE upstream so the pipeline 'fails' even though the pattern MATCHED (it rejected a good backup \u2014 use grep -c); a remote pg_dump | gzip over ssh has NO pipefail by default, so a dying pg_dump still exits 0 and a TRUNCATED dump reads as success (prepend set -o pipefail to the remote command); and an [ -n VAR ] guard around a check silently SKIPS the check when the metadata query fails \u2014 log a warning, never skip quietly.",
+      "dated": "2026-07-29"
     },
     {
       "id": "lms-watchdog",
@@ -727,6 +733,132 @@
       "desc": "Guards the shared LM Studio server on :1234 (qwen/qwen3.5-9b at 64k ctx) that feeds facility OCR (3035/3036/Cyclops) and the Pixel personas. LaunchAgent com.themaxlong.hark.lms-server.",
       "tech": "bash \u00b7 lms load \u00b7 run_with_timeout \u00b7 launchd",
       "notes": "2026-07-20: fixed a 13h SILENT outage (Jul 19 9:11pm to Jul 20 10:20am) -- MODEL pointed at the deleted qwen/qwen3-8b, so lms load dropped into an interactive model picker and blocked the loop forever while the LaunchAgent stayed green and :1234 was dead. Three guards added, all required: correct model qwen/qwen3.5-9b; -y plus input redirect from /dev/null; a run_with_timeout helper; also -c 65536 so ctx is right immediately. RED-before-GREEN proven (the old path now exits code 1 in 2s). STILL OPEN: nothing monitors :1234 LIVENESS -- the pileup and 64k guards check pileup/context, not is-it-answering."
+    },
+    {
+      "id": "hark-box",
+      "label": "HARK Box\n(the appliance)",
+      "cat": "commercial",
+      "sz": 25,
+      "x": 0.14,
+      "y": 0.215,
+      "type": "Commercial Appliance \u00b7 Beelink SER3",
+      "status": "live",
+      "dated": "2026-07-29",
+      "desc": "The product Max sells: a small sealed computer a grower plugs in. It comes up on its own with nobody typing anything, finds the irrigation and climate controllers on the site's network, works out the facility, and asks the grower to confirm it. Runs the commercial CannaMax and Fluxuum \u2014 NOT the two Pis' versions.",
+      "tech": "Beelink SER3 (Ryzen 3200U) \u00b7 Debian 13 \u00b7 encrypted disk sealed to the TPM chip via clevis (no passphrase at boot) \u00b7 cage + Chromium kiosk \u00b7 its own PostgreSQL (cannamax + fluxuum DBs) \u00b7 every service bound to 127.0.0.1 \u00b7 appliance v0.5",
+      "notes": "\u26d4 NOT the Pis. feedback_commercialization_never_on_pis: no commercial code ever goes onto anderson-hub or hub-backup, not even to read. The Pis' CannaMax and Fluxuum are the muse \u2014 copy how well they work, never touch them.\n\n2026-07-27: boot sequence complete on the real hardware \u2014 offline stick \u2192 unattended install with no internet in the room \u2192 automatic TPM seal on /dev/nvme0n1p3 \u2192 reboots straight to the setup wizard full-screen, zero keypresses. Beelink firmware notes: boot menu is F7 with a 1-second window; efibootmgr is silently ignored by this firmware; `systemctl reboot` sometimes powers it OFF instead \u2014 restart the unit, never reboot to test.\n2026-07-27: missing link closed \u2014 the wizard's confirmed controllers now actually reach controller_endpoints, so a configured box watches something. Proven live on Max's 3 Anderson controllers, polling every 30s. TRAP: no HARK_STATE_DIR on the service = silent no-op (fixed in /etc/hark/cannamax.env).\n2026-07-28: real Fluxuum on the box (API server + own Postgres) replacing a static 4-file picture of a dashboard. Config was wiped twice that day and restored; SCAN_SUBNETS being unset is THE cause of 'the scan finds nothing' \u2014 the box sits on 192.168.6.x, the equipment is on 10.10.x. Targeted /32s: 1.2 seconds instead of an hour.\n2026-07-28: confirm screen live as wizard step 11 \u2014 the box shows the facility it worked out and waits to be told yes.\n2026-07-29: overnight sweep \u2014 4 real defects fixed, deployed, and read back on the live box, then committed and pushed. The big one: the same building was filed twice by spelling ('Building AB' and 'ab'), so the box's two witnesses to the same rooms were never in the same building. Now 3 building rows, 2 controllers each.\n\n\u26a0\ufe0f TWO code trees on the box (/opt/hark/src and /opt/hark/cannamax/src) and they have drifted silently once. /opt/hark/src is mode 555 so a copy can fail QUIETLY. Deploy the whole appliance/setup-app folder to BOTH, then grep to prove it landed.\n\n\u26d4 STILL OPEN: it proposes 57 rooms for a 31-room facility (24 flower + 7 veg) \u2014 standalone tanks and bare 'Zone NN' slots counted as rooms. That is the demo feature, not a patch. The organization row is still named 'a' instead of the facility name typed in setup. last_seen_at is never written. hark-setup needs SIGKILL to stop.\n\ud83c\udfaf DEMO ~2026-07-31/08-01 in front of co-workers: from a clean slate, deduce the true room list by cross-referencing BOTH controller types and show its reasoning."
+    },
+    {
+      "id": "hark-setup",
+      "label": "HARK Setup Wizard",
+      "cat": "commercial",
+      "sz": 18,
+      "x": 0.1,
+      "y": 0.08,
+      "type": "First-boot Onboarding \u00b7 Kiosk",
+      "status": "live",
+      "dated": "2026-07-29",
+      "desc": "The screen a grower sees the first time the box is switched on. Eleven steps: network, scan the site for controllers, confirm what was found, then the facility the box worked out \u2014 rooms shown name beside code, guesses in amber, tick or correct them.",
+      "tech": "Node 22 \u00b7 zero npm dependencies on the boot path \u00b7 full-screen Chromium kiosk \u00b7 :8088 \u00b7 state in /var/lib/hark",
+      "notes": "\ud83e\udd1d THE LAW: the box proposes, the grower confirms. Guaranteed facts get pre-filled (zone names, room-vs-tank tag, which meters exist). Judgement calls get asked (which zones are really rooms, what the crew calls them, cycle length). Never a blank form, never a silent decision \u2014 confirming a good guess takes seconds, typing 31 rooms does not, and a silent wrong guess is caught three weeks later in a dashboard that looked complete.\n\n\u2328\ufe0f Fully operable with arrow keys + Enter, no mouse \u2014 it gets set up standing in a facility on whatever screen is attached. Every control has a focus ring thick enough to read across a room, and something is always focused. Room rows are deliberately NOT focusable, so a 30-room list isn't 30 arrow presses.\n\ud83c\udfed Customer-facing copy says 'facility', never 'barn'.\n\n2026-07-28: confirm screen live (step 11, and 'Check my rooms \u2192' from the home screen). Showing it reads the proposal file so it works even with the dashboard down; agreeing is a file copy. The no-rooms case is the MAIN case and its button is 'Carry on \u2192', never a dead end.\n\u2705 The controller login is the shortcut worth using: POST /api/setup/controller-login hands over a controller's whole room list in one call. Rooms are also learned with no password at all, just slowly.\n\u26a0\ufe0f Scan is passive by default \u2014 sends no packets. ~15 min per /24; the gentleness is the product, so the wizard was made honest (estimate, elapsed counter, stop button) rather than faster.\n\u26d4 DEPLOY TRAP: deploy the whole appliance/setup-app folder or hark-setup crash-loops on a missing import."
+    },
+    {
+      "id": "cannamax-template",
+      "label": "CannaMax\nCommercial Template",
+      "cat": "commercial",
+      "sz": 21,
+      "x": 0.055,
+      "y": 0.17,
+      "type": "Commercial Product \u00b7 Watcher + Alerts",
+      "status": "building",
+      "dated": "2026-07-29",
+      "desc": "The commercial CannaMax \u2014 a separate product from the CannaMax on the Pi. It discovers controllers, fingerprints what family they are, keeps a watch list, and pushes a phone alert when one drops off. Sold, not run at Anderson.",
+      "tech": "TypeScript \u00b7 Drizzle \u00b7 PostgreSQL \u00b7 vendored @alexandria adapter \u00b7 TheMaxLong/hark-cannamax-template \u00b7 suite 588/588 \u00b7 HEAD 07f0139",
+      "notes": "\u26d4 Different software from the Pi's CannaMax. Same name, same ideas, separate repo, separate business. The Pi's version is never touched by this work.\n\n2026-07-25: the customer's facility is out of the bundle \u2014 @alexandria/adapter-he-anderson was shipping Max's 3 real controller IPs inside its dist/, arriving with npm install and never visible in git. Whole subsystem removed; a bundle gate now checks the shipped artifact, not just tracked source. Vendor family names (he-anderson, unitronics-infinium) were KEPT on purpose \u2014 they identify a customer's equipment, and deleting them blinds discovery.\n2026-07-27: controller_endpoints finally has a writer. It also caught four things beyond the missing wiring: a second scan crashed on the unique index; an empty database has no organization to hang controllers off; a controller found without a port got port 80 regardless of family; and a controller that drops must stop being watched WITHOUT being deleted.\n2026-07-28: the watcher used to collapse controllers that shared a LABEL \u2014 all three of Max's were called 'Irrigation controller', so three machines became one watched target and the screen still read healthy. Now keyed by host:port. A label is a human name; an address is an identity.\n2026-07-29: the watch list was read ONCE at startup, so Max confirmed 6 controllers, was told in writing 'watching 6', and the box watched 3. Now re-read every poll, and it keeps the old list if the database read fails \u2014 losing the list on one timeout would turn a blip into a silent outage.\n\nEvery fault in this product so far was silent in the same way: the log said it started fine. They were all caught by reading the live box back after deploying.\n\n\ud83e\uddec WHY THIS LOOKS LIKE A DUPLICATE \u2014 Max, 2026-07-29: \"I'm trying to set up what I have on Anderson Hub over on the harkbox... I'm pretty much trying to clone one and make a little Frankenstein version on the hark box.\" So yes, the same names appear twice on this map on purpose. This is the clone; anderson-hub's is the original. They share ideas, not code paths, and nothing here reaches the Pi."
+    },
+    {
+      "id": "fluxuum-template",
+      "label": "Fluxuum\nCommercial Template",
+      "cat": "commercial",
+      "sz": 21,
+      "x": 0.062,
+      "y": 0.3,
+      "type": "Commercial Product \u00b7 Dashboard",
+      "status": "building",
+      "dated": "2026-07-29",
+      "desc": "The commercial Fluxuum \u2014 the dashboard a customer looks at. Draws the facility the grower confirmed, from the controllers' own readings. Ships brand profiles for controllers other than Anderson.",
+      "tech": "pnpm monorepo \u00b7 React + Vite + wouter \u00b7 api-server + poller + facility-profile lib \u00b7 brands: he-anderson / aranet / autogrow / trolmaster / wadsworth \u00b7 TheMaxLong/hark-fluxuum-template \u00b7 facility-profile 100/100 \u00b7 HEAD 2e0f955",
+      "notes": "\u26d4 Different software from the Pi's Fluxuum Logger. In box work 'Fluxuum' means this one; the Pi's is the muse, never touched.\n\n2026-07-28: four portability faults had to be fixed before a built server would run anywhere but the machine that built it \u2014 an absolute build path baked into the bundle, a pure-JS package wrongly marked unbundlable, the server binding EVERY interface (which with tab passwords removed would have served an unlocked dashboard to the whole site network), and the Esc-back-to-menu hatch that only existed in the old static server \u2014 a kiosk dashboard with no door.\nAuto-configure: it writes a facility profile from a discovered controller and turns the controller's own series names (EC, pH #1, pH #2, Precision Flow Meter) into dashboard metrics. Two pH probes collapse to one reading. It NEVER lists a metric the controller didn't send \u2014 an always-empty chart reads as a broken sensor.\n2026-07-29: building codes were backwards. Every word was reduced to its initial, so 'Building AB' became BA and the grower got room codes BA1..BA8 for rooms the crew calls AB1..AB8. Two-plus capitals typed deliberately are now kept whole.\n\n\u26d4 STILL PINNED to demo.yaml by an env var, and that stays for now: a confirmed facility-profile.yaml outranks the pin, and the fallback profile does not exist on the box \u2014 pulling the pin would point the dashboard at a missing file.\n\n\ud83e\uddec WHY THIS LOOKS LIKE A DUPLICATE \u2014 Max, 2026-07-29: he is rebuilding what already works on anderson-hub over on the hark box, a piece at a time. Same names twice on this map is intentional. This is the clone; the Pi's Fluxuum Logger is the original and stays untouched."
+    },
+    {
+      "id": "hark-installer",
+      "label": "HARK Installer Stick",
+      "cat": "commercial",
+      "sz": 15,
+      "x": 0.215,
+      "y": 0.13,
+      "type": "Offline USB Installer \u00b7 Debian preseed",
+      "status": "live",
+      "dated": "2026-07-29",
+      "desc": "How a box gets built. One USB stick, no internet needed, no keypresses: it installs Debian, encrypts the disk, seals the key to the machine's TPM chip so it unlocks itself, then installs HARK on first boot.",
+      "tech": "build-usb-offline.sh \u2192 hark-installer-offline.iso (4.0 GB) \u00b7 Debian DVD-1 + 81 clevis/tpm2 debs + 741 appliance debs (Node 22, Chromium, cage, Postgres, NetworkManager, Tailscale, AMD graphics firmware) \u00b7 flash-usb.sh self-verifies the stick and refuses to write otherwise",
+      "notes": "The bar it had to clear: plug it in, it comes up, nobody types anything, ever. A monitoring box that doesn't come back after a power cut is a guaranteed outage.\n\n\u26d4 The plan of using systemd-cryptenroll for the TPM does NOT work on Debian at all \u2014 the boot image contains zero TPM code, so the box would ask a grower for a passphrase forever. clevis is the fix, and it installs its own unlock path into the boot image.\n\u26d4 Do NOT delete the passphrase keyslot after sealing. hark123 is the recovery path; without it a dead motherboard is an unrecoverable disk.\n\u26a0\ufe0f Pull the stick the moment an install finishes on a box that boots USB first, or the next power-on silently re-wipes the install you just did.\n\u26d4 NEVER flash hark-installer-debug.iso \u2014 its console goes to a serial port the Beelink doesn't have, so the screen stays blank.\n\nTraps found building it, each of which would have stranded Max at the hardware: Debian's ISO sets no menu timeout, so with no keyboard it waits forever; unattended flags must go BEFORE the --- on the kernel line; /sys/block/*/removable is 0 for USB flash drives, so a removable-check picks the boot stick itself and dies 'disk too small'; a cdrom apt source blocks forever on 'please insert the disc'; and never put real work in late_command \u2014 it goes through several shells and mangles quotes. \u2620\ufe0f The packaging trap cost two full build cycles: --download-only in a container only fetches what that container is MISSING, so 265 debs staged and zero installed, with a clean dpkg -C because nothing was half-installed. Never treat a clean dpkg -C as proof software is present \u2014 check the binaries."
+    },
+    {
+      "id": "hark-practice-vm",
+      "label": "HARK Practice VMs",
+      "cat": "commercial",
+      "sz": 13,
+      "x": 0.245,
+      "y": 0.23,
+      "type": "QEMU Rehearsal Rig \u00b7 Mac",
+      "status": "live",
+      "dated": "2026-07-29",
+      "desc": "Two virtual machines on the Mac that stand in for the real box, so an install can be rehearsed overnight instead of at the facility at 2am. Everything except the TPM seal itself can be proven here.",
+      "tech": "~/Documents/HARK-Products/hark-vm \u00b7 run-vm.sh (ARM) + run-vm-x86.sh (Intel) \u00b7 serial console over a unix socket \u00b7 vmtype.sh + QEMU screendump/sendkey = eyes and hands on any VM",
+      "notes": "The console split wastes an hour if forgotten: the QEMU window shows firmware and GRUB only, then says 'display output is not active' forever. Everything Linux does is on the serial line.\n\nThe ARM VM can NEVER rehearse the TPM seal \u2014 QEMU's ARM machine offers a chip type Debian's arm64 kernel doesn't compile support for, so there is no TPM device. The Intel VM does, which is why it exists, and the walk-away test passed there: cold power-on with nothing attached \u2192 unlocks itself \u2192 login prompt.\n\n\u26a0\ufe0f Scope discipline learned the hard way: a VM pass is a VM pass. There was a stretch where the appliance stick had been proven in a VM and NEVER successfully run on Max's Beelink, and the hands-free boot he'd seen came from a seal done by hand on an older build. Don't describe a VM result as proven on hardware.\n\u26d4 vmtype.sh originally could not type { or } \u2014 the exact characters in the seal command \u2014 so the one step the whole appliance depends on was unrehearsable. Fixed."
+    },
+    {
+      "id": "hark-commercialization",
+      "label": "HARK Commercialization\n(docs \u00b7 legal \u00b7 BOM)",
+      "cat": "commercial",
+      "sz": 16,
+      "x": 0.088,
+      "y": 0.395,
+      "type": "Business & Legal Record",
+      "status": "live",
+      "dated": "2026-07-29",
+      "desc": "The written half of the business: what the appliance is made of, what it costs, what it is allowed to do on a customer's network, and the legal paperwork around selling it. No code runs from here.",
+      "tech": "TheMaxLong/hark-commercialization \u00b7 equipment spec v1 + hardware/BOM \u00b7 OT/ICS safety framework \u00b7 simulation-only write policy \u00b7 day-of facility test playbook \u00b7 vendor-neutral controller framing \u00b7 proprietary LICENSE + NOTICE \u00b7 sibling: hark-legal-mock-up (EULA / mutual NDA / attorney questions)",
+      "notes": "The two rules that govern everything else in this cluster live here: the box only ever READS a customer's controller (simulation-only write policy), and controllers are described by capability, not by vendor name (vendor-neutral framing) \u2014 so the product isn't pitched as an Anderson accessory.\n\nAlso holds the simulation lab, the phase roadmap, the productization audit of Fluxuum, and the day-of test checklist used at the facility. The legal mockups are drafts for an attorney to review, not filed documents."
+    },
+    {
+      "id": "hark-assistant",
+      "label": "HARK Assistant",
+      "cat": "commercial",
+      "sz": 13,
+      "x": 0.205,
+      "y": 0.355,
+      "type": "Operator Chat Bubble (not AI)",
+      "status": "building",
+      "dated": "2026-07-29",
+      "desc": "A small chat bubble in the corner of a HARK app that helps an operator get around it in plain language. It is a word matcher, not a model \u2014 when it isn't sure it asks 'did you mean one of these?' instead of confidently doing the wrong thing.",
+      "tech": "match.js (the matcher) + deployment.js (this app's real routes) + widget.js/css \u00b7 emerald #059669 \u00b7 rides inside fluxuum-template's sensor-dashboard \u00b7 TheMaxLong/hark-assistant",
+      "notes": "Deliberately not an LLM. Pattern matching was Max's settled call \u2014 same failure mode as the old Word assistant: a confident wrong answer is worse than a question.\n\nv1 does two things: it navigates (clicks the app's own sidebar links) and it REFUSES \u2014 any write verb aimed at a controller is turned down, by design. Read-only, never writes to a controller, never invents a phase target.\n2026-07-25: demo-working locally inside the Fluxuum template. Nothing deployed, nothing on a Pi.\n\u26a0\ufe0f Finding that closed a planned feature: phase pH/EC/temp target RANGES are not stored queryably anywhere in the stack \u2014 they are hand-set constants. So 'write the real targets query' has no answer. Do not reopen unprompted."
+    },
+    {
+      "id": "failover-watcher",
+      "label": "Failover Watcher\n(DISARMED)",
+      "cat": "infra",
+      "sz": 14,
+      "x": 0.175,
+      "y": 0.925,
+      "type": "Auto-promotion Watchdog \u00b7 on hub-backup",
+      "status": "disarmed",
+      "dated": "2026-07-29",
+      "desc": "Promotes hub-backup to primary when anderson-hub dies. It fired correctly on 2026-07-29 and is switched OFF right now on purpose, because promoting again would destroy readings that exist nowhere else.",
+      "tech": "failover-watcher.service on hub-backup \u00b7 promote-to-primary.sh (dropdb + createdb + restore, 6 writer services, urgent ntfy) \u00b7 /home/pi/PROMOTED_AT \u00b7 ping-OR-http with 20-fail anti-flapping",
+      "notes": "\u26d4 WHY IT IS OFF: /home/pi/PROMOTED_AT is deliberately left in place. Arming the watcher while anderson-hub is dead makes it re-promote within 10 minutes, and promotion drops the database holding 3,774 irreplaceable readings. There is also nothing to fail over TO. Re-arm only after anderson-hub is back, demoted, and its readings merged \u2014 and only once the pre-drop safety guard exists.\n\n2026-07-29, four faults found around it:\n1. The promote script's dropdb + createdb + restore threw away everything hub-backup's own poller had collected since the last dump \u2014 a 1h54m hole.\n2. It was not armed at all: the service was restart-looping every 30s (269+ and climbing), because Restart=always resurrects its clean 'already promoted' exit and the StartLimit settings sit in [Service], where systemd ignores them \u2014 they belong in [Unit].\n3. Latent: restore_db()'s restore line is missing the piped password, so it only ever worked on a warm sudo cache. A cold cache would feed SQL to sudo AS a password.\n4. It had been silently dead for about a month before 2026-07-01 on a stale PROMOTED_AT \u2014 the same failure mode, twice.\n\nFix script PREPARED, NOT APPLIED: ~/bin/emergency-fix-2026-07-29.sh (dashboard links, verified dump, pre-drop safety guard, watcher unit fix). Blocked three times by the permission classifier; the blocks were not worked around and hub-backup was verified unmodified."
     }
   ],
   "edges": [
@@ -1620,7 +1752,144 @@
       "label": "persona LLM :1234",
       "pulse": false,
       "dash": true
+    },
+    {
+      "s": "hark-practice-vm",
+      "t": "hark-installer",
+      "label": "rehearses the whole install",
+      "pulse": false,
+      "dash": true
+    },
+    {
+      "s": "hark-installer",
+      "t": "hark-box",
+      "label": "offline install + TPM seal, no keypresses",
+      "pulse": true
+    },
+    {
+      "s": "hark-setup",
+      "t": "hark-box",
+      "label": "onboarding \u2014 arrow keys + Enter",
+      "pulse": true
+    },
+    {
+      "s": "cannamax-template",
+      "t": "hark-box",
+      "label": "runs as hark-cannamax",
+      "pulse": true
+    },
+    {
+      "s": "fluxuum-template",
+      "t": "hark-box",
+      "label": "runs as hark-fluxuum (dashboard)",
+      "pulse": true
+    },
+    {
+      "s": "hark-assistant",
+      "t": "fluxuum-template",
+      "label": "chat bubble (word matcher)",
+      "pulse": false,
+      "dash": true
+    },
+    {
+      "s": "hark-setup",
+      "t": "cannamax-template",
+      "label": "confirmed controllers \u2192 watch list",
+      "pulse": true
+    },
+    {
+      "s": "hark-setup",
+      "t": "fluxuum-template",
+      "label": "confirmed facility \u2192 profile",
+      "pulse": true
+    },
+    {
+      "s": "hark-commercialization",
+      "t": "hark-box",
+      "label": "equipment spec \u00b7 BOM \u00b7 read-only policy",
+      "pulse": false,
+      "dash": true
+    },
+    {
+      "s": "hark-commercialization",
+      "t": "hark-site",
+      "label": "product story \u00b7 catalog copy",
+      "pulse": false,
+      "dash": true
+    },
+    {
+      "s": "anderson",
+      "t": "hark-box",
+      "label": "scan \u00b7 heartbeat \u00b7 room lists (login)",
+      "pulse": true
+    },
+    {
+      "s": "hark-box",
+      "t": "infinium",
+      "label": "\u26d4 TCP probe only \u2014 NO adapter, cannot read",
+      "pulse": false,
+      "dash": true
+    },
+    {
+      "s": "hark-box",
+      "t": "ntfy",
+      "label": "this-controller-dropped",
+      "pulse": false
+    },
+    {
+      "s": "tailscale",
+      "t": "hark-box",
+      "label": "mesh node (hark-box)",
+      "pulse": false
+    },
+    {
+      "s": "alexandria",
+      "t": "cannamax-template",
+      "label": "vendored HE Anderson adapter",
+      "pulse": false
+    },
+    {
+      "s": "alex-fluxuum-bridge",
+      "t": "fluxuum-template",
+      "label": "multi-brand bench",
+      "pulse": false,
+      "dash": true
+    },
+    {
+      "s": "cannamax-template",
+      "t": "hark-controller",
+      "label": "the commercial road to it",
+      "pulse": false,
+      "dash": true
+    },
+    {
+      "s": "fluxuum-template",
+      "t": "hark-controller",
+      "label": "the commercial road to it",
+      "pulse": false,
+      "dash": true
+    },
+    {
+      "s": "pi",
+      "t": "failover-watcher",
+      "label": "the box it watches for",
+      "pulse": false,
+      "dash": true
+    },
+    {
+      "s": "failover-watcher",
+      "t": "hub-backup",
+      "label": "\u26d4 DISARMED \u2014 a promote would destroy 3,774 readings",
+      "pulse": false,
+      "dash": true
+    },
+    {
+      "s": "failover-watcher",
+      "t": "ntfy",
+      "label": "urgent push on promotion",
+      "pulse": false,
+      "dash": true
     }
   ],
-  "_saved": "2026-07-14T16:19:33.594Z"
+  "_saved": "2026-07-30T05:00:00.000Z"
 }
