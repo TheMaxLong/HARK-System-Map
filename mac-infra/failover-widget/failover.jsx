@@ -36,12 +36,18 @@ export const className = `
   .hd {
     display: flex; justify-content: space-between; align-items: baseline;
     font-size: 9.5px; letter-spacing: 0.14em; text-transform: uppercase;
-    color: #94a5a0; padding-bottom: 8px; margin-bottom: 9px;
+    color: #94a5a0; padding: 3px 5px 8px; margin: -3px -5px 9px;
     border-bottom: 1px solid rgba(148,165,160,0.16);
+    border-radius: 4px 4px 0 0;
     cursor: grab; -webkit-user-select: none; user-select: none;
   }
-  .hd:active { cursor: grabbing; }
+  /* Hover test: if this strip does NOT light up under the cursor, mouse events
+     are not reaching the widget and no drag code can work — enable interaction
+     for this widget from the Übersicht menu bar. */
+  .hd:hover { background: rgba(95,191,165,0.13); color: #cfdcd8; }
+  .hd:active { cursor: grabbing; background: rgba(95,191,165,0.2); }
   .grip { letter-spacing: 0; opacity: 0.45; }
+  .hd:hover .grip { opacity: 0.9; }
 
   .banner {
     font-size: 12.5px; font-weight: 700; letter-spacing: 0.03em;
@@ -76,25 +82,34 @@ const age = (s) => {
   return `${Math.round(s / 3600)}h`;
 };
 
-// Übersicht applies className to a positioned wrapper around whatever render
-// returns, so climb until we find the element actually carrying the position.
-const positionedParent = (el) => {
+// Übersicht wraps whatever render() returns in a positioned element carrying
+// the className styles. Find that wrapper without assuming its exact shape:
+// prefer the nearest ancestor with an id (Übersicht ids each widget), fall back
+// to the nearest positioned ancestor, then to the direct parent. Never climb as
+// far as body — a shared container would drag every widget at once.
+const dragTarget = (el) => {
   let n = el ? el.parentElement : null;
-  for (let i = 0; n && i < 4; i++) {
-    const p = window.getComputedStyle(n).position;
-    if (p === "absolute" || p === "fixed") return n;
+  let positioned = null;
+  for (let i = 0; n && n !== document.body && i < 5; i++) {
+    if (n.id) return n;
+    if (!positioned) {
+      const p = window.getComputedStyle(n).position;
+      if (p === "absolute" || p === "fixed") positioned = n;
+    }
     n = n.parentElement;
   }
-  return el ? el.parentElement : null;
+  return positioned || (el ? el.parentElement : null);
 };
 
 // Attached once per mounted element; render() runs again on every refresh.
 const makeDraggable = (el) => {
   if (!el || el.dataset.dragReady === "1") return;
-  const box = positionedParent(el);
+  const box = dragTarget(el);
   const grip = el.querySelector(".hd");
   if (!box || !grip) return;
   el.dataset.dragReady = "1";
+  // Visible in the inspector, so you can confirm what is actually being moved.
+  el.dataset.dragTarget = box.id || box.className || box.tagName;
 
   const place = (left, top) => {
     box.style.left = `${left}px`;
@@ -123,9 +138,15 @@ const makeDraggable = (el) => {
     place(left, top);
   };
 
-  const onUp = () => {
-    document.removeEventListener("mousemove", onMove);
-    document.removeEventListener("mouseup", onUp);
+  const onUp = (ev) => {
+    grip.removeEventListener("pointermove", onMove);
+    grip.removeEventListener("pointerup", onUp);
+    grip.removeEventListener("pointercancel", onUp);
+    try {
+      grip.releasePointerCapture(ev.pointerId);
+    } catch (e) {
+      /* capture already released */
+    }
     try {
       window.localStorage.setItem(
         POS_KEY,
@@ -136,17 +157,34 @@ const makeDraggable = (el) => {
     }
   };
 
-  grip.addEventListener("mousedown", (ev) => {
+  // Pointer events with capture: the drag keeps tracking even when the cursor
+  // outruns the widget, which plain mousemove-on-document does not guarantee
+  // inside Übersicht's desktop layer.
+  grip.addEventListener("pointerdown", (ev) => {
     const r = box.getBoundingClientRect();
     startX = ev.clientX;
     startY = ev.clientY;
     baseLeft = r.left;
     baseTop = r.top;
     place(r.left, r.top); // convert a right-anchored box to left/top before moving
-    document.addEventListener("mousemove", onMove);
-    document.addEventListener("mouseup", onUp);
+    try {
+      grip.setPointerCapture(ev.pointerId);
+    } catch (e) {
+      /* older engine — listeners below still fire */
+    }
+    grip.addEventListener("pointermove", onMove);
+    grip.addEventListener("pointerup", onUp);
+    grip.addEventListener("pointercancel", onUp);
     ev.preventDefault();
   });
+};
+
+// render()'s ref fires on mount, but if Übersicht reuses the node across
+// refreshes the ref may not fire again — so also retry by class. Both paths run
+// through the same idempotent guard.
+const armDrag = () => {
+  const el = document.querySelector(".fw-root");
+  if (el) makeDraggable(el);
 };
 
 // Can the failover actually promote right now? The marker alone cannot answer
@@ -195,8 +233,10 @@ export const render = ({ output, error }) => {
   const archText =
     arch.count === -1 ? "folder missing" : arch.count === 0 ? "EMPTY" : `${arch.count} · ${arch.age_h}h old`;
 
+  window.setTimeout(armDrag, 0);
+
   return (
-    <div ref={makeDraggable}>
+    <div className="fw-root" ref={makeDraggable}>
       <div className="hd">
         <span>Failover <span className="grip">⠿</span></span>
         <span>{d.checked}</span>
