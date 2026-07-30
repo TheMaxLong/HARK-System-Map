@@ -12,7 +12,7 @@ won't match. The `*bersicht` glob avoids the problem:
 ```sh
 W=$(ls -d ~/Library/Application\ Support/*bersicht/widgets | head -1)
 mkdir -p "$W/failover" && cd "$W/failover"
-BASE=https://raw.githubusercontent.com/TheMaxLong/HARK-System-Map/6090220778ec1b326d0dc8156d0a32f2300db27c/mac-infra/failover-widget
+BASE=https://raw.githubusercontent.com/TheMaxLong/HARK-System-Map/5b0c9079d635512020c60e779870cbbc832667d9/mac-infra/failover-widget
 curl -fsSLO "$BASE/failover.jsx"
 curl -fsSLO "$BASE/failover-probe.sh"
 chmod +x failover-probe.sh
