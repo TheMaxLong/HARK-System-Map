@@ -29,15 +29,25 @@ A_AGE=-1
 
 if $SSH anderson-hub true 2>/dev/null; then
   A_UP=up
-  # Single query returns both the clock time and its age, so this is one scan.
-  ROW=$($SSH anderson-hub "timeout 20 sudo -u postgres psql -tAX -F'|' -d fluxuum \
-    -c \"select to_char(max(created_at),'MM-DD HH24:MI'), \
-       coalesce(extract(epoch from now()-max(created_at))::int,-1) from readings;\"" 2>/dev/null)
-  if [ -n "$ROW" ]; then
-    A_LAST="${ROW%%|*}"
-    A_AGE="${ROW##*|}"
-    case "$A_AGE" in ''|*[!0-9-]*) A_AGE=-1 ;; esac
-    [ -z "$A_LAST" ] && A_LAST="--"
+  # Returns two epochs — the newest reading and the Pi's own clock — as
+  # "last|now" on psql's default separator. Ages are computed from the Pi's
+  # clock, so a skewed Mac clock cannot invent staleness.
+  #
+  # Two rules keep this parsable by macOS's /bin/bash 3.2, which Übersicht uses:
+  # the remote command is wrapped in SINGLE quotes so nothing needs escaping,
+  # and the SQL contains no quotes of its own (hence epochs here and formatting
+  # below, rather than to_char with a quoted format string). The earlier version
+  # nested escaped quotes inside $( ), which 3.2 mis-scans — it runs past the
+  # closing paren and dies on the next ")" it meets, at a baffling line number.
+  ROW=$($SSH anderson-hub 'timeout 20 sudo -u postgres psql -tAX -d fluxuum -c "select coalesce(extract(epoch from max(created_at))::bigint,0), extract(epoch from now())::bigint from readings;"' 2>/dev/null)
+  LAST_E="${ROW%%|*}"
+  NOW_E="${ROW##*|}"
+  case "$LAST_E" in ''|*[!0-9]*) LAST_E=0 ;; esac
+  case "$NOW_E" in ''|*[!0-9]*) NOW_E=0 ;; esac
+  if [ "$LAST_E" -gt 0 ] && [ "$NOW_E" -gt 0 ]; then
+    A_AGE=$(( NOW_E - LAST_E ))
+    [ "$A_AGE" -lt 0 ] && A_AGE=0
+    A_LAST=$(date -r "$LAST_E" '+%m-%d %H:%M' 2>/dev/null || echo "--")
   fi
 fi
 
