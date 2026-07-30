@@ -226,12 +226,21 @@ export const render = ({ output, error }) => {
   const aDot = a.up !== "up" ? "bad" : stale ? "warn" : "ok";
   const bDot = (d.backup || {}).up === "up" ? "ok" : "bad";
 
+  // "Could not look" is not "the backups are gone" — the archive folders are
+  // TCC-protected and hand back an empty listing rather than an error. Only
+  // report red for a readable folder that genuinely holds nothing.
   const arch = d.archive || {};
-  const archBad = arch.count === 0 || arch.count === -1;
   const archStale = arch.age_h >= 0 && arch.age_h > 36;
-  const archDot = archBad ? "bad" : archStale ? "warn" : "ok";
+  const archDot =
+    arch.source === "unknown" ? "warn"
+    : arch.source === "disk" && arch.count === 0 ? "bad"
+    : archStale ? "warn"
+    : "ok";
   const archText =
-    arch.count === -1 ? "folder missing" : arch.count === 0 ? "EMPTY" : `${arch.count} · ${arch.age_h}h old`;
+    arch.source === "unknown" ? "unreadable"
+    : arch.source === "receipt" ? `${arch.age_h}h old · receipt`
+    : arch.count === 0 ? "EMPTY"
+    : `${arch.count} · ${arch.age_h}h old`;
 
   window.setTimeout(armDrag, 0);
 

@@ -12,8 +12,13 @@ export PATH="/usr/local/bin:/opt/homebrew/bin:/usr/bin:/bin:/usr/sbin:/sbin"
 
 # Where the Mac keeps the off-site archive. Override if yours lives elsewhere:
 #   export HARK_ARCHIVE_DIR="$HOME/path/to/archives"
-ARCHIVE_DIR="${HARK_ARCHIVE_DIR:-$HOME/Documents/facility-archive}"
+ARCHIVE_DIR="${HARK_ARCHIVE_DIR:-$HOME/Documents/facility-archives}"
+ARCHIVE_ALT="${HARK_ARCHIVE_ALT:-$HOME/Library/CloudStorage/GoogleDrive-max2k03@gmail.com/My Drive/facility-archives}"
 ARCHIVE_GLOB="hub-backup-fluxuum-*.sql.gz"
+# Written by facility-archive-backup.sh after each successful run. Lives under
+# ~/Library/Logs, which macOS does not gate, so it stays readable when the
+# archive folders themselves are not.
+ARCHIVE_RECEIPT="${HARK_ARCHIVE_RECEIPT:-$HOME/Library/Logs/facility-archive-last.txt}"
 
 SSH="ssh -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=accept-new"
 
@@ -65,22 +70,72 @@ if $SSH hub-backup true 2>/dev/null; then
 fi
 
 # ---------- off-site archive (local, free) ----------
-ARCH_N=0
+# Both archive folders sit in TCC-protected locations (~/Documents and
+# ~/Library/CloudStorage). A scheduled or sandboxed job can stat them but gets
+# handed an EMPTY listing of their contents — so "no files" here means "could
+# not look", not "the backups are gone". Never report absence from that.
+#
+# Same ladder the staleness alarm uses: read the real folders when they are
+# readable, otherwise fall back to the receipt the backup job leaves behind.
+ARCH_N=-1
 ARCH_AGE=-1
+ARCH_SRC=unknown
 
-if [ -d "$ARCHIVE_DIR" ]; then
+# read_dir DIR — echo "count|newest_mtime", or return 1 if it cannot be read.
+# A readable folder holding no archives returns "0|" — that is a real finding,
+# distinct from a blocked listing, and must stay distinguishable from it.
+read_dir() {
+  local d="$1" entries n newest
+  [ -d "$d" ] || return 1
+  entries=$(ls -A "$d" 2>/dev/null | wc -l | tr -d ' ')
+  # Zero visible entries is the signature of a blocked listing, not an empty
+  # folder — treat it as unreadable and let the receipt answer instead.
+  [ "${entries:-0}" -gt 0 ] || return 1
   # shellcheck disable=SC2086
-  ARCH_N=$(ls -1 "$ARCHIVE_DIR"/$ARCHIVE_GLOB 2>/dev/null | wc -l | tr -d ' ')
-  NEWEST=$(ls -1t "$ARCHIVE_DIR"/$ARCHIVE_GLOB 2>/dev/null | head -1)
-  if [ -n "$NEWEST" ]; then
-    ARCH_AGE=$(( ( $(date +%s) - $(stat -f %m "$NEWEST") ) / 3600 ))
+  n=$(ls -1 "$d"/$ARCHIVE_GLOB 2>/dev/null | wc -l | tr -d ' ')
+  # shellcheck disable=SC2086
+  newest=$(ls -1t "$d"/$ARCHIVE_GLOB 2>/dev/null | head -1)
+  [ -n "$newest" ] || { echo "0|"; return 0; }
+  echo "${n}|$(stat -f %m "$newest")"
+}
+
+# Prefer a folder that actually holds archives. A readable-but-empty folder is
+# only reported once every location has been tried, so a blocked primary cannot
+# mask a healthy Drive copy.
+SAW_EMPTY=0
+for dir in "$ARCHIVE_DIR" "$ARCHIVE_ALT"; do
+  if HIT=$(read_dir "$dir"); then
+    MTIME="${HIT##*|}"
+    if [ -n "$MTIME" ]; then
+      ARCH_N="${HIT%%|*}"
+      ARCH_AGE=$(( ( $(date +%s) - MTIME ) / 3600 ))
+      ARCH_SRC=disk
+      break
+    fi
+    SAW_EMPTY=1
   fi
-else
-  ARCH_N=-1
+done
+
+if [ "$ARCH_SRC" = unknown ] && [ "$SAW_EMPTY" = 1 ]; then
+  ARCH_N=0
+  ARCH_AGE=-1
+  ARCH_SRC=disk
 fi
 
-printf '{"anderson":{"up":"%s","last":"%s","age":%s},"backup":{"up":"%s"},"promoted":"%s","watcher":{"active":"%s","enabled":"%s"},"archive":{"count":%s,"age_h":%s},"checked":"%s"}\n' \
+if [ "$ARCH_SRC" = unknown ] && [ -r "$ARCHIVE_RECEIPT" ]; then
+  R_EPOCH=$(sed -n 's/^epoch=//p' "$ARCHIVE_RECEIPT" | head -1 | tr -d '[:space:]')
+  case "$R_EPOCH" in
+    ''|*[!0-9]*) ;;
+    *)
+      ARCH_AGE=$(( ( $(date +%s) - R_EPOCH ) / 3600 ))
+      ARCH_N=1
+      ARCH_SRC=receipt
+      ;;
+  esac
+fi
+
+printf '{"anderson":{"up":"%s","last":"%s","age":%s},"backup":{"up":"%s"},"promoted":"%s","watcher":{"active":"%s","enabled":"%s"},"archive":{"count":%s,"age_h":%s,"source":"%s"},"checked":"%s"}\n' \
   "$A_UP" "$A_LAST" "${A_AGE:--1}" \
   "$B_UP" "$PROMOTED" "$W_ACTIVE" "$W_ENABLED" \
-  "${ARCH_N:--1}" "${ARCH_AGE:--1}" \
+  "${ARCH_N:--1}" "${ARCH_AGE:--1}" "$ARCH_SRC" \
   "$(date '+%H:%M')"
