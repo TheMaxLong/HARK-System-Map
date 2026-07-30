@@ -24,16 +24,36 @@ chmod +x failover-probe.sh
 bash "$W/failover/failover-probe.sh"
 ```
 
+## Position and display
+
+**Move it:** drag by the title bar. The position is saved and survives refreshes
+and restarts. To send it back to the top-right corner, open the widget's web
+inspector and run `localStorage.removeItem("failover-widget-pos")`, or edit
+`HOME_TOP` / `HOME_RIGHT` at the top of `failover.jsx`.
+
+If dragging does nothing, the desktop layer is in click-through mode — enable
+interaction for the widget from the Übersicht menu bar icon, then try again.
+
+**Pin it to one display:** this is a per-widget setting in Übersicht's own UI,
+not something the widget file controls. Open the Übersicht menu bar icon, find
+this widget in the list, and set which screen it appears on. There is no
+`screens` export to set in code.
+
 ## What it shows
 
-The banner is driven by `/home/pi/PROMOTED_AT`, because that single file is what
-decides whether failover can fire at all:
+The banner answers one question — *can the failover actually promote right now?*
+That takes both the marker file and the unit state, because a masked or stopped
+watcher cannot fire regardless of what `/home/pi/PROMOTED_AT` says:
 
 | Banner | Meaning |
 |---|---|
-| `FAILOVER DISARMED` | Marker present. Auto-promotion cannot happen. |
-| `FAILOVER ARMED` | Marker cleared. Watcher can promote. |
+| `FAILOVER ARMED` | Watcher running, marker clear. It can promote. |
+| `FAILOVER OFF` | Watcher masked or not running. It cannot promote. |
+| `FAILOVER BLOCKED` | Watcher running, but the marker stops it. |
 | `STATE UNKNOWN` | hub-backup unreachable — never shown as green. |
+
+Green means *armed*, which is only good once both Pis hold the same readings.
+While they differ, armed is the dangerous state — see the recovery checklist.
 
 Below that: anderson-hub with its **last reading age**, hub-backup reachability,
 and off-site archive count + age. The anderson-hub dot turns amber when readings

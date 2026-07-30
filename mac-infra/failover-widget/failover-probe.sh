@@ -36,11 +36,18 @@ if $SSH anderson-hub true 2>/dev/null; then
   fi
 fi
 
-# ---------- hub-backup (standby / current primary) ----------
-# No sudo here on purpose: the two boxes differ in sudo config, and a file test
-# needs none.
+# ---------- hub-backup (standby, separate building) ----------
+# No sudo here on purpose: the two boxes differ in sudo config, and neither a
+# file test nor systemctl's query verbs need it.
+#
+# Both the marker and the unit state are needed to answer "can this actually
+# fire?". The marker alone is not enough — a masked or dead unit cannot promote
+# whatever /home/pi/PROMOTED_AT says, and calling that "armed" would be a lie in
+# exactly the situation where the answer matters.
 B_UP=down
 PROMOTED=unknown
+W_ACTIVE=unknown
+W_ENABLED=unknown
 
 if $SSH hub-backup true 2>/dev/null; then
   B_UP=up
@@ -49,6 +56,12 @@ if $SSH hub-backup true 2>/dev/null; then
   else
     PROMOTED=absent
   fi
+  WROW=$($SSH hub-backup 'systemctl is-active failover-watcher.service 2>/dev/null; \
+    systemctl is-enabled failover-watcher.service 2>/dev/null' 2>/dev/null)
+  W_ACTIVE=$(printf '%s\n' "$WROW" | sed -n 1p | tr -d '[:space:]')
+  W_ENABLED=$(printf '%s\n' "$WROW" | sed -n 2p | tr -d '[:space:]')
+  [ -z "$W_ACTIVE" ] && W_ACTIVE=unknown
+  [ -z "$W_ENABLED" ] && W_ENABLED=unknown
 fi
 
 # ---------- off-site archive (local, free) ----------
@@ -66,8 +79,8 @@ else
   ARCH_N=-1
 fi
 
-printf '{"anderson":{"up":"%s","last":"%s","age":%s},"backup":{"up":"%s"},"promoted":"%s","archive":{"count":%s,"age_h":%s},"checked":"%s"}\n' \
+printf '{"anderson":{"up":"%s","last":"%s","age":%s},"backup":{"up":"%s"},"promoted":"%s","watcher":{"active":"%s","enabled":"%s"},"archive":{"count":%s,"age_h":%s},"checked":"%s"}\n' \
   "$A_UP" "$A_LAST" "${A_AGE:--1}" \
-  "$B_UP" "$PROMOTED" \
+  "$B_UP" "$PROMOTED" "$W_ACTIVE" "$W_ENABLED" \
   "${ARCH_N:--1}" "${ARCH_AGE:--1}" \
   "$(date '+%H:%M')"
