@@ -1,46 +1,112 @@
 #!/data/data/com.termux/files/usr/bin/bash
-# watch-pi-health.sh — Pings the Pi (Anderson hub) and key services.
-# Alerts if anything that was healthy goes down.
+# watch-pi-health.sh — Checks BOTH Pis and their key services, independently.
+#
+# anderson-hub is the production primary; hub-backup is the standby, at the same
+# facility but in a SEPARATE BUILDING (corrected 2026-07-30 — the map used to say
+# "Max's condo", which was wrong).
+# Each host is probed and alerted on separately, and every alert names the host it
+# came from. A healthy standby must never mask a dead primary.
+#
+# It did exactly that from 2026-05-27 to 2026-07-30: commit 82dabaf repointed the
+# HTTP probe to hub-backup during the SD-card death and it was never repointed back
+# after anderson-hub resumed primary on 05-28. The ssh probes kept hitting
+# anderson-hub via the `pi` alias, so one composite state mixed two machines — and
+# the "$ROOT = up" guard suppressed anderson-hub service alerts based on
+# hub-backup's reachability.
 source ~/sentinel/lib/common.sh
 
 WATCHER=pi-health
-PI="hub-backup.tailf0f27a.ts.net"
 STATE_FILE="$STATE_DIR/$WATCHER.json"
 
-# 1. Tailscale reachability to Pi root
-ROOT_CODE=$(curl -s -o /dev/null --max-time 5 -w '%{http_code}' "https://$PI/")
-[ "$ROOT_CODE" = "200" ] && ROOT=up || ROOT=down
+ANDERSON_HOST="anderson-hub.tailf0f27a.ts.net"
+ANDERSON_SSH="pi"                # long-standing ssh alias for anderson-hub
+BACKUP_HOST="hub-backup.tailf0f27a.ts.net"
+BACKUP_SSH="hub-backup"          # ssh legs self-park if this alias isn't configured
 
 # Helper: any HTTP response code 1xx-5xx means the server is alive.
 # Only "000" or empty means it failed to reach the service.
 is_alive() { [ -n "$1" ] && [ "$1" != "000" ]; }
 
-# 2. Fluxuum API (Pi:3001) — serves under /api/*, root returns 404 (still alive)
-FLUX_CODE=$(ssh -o ConnectTimeout=4 -o BatchMode=yes pi 'curl -s -o /dev/null --max-time 3 -w "%{http_code}" http://localhost:3001/' 2>/dev/null)
-is_alive "$FLUX_CODE" && FLUX=up || FLUX=down
+# http_up HOST — Tailscale reachability of the host root.
+http_up() {
+  local CODE
+  CODE=$(curl -s -o /dev/null --max-time 5 -w '%{http_code}' "https://$1/")
+  [ "$CODE" = "200" ] && echo up || echo down
+}
 
-# 3. FT api (Pi:8080)
-FT_CODE=$(ssh -o ConnectTimeout=4 -o BatchMode=yes pi 'curl -s -o /dev/null --max-time 3 -w "%{http_code}" http://localhost:8080/' 2>/dev/null)
-is_alive "$FT_CODE" && FT=up || FT=down
+# svc_state SSH_ALIAS PORT — is a service answering on the host's localhost?
+svc_state() {
+  local CODE
+  CODE=$(ssh -o ConnectTimeout=4 -o BatchMode=yes "$1" \
+    "curl -s -o /dev/null --max-time 3 -w '%{http_code}' http://localhost:$2/" 2>/dev/null)
+  is_alive "$CODE" && echo up || echo down
+}
 
-# Compose state
-CURR="root=$ROOT flux=$FLUX ft=$FT"
+# ssh_ready ALIAS — true if the alias resolves and accepts a batch-mode login.
+ssh_ready() { ssh -o ConnectTimeout=4 -o BatchMode=yes "$1" true 2>/dev/null; }
+
+# ---------- anderson-hub (PRIMARY) ----------
+A_ROOT=$(http_up "$ANDERSON_HOST")
+A_FLUX=unknown
+A_FT=unknown
+
+if [ "$A_ROOT" = "down" ]; then
+  alert_throttled "anderson-root-down" "critical" "anderson-hub unreachable" \
+    "PRIMARY anderson-hub is not responding via Tailscale."
+elif ssh_ready "$ANDERSON_SSH"; then
+  A_FLUX=$(svc_state "$ANDERSON_SSH" 3001)
+  A_FT=$(svc_state "$ANDERSON_SSH" 8080)
+
+  if [ "$A_FLUX" = "down" ]; then
+    alert_throttled "anderson-flux-down" "warn" "Fluxuum API down (anderson-hub)" \
+      "anderson-hub is reachable but :3001 is not responding."
+  fi
+  if [ "$A_FT" = "down" ]; then
+    alert_throttled "anderson-ft-down" "warn" "Facility Tracker down (anderson-hub)" \
+      "anderson-hub is reachable but :8080 is not responding."
+  fi
+else
+  # Could not log in. That says nothing about the services, so do not claim they
+  # are down — leave both `unknown` and say why.
+  #
+  # Found the day this shipped, 2026-07-30: the phone's key to anderson-hub was
+  # being refused (Permission denied (publickey)), `svc_state` got empty output,
+  # and the watcher pushed "Fluxuum API down" and "Facility Tracker down" while
+  # both were fine — :3001 answering 404 and :8080 answering 200, checked by hand
+  # on the Pi itself. Two false alarms on its first run.
+  #
+  # The standby branch below already guarded with ssh_ready. The primary did not,
+  # which is exactly backwards: a false alarm about the PRIMARY is the one that
+  # gets someone out of bed. Digest, never a push — a watcher that cannot see is
+  # not an outage, and this project's rule is that alerts report facts, not guesses.
+  log_digest warn "$WATCHER" \
+    "cannot log in to anderson-hub over ssh — service checks parked as unknown (this is NOT a service outage)"
+fi
+
+# ---------- hub-backup (STANDBY / failover target) ----------
+# Unreachable is critical: if the standby is dead there is nothing to fail over to.
+# Its individual services are digest-only — as a cold standby they are deliberately
+# stopped, so pushing on them would be noise. Reachability is the signal that matters.
+B_ROOT=$(http_up "$BACKUP_HOST")
+B_FLUX=unknown
+B_FT=unknown
+
+if [ "$B_ROOT" = "down" ]; then
+  alert_throttled "backup-root-down" "critical" "hub-backup unreachable" \
+    "STANDBY hub-backup is not responding via Tailscale — no failover target."
+elif ssh_ready "$BACKUP_SSH"; then
+  B_FLUX=$(svc_state "$BACKUP_SSH" 3001)
+  B_FT=$(svc_state "$BACKUP_SSH" 8080)
+  [ "$B_FLUX" = "down" ] && log_digest warn "$WATCHER" "hub-backup :3001 down"
+  [ "$B_FT" = "down" ] && log_digest warn "$WATCHER" "hub-backup :8080 down"
+fi
+
+# ---------- compose + recovery ----------
+CURR="anderson[root=$A_ROOT flux=$A_FLUX ft=$A_FT] backup[root=$B_ROOT flux=$B_FLUX ft=$B_FT]"
 PREV=$(cat "$STATE_FILE" 2>/dev/null || echo "")
 
-# Only alert if any service is down AND state changed (or no prev state)
-if [ "$ROOT" = "down" ]; then
-  alert_throttled "pi-root-down" "critical" "Pi unreachable" "Anderson hub not responding via Tailscale."
-fi
-if [ "$FLUX" = "down" ] && [ "$ROOT" = "up" ]; then
-  alert_throttled "pi-flux-down" "warn" "Fluxuum API down" "Pi reachable but :3001 not responding."
-fi
-if [ "$FT" = "down" ] && [ "$ROOT" = "up" ]; then
-  alert_throttled "pi-ft-down" "warn" "Facility Tracker down" "Pi reachable but :8080 not responding."
-fi
-
-# Recovery: log when all-up returns after a down period
-if [ "$CURR" = "root=up flux=up ft=up" ] && [ "$PREV" != "$CURR" ] && [ -n "$PREV" ]; then
-  log_digest info "$WATCHER" "all services back: $PREV -> $CURR"
+if [ "$CURR" != "$PREV" ] && [ -n "$PREV" ]; then
+  log_digest info "$WATCHER" "state change: $PREV -> $CURR"
 fi
 
 echo "$CURR" > "$STATE_FILE"
