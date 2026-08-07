@@ -109,7 +109,7 @@ Commercial floor robots (Tombot Jennie, Loona, AIBO) are **not** for dog monitor
 
 **Natural dashboard layer:**
 - Rover publishes: `{position: [x, y], battery: %, treats_dispensed: N, motion_detected: true/false, timestamp}` to local MQTT.
-- Same pattern as your greenhouse sensors (Fluxuum). Dead simple to wire into Facility Tracker or new CannaMax-style pet dashboard.
+- Same pattern as your greenhouse sensors (Fluxuum). Dead simple to wire into Facility Tracker or new Cannamax-style pet dashboard.
 - Heatmap of where dog spent time.
 - Treat dispense log (did he eat it? when?).
 - Battery health alerts.

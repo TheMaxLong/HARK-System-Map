@@ -1,5 +1,5 @@
 #!/data/data/com.termux/files/usr/bin/bash
-# watch-cannamax.sh — Polls CannaMax drift detector for new drift events.
+# watch-cannamax.sh — Polls Cannamax drift detector for new drift events.
 # Alerts on each new drift signature not previously seen.
 #
 # Auto-parks when no URL is configured. To enable:
@@ -10,7 +10,7 @@ source ~/sentinel/lib/common.sh
 WATCHER=cannamax-drift
 URL_FILE="$HOME/sentinel/cannamax.url"
 
-# Self-park if no URL configured — avoid spamming digest until CannaMax is deployed.
+# Self-park if no URL configured — avoid spamming digest until Cannamax is deployed.
 if [[ ! -s "$URL_FILE" ]]; then
   exit 0
 fi
@@ -31,7 +31,7 @@ done
 
 if [ -z "$DRIFT_JSON" ]; then
   # All endpoints failed — log once per throttle window (don't spam)
-  alert_throttled "cannamax-endpoint-unreachable" "info" "CannaMax silent" "No drift endpoint responding — verify URL or service is up."
+  alert_throttled "cannamax-endpoint-unreachable" "info" "Cannamax silent" "No drift endpoint responding — verify URL or service is up."
   exit 0
 fi
 
