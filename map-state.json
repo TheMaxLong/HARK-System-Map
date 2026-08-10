@@ -896,6 +896,19 @@
       "desc": "The archive a customer's box ships: when the grower marks a room harvested in Cannamax, the whole cycle is packaged into one dossier — every irrigation run in the load-to-harvest window; sources the box doesn't have yet are declared plainly, never faked — and served for browsing on the box. The capture can never block a harvest. Profile-driven, and the profile is generated fresh from the confirmed facility at every harvest.",
       "tech": "Python 3 stdlib only · profile-driven · 22 tests · TheMaxLong/hark-harvest-archive-template",
       "notes": "2026-08-01: four commits today, the repo's first. It reads a run log over HTTP and runoff from SQLite, anchors everything to day-of-cycle rather than row count, and writes per-room, per-crop dossiers. It never writes to a facility source. Room names and zone patterns arrive in a profile JSON, so it can be stood up before any controller is wired. Each dossier states its own completeness — complete, partial, or INCOMPLETE-UNEXPECTED, and only the last is worth interrupting someone about. The run stream and the runoff stream are kept separate inside a dossier because they measure different things and must never be blended. A lint tool refuses to ship one grow's details in the template. This is the commercial descendant of the harvest-dossier and Harvest Archive work at Max's facility; per the standing rule the lineage is written here rather than drawn as an edge, because no commercial node connects to a facility node."
+    },
+    {
+      "id": "noema",
+      "label": "NOEMA",
+      "cat": "app",
+      "sz": 15,
+      "x": 0.94,
+      "y": 0.1,
+      "type": "Application · local-first project memory",
+      "status": "live",
+      "desc": "Project memory. Inventories the nearby git repositories, keeps per-project re-entry notes, and compiles research packets for an LLM. Splits cannabis operations from personal systems, which is how Max actually thinks about them. Built by Codex on 2026-06-20, not by Claude, and it sits alongside the Claude memory files rather than replacing them.",
+      "tech": "Node ESM · server.mjs on 127.0.0.1:4173 · launchd com.max.noema + com.max.noema.sync (5 min) · Ubersicht noema-projects.widget · TheMaxLong/NOEMA (private)",
+      "notes": "The name is not an acronym. Greek noema, that which is thought, from Husserl.\n\nWorking checkout is ~/Documents/Project Organizer on the Mac, auto-syncing every five minutes. The Ubersicht widget reads the project index straight off disk, so the summary still shows when the organizer itself is closed. AI providers are deliberately unconfigured - it is local only and nothing leaves the machine.\n\n2026-07-31: it was the answer to a recurring intrusion alert. facility-health kept reporting an unexpected listener on port 4173 of hub-backup, which turned out to be this, bound to all interfaces and therefore visible to the scanner. The port was allowlisted rather than the process killed, because the process was legitimate.\n\n⚠️ /home/pi/noema on hub-backup is a hand-copied deployment, NOT a git checkout. It was byte-identical to the repo when checked, but it has no auto-update path, so a push will never reach it. Its data directory is Pi-local state and gitignored on purpose - do not check out over it. Whether it belongs on that Pi at all is still undecided.\n\n2026-08-10 (git, through 01:30 PT): TheMaxLong/NOEMA @ main 61b3b04 - 2 commits since 2026-08-01, both housekeeping: a license file, and a line in the docs saying what the name means."
     }
   ],
   "edges": [
@@ -1997,6 +2010,12 @@
       "t": "harvest-archive-template",
       "label": "runs API → cycle window",
       "pulse": true
+    },
+    {
+      "s": "noema",
+      "t": "hub-backup",
+      "label": "hand-copied mirror",
+      "pulse": false
     }
   ],
   "_saved": "2026-08-09T05:23:30.797Z"
