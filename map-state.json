@@ -1053,6 +1053,48 @@
       "tech": "nginx sites-enabled: fluxuum (:443) · public-readonly (:10000) · cannamax-readonly (:10000/cannamax) · recipe-readonly (:8443)",
       "notes": "2026-08-27: added to the map because it hid a real outage. Max actual url is the :10000 funnel, not the bare hostname on :443, and the two are DIFFERENT server blocks -- a dead Status page on :10000 sat behind a :443 that looked perfect. The gzip trap: /etc/nginx/nginx.conf http had gzip on with EVERY modifier commented out (the Debian default), and gzip on alone compresses nothing proxied and nothing but text/html -- so /api/runs shipped 4,518,499 bytes uncompressed in 12.2s on :10000 while :443 sent 440 KB, because the fluxuum block set gzip_proxied any and gzip_types application/json locally. ⛔ gzip_proxied is the LOAD-BEARING directive; without it proxied responses are never touched. Fixed by enabling gzip properly in http so all six blocks inherit it. Verified after: :443 440,110 b gzip 7.8s and :10000 440,110 b gzip 8.1s. Status page on :10000 recovered -- LIVE, 29 zones, 178 runs/24h, AB 9/9 active. Backup /etc/nginx/nginx.conf.bak-20260827-gzip. ⚠️ Still 404 on BOTH listeners: /api/runoff/today, never proxied. ⚠️ Verify every proxy change on :10000 as well as :443 -- passing on one listener proves nothing about the other.",
       "dated": "2026-08-27"
+    },
+    {
+      "id": "hark-licence",
+      "label": "HARK Licence\n/ the off switch",
+      "cat": "commercial",
+      "sz": 17,
+      "x": 0.04,
+      "y": 0.26,
+      "type": "Commercial · Entitlement",
+      "status": "building",
+      "desc": "Signed licence with an expiry, verified on the box offline against a vendor key in the image. There is no inbound path: renewal is a new signed file and switching a box off is declining to issue the next one. Expiry blocks recording new data only — reading and export are literal true in the capability type, because EULA §6 says the grower owns their data. Bound to one box's key so a paid licence cannot be copied.",
+      "tech": "Ed25519 · DSSE envelope · appliance/licence/ · npm run licence",
+      "notes": "2026-08-28: built and pushed. 55 tests. Vendor CLI (keygen/issue/inspect) proven end to end — a lapsed licence reports recording NO, another box's licence is refused subject-mismatch, a forged one bad-signature. A dead RTC reports clock-suspect and KEEPS RECORDING rather than reading as expired. Inert until HARK_VENDOR_PUBKEY + HARK_LICENCE_FILE + HARK_DEVICE_FINGERPRINT are all set. Not deployed: no vendor keypair generated yet.",
+      "dated": "2026-08-28"
+    },
+    {
+      "id": "hark-fleet",
+      "label": "Fleet Centre\n/ vendor side",
+      "cat": "commercial",
+      "sz": 19,
+      "x": 0.04,
+      "y": 0.33,
+      "type": "Commercial · Vendor Infrastructure",
+      "status": "building",
+      "desc": "The vendor's own server. Boxes post signed health reports; a sweeper turns silence into a row, because a dead box and a healthy box otherwise look identical. Carries no facility data by construction — the wire holds a check id and a verdict, and the grower-facing sentence is excluded from the allow-list so a room name cannot ride out in prose.",
+      "tech": "Express · Postgres · DSSE · Docker · appliance/fleet/centre/",
+      "notes": "2026-08-28: HTTP door, sweep timer, Dockerfile and deploy README built and pushed. Boots and serves, proven against a real schema over real HTTP. Measured payload 2,841 bytes per report; 20 boxes is 1.85 GB of envelope bytes a year, so 1 vCPU / 1 GB / 20 GB covers well past 100 customers — the reason to care about the host is uptime, not size. NOT DEPLOYED: no host, DATABASE_URL and FLEET_VIEW_TOKEN unset. Never on a production facility machine.",
+      "dated": "2026-08-28"
+    },
+    {
+      "id": "hark-brain",
+      "label": "Community Brain\n/ boxes teach boxes",
+      "cat": "commercial",
+      "sz": 18,
+      "x": 0.13,
+      "y": 0.305,
+      "type": "Commercial · Shared Learning",
+      "status": "building",
+      "desc": "Boxes contribute what they learned — controller shapes, the capabilities they proved, and industry vocabulary — so the next site with the same hardware works on day one. Nothing is published until k independent DEVICES agree, enforced by the primary key rather than by application code, so one talkative box cannot promote its own room name. Boxes submit controllers they DID recognise: two boxes disagreeing about one shape is the bug report, and a fleet of confident boxes that never speak up cannot disagree.",
+      "tech": "k-anonymity · DSSE · derived not redacted · appliance/fleet/*-share.ts",
+      "notes": "2026-08-28: filters, storage, sender, receiver, distribution and the device-is-authority adoption all built and pushed. Four channels reached the same rule independently — structured fields travel, prose never does: the health sentence, the controller page body, the dossier notes and the matcher reasons are each excluded. A downloaded signature is a CANDIDATE until the box matches it against hardware it can see. NOT RUNNING: consent.sharedLearning is false by default and no centre exists to talk to.",
+      "dated": "2026-08-28"
     }
   ],
   "edges": [
@@ -2274,6 +2316,42 @@
       "s": "nginx-funnel",
       "t": "cannamax",
       "label": ":10000/cannamax"
+    },
+    {
+      "s": "hark-box",
+      "t": "hark-fleet",
+      "label": "signed health",
+      "pulse": true
+    },
+    {
+      "s": "hark-box",
+      "t": "hark-brain",
+      "label": "what it learned",
+      "pulse": true
+    },
+    {
+      "s": "hark-brain",
+      "t": "hark-box",
+      "label": "candidates only",
+      "pulse": false
+    },
+    {
+      "s": "hark-licence",
+      "t": "hark-box",
+      "label": "signed term",
+      "pulse": false
+    },
+    {
+      "s": "cannamax-template",
+      "t": "hark-licence",
+      "label": "gate",
+      "pulse": false
+    },
+    {
+      "s": "hark-fleet",
+      "t": "hark-brain",
+      "label": "same centre",
+      "pulse": false
     }
   ],
   "_saved": "2026-08-10T09:01:18.863Z"
