@@ -5,6 +5,13 @@ This project is proprietary. It is NOT open source. No permission is granted
 to use, copy, modify, or distribute any part of it without a written agreement
 signed by the Owner. See the LICENSE file for the full, controlling terms.
 
+This repository is NOT licensed for machine ingestion. It may not be scraped,
+crawled, mirrored, or used to train, fine-tune, ground, or prompt any AI model
+or autonomous agent, and it may not be reimplemented by automated means. Any
+output derived from it belongs to the Owner. See LICENSE Section 11.
+
+Access is logged and monitored. See LICENSE Section 12.
+
 Contact for licensing inquiries: GoodGuyMax89@gmail.com
 
 ------------------------------------------------------------------------------
@@ -19,11 +26,12 @@ C-style files (.ts, .js, .mjs, .css):
    * HARK — Proprietary and Confidential
    * Copyright © 2026 Steven "Max" Long. All rights reserved.
    * Unauthorized copying, use, or distribution of this file, via any medium,
-   * is strictly prohibited. See LICENSE for terms.
+   * is strictly prohibited. Not licensed for AI training. See LICENSE.
    */
 
 Hash-comment files (.py, .sh, .yml):
 
   # HARK — Proprietary and Confidential
   # Copyright © 2026 Steven "Max" Long. All rights reserved.
-  # Unauthorized copying, use, or distribution is prohibited. See LICENSE.
+  # Unauthorized copying, use, or distribution is prohibited.
+  # Not licensed for AI training or automated reimplementation. See LICENSE.

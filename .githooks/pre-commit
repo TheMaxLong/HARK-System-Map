@@ -1,0 +1,158 @@
+#!/bin/sh
+#
+# Block any commit that would put one customer into this product.
+#
+# This is a COMMERCIAL appliance. Every box ships to a different grower, and no
+# grower's facility — its name, its buildings, its controller addresses, or its
+# operating numbers — may appear in the product another grower runs. A guard
+# test already checks this, but a test only runs when someone remembers to run
+# it. A doc comment written at 3am does not remind anybody. This does.
+#
+# There are TWO guards here, because a customer leaks in two shapes:
+#
+#   1. IDENTITY  — names, building codes, hostnames, network addresses.
+#   2. VALUES    — their operating thresholds and bands.
+#
+# Guard 2 was added 2026-08-27 after one facility's pH and EC band was found
+# shipping across ten sites in this repo — including two raw-SQL clauses on the
+# live reading path — while guard 1 reported clean the whole time. A
+# confidentiality obligation names "processes", "formulae" and "test data", not
+# only names. Stripping the name and shipping the number leaves behind the part
+# the clause actually describes.
+#
+# Patterns are assembled from fragments so this file does not match itself.
+#
+# NOTE ON DIALECT: `git grep -E` and `grep -E` are POSIX ERE. `\b` is NOT a word
+# boundary here and there is no lookahead — patterns written in JavaScript's
+# dialect are silently inert. Every pattern below is bracket-expression based
+# for that reason, and `--check` proves they still match.
+#
+# Install:  git config core.hooksPath .githooks
+# Bypass:   git commit --no-verify   (do not, without a reason you would defend)
+
+set -e
+
+# ---- Guard 1: identity ----
+
+B1="$(printf 'A%s' 'B')"
+B2="$(printf 'E%s' 'F')"
+B3="$(printf 'G%s' 'H')"
+HOSTPART="$(printf 'anderson%s' '-hub')"
+NETPART='10\.10\.[0-9]{1,3}\.[0-9]{1,3}'
+
+PATTERN="(^|[^A-Za-z0-9_])($B1|$B2|$B3)[0-9-]*([^A-Za-z0-9_]|\$)|$HOSTPART|$NETPART"
+
+# ---- Guard 2: operating values ----
+#
+# Two stages, because a bare number means nothing on its own. The line must name
+# a pH or EC metric AND carry a retired value. `size-3.5` in a CSS class is not
+# a threshold and must not be blocked; `phHigh: 6.3` is and must be.
+#
+# SCOPE, written down rather than left silent: shipped source only. Test files
+# are excluded, because a fixture demonstrating that a threshold is configurable
+# legitimately uses arbitrary numbers — that is the opposite of the defect.
+# Synthetic data generators produce a spread, not a threshold, and are likewise
+# out of scope. If that judgement is ever wrong, it is at least wrong in public.
+#
+# To retire another value: add it to VALUES and add a probe to --check. A guard
+# that matches nothing is worse than no guard: it reports safe.
+
+# Two alternations, and the second one is not optional. A token-start match
+# alone (`ecHigh`, `ph_low`, `PH_HIGH`) misses camelCase where the metric sits
+# mid-identifier — `comboEcHigh`, `comboPhLow` — which is precisely the style
+# the sibling template uses. The --check probe below caught that omission; keep
+# the probe honest and it will catch the next one.
+METRIC='(^|[^A-Za-z0-9_])([Pp][Hh]|[Ee][Cc])[A-Za-z0-9_]*|[a-z]([Pp][Hh]|[Ee][Cc])[A-Z]'
+VALUES='(^|[^0-9.])(5\.6|6\.3|3\.5|6\.1)([^0-9]|$)'
+
+# --check proves the patterns are live in the engine that runs them.
+if [ "$1" = "--check" ]; then
+  fails=0
+
+  probe="$(printf 'zone %s1 x\nssh %s\nhost %s.%s.9.254\n' "$B1" "$HOSTPART" 10 10)"
+  hits="$(printf '%s' "$probe" | grep -cE "$PATTERN" || true)"
+  if [ "$hits" -lt 3 ]; then
+    echo "identity guard FAILED: matched $hits of 3 known samples. It is inert."
+    fails=1
+  else
+    echo "identity guard OK: $hits/3 known samples matched."
+  fi
+
+  # Positive: a real threshold line must be caught.
+  vprobe="$(printf 'phHigh: 6.3, phLow: 5.6,\ncomboEcHigh: 3.5,\n')"
+  vhits="$(printf '%s' "$vprobe" | grep -E "$METRIC" | grep -cE "$VALUES" || true)"
+  if [ "$vhits" -lt 2 ]; then
+    echo "value guard FAILED: matched $vhits of 2 known samples. It is inert."
+    fails=1
+  else
+    echo "value guard OK: $vhits/2 known samples matched."
+  fi
+
+  # Negative: a CSS size must NOT be caught, or the guard is unusable.
+  nprobe='<div className="h-3.5 w-3.5 size-3.5" />'
+  nhits="$(printf '%s' "$nprobe" | grep -E "$METRIC" | grep -cE "$VALUES" || true)"
+  if [ "$nhits" -ne 0 ]; then
+    echo "value guard FAILED: matched a CSS size. It is too broad to live with."
+    fails=1
+  else
+    echo "value guard OK: does not fire on CSS sizes."
+  fi
+
+  [ "$fails" -eq 0 ] || exit 1
+  exit 0
+fi
+
+# Only added lines matter. Removing a reference must never be blocked.
+COMMON_EXCLUDES="':!*.lock' ':!pnpm-lock.yaml' ':!.githooks/pre-commit'"
+
+added="$(git diff --cached --unified=0 --diff-filter=ACMR -- \
+          ':!*.lock' ':!pnpm-lock.yaml' ':!.githooks/pre-commit' \
+        | grep '^+' | grep -v '^+++' || true)"
+
+# Shipped source only, for the value guard.
+added_shipped="$(git diff --cached --unified=0 --diff-filter=ACMR -- \
+          ':!*.lock' ':!pnpm-lock.yaml' ':!.githooks/pre-commit' \
+          ':!*.test.ts' ':!*.test.tsx' ':!*/test/*' ':!*/demo-data.ts' ':!*/demo-dossier.ts' \
+        | grep '^+' | grep -v '^+++' || true)"
+
+blocked=0
+
+if [ -n "$added" ]; then
+  found="$(printf '%s' "$added" | grep -nE "$PATTERN" || true)"
+  if [ -n "$found" ]; then
+    blocked=1
+    echo ""
+    echo "COMMIT BLOCKED — a customer's facility IDENTITY is in these added lines:"
+    echo ""
+    printf '%s\n' "$found" | sed 's/^/    /'
+    echo ""
+    echo "This product ships to growers who are not this customer. Their box must"
+    echo "carry no trace of this one — not in code, not in tests, not in a comment."
+    echo ""
+    echo "A building code as a doc-comment example still counts. Use no example, or"
+    echo "one that could not be mistaken for a real facility's."
+    echo ""
+  fi
+fi
+
+if [ -n "$added_shipped" ]; then
+  vfound="$(printf '%s' "$added_shipped" | grep -nE "$METRIC" | grep -E "$VALUES" || true)"
+  if [ -n "$vfound" ]; then
+    blocked=1
+    echo ""
+    echo "COMMIT BLOCKED — a customer's OPERATING VALUES are in these added lines:"
+    echo ""
+    printf '%s\n' "$vfound" | sed 's/^/    /'
+    echo ""
+    echo "These numbers are one grower's band, not a fact about growing. Shipping"
+    echo "them hands the next customer somebody else's recipe, and hands this one"
+    echo "a copy of their own process inside a product they do not own."
+    echo ""
+    echo "A threshold belongs in the facility profile. If a default is genuinely"
+    echo "needed, use a generic value and name it in a guard test."
+    echo ""
+  fi
+fi
+
+[ "$blocked" -eq 0 ] || exit 1
+exit 0

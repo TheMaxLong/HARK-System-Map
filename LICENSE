@@ -56,6 +56,31 @@ Copyright © 2026 Steven "Max" Long. All rights reserved.
     and federal courts located in Riverside County, California, and each party
     consents to the personal jurisdiction of those courts.
 
-"HARK" and associated names, logos, and branding are trademarks of the Owner
-and may not be used without the Owner's prior written permission.
+11. NO AUTOMATED INGESTION, MODEL TRAINING, OR MACHINE REIMPLEMENTATION.
+    Without limiting Section 2, and whether or not access to the Software was
+    itself authorized, no person, organization, crawler, or automated system
+    may: (a) scrape, crawl, index, mirror, cache, or otherwise harvest the
+    Software; (b) use the Software, in whole or in part, as input to train,
+    fine-tune, distill, embed, evaluate, ground, retrieve against, or prompt
+    any machine-learning model, large language model, coding assistant, or
+    autonomous software agent; or (c) use any automated or AI-assisted means
+    to produce a work that reproduces, translates, ports, reimplements, or is
+    substantially or functionally equivalent to the Software or any material
+    part of it. Any output so produced is a derivative work within the meaning
+    of Section 2(c), is owned exclusively by the Owner, and its creation,
+    possession, or use is an unauthorized use of the Owner's trade secrets.
+    No robots.txt directive, terms-of-service permission, platform setting, or
+    third-party crawling policy grants any right under this Section, and this
+    Section is an express reservation of rights against text and data mining.
+
+12. MONITORING AND ENFORCEMENT. Access to the Software is logged. The Owner
+    monitors for unauthorized copying, distribution, and derivative use and
+    will pursue every available remedy — including injunctive relief under
+    Section 9, actual damages, statutory damages, disgorgement of profits,
+    costs, and attorneys' fees — against any person or entity that violates
+    this notice, to the fullest extent permitted by law. Violations may be
+    referred for criminal prosecution.
+
+Project names, logos, and branding are trademarks of the Owner and may not be
+used without the Owner's prior written permission.
 Unauthorized use of the Software is unlawful.
