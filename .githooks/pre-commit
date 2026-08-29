@@ -40,7 +40,34 @@ B3="$(printf 'G%s' 'H')"
 HOSTPART="$(printf 'anderson%s' '-hub')"
 NETPART='10\.10\.[0-9]{1,3}\.[0-9]{1,3}'
 
-PATTERN="(^|[^A-Za-z0-9_])($B1|$B2|$B3)[0-9-]*([^A-Za-z0-9_]|\$)|$HOSTPART|$NETPART"
+CODEPART="(^|[^A-Za-z0-9_])($B1|$B2|$B3)[0-9-]*([^A-Za-z0-9_]|\$)"
+
+# ---- Per-repo relaxation: building codes only ----
+#
+# 2026-08-29, Max's call, for THIS repo only. The System Map is deliberately
+# public and already carries the building codes in 117 places across 25 nodes —
+# identical 117 already on origin/main. Blocking them here does not remove one
+# character from the internet; it only makes the map permanently un-editable,
+# which is a worse outcome than the exposure it fails to undo.
+#
+# ⛔ SCOPE: this relaxes the building codes and NOTHING else. The hostname, the
+# network addressing and the whole operating-value guard stay ON — the hostname
+# and addressing were scrubbed from this repo the same day precisely because
+# they were worth removing.
+#
+# Set per-clone with:  git config hark.allowBuildingCodes 1
+# It lives in .git/config, which is NOT committed — so a fresh clone is strict
+# again by default. That is deliberate: the relaxation is a decision someone
+# has to make on purpose, not one that travels.
+ALLOW_CODES="$(git config --get hark.allowBuildingCodes 2>/dev/null || true)"
+
+if [ "$ALLOW_CODES" = "1" ]; then
+  PATTERN="$HOSTPART|$NETPART"
+  EXPECT=2
+else
+  PATTERN="$CODEPART|$HOSTPART|$NETPART"
+  EXPECT=3
+fi
 
 # ---- Guard 2: operating values ----
 #
@@ -71,11 +98,27 @@ if [ "$1" = "--check" ]; then
 
   probe="$(printf 'zone %s1 x\nssh %s\nhost %s.%s.9.254\n' "$B1" "$HOSTPART" 10 10)"
   hits="$(printf '%s' "$probe" | grep -cE "$PATTERN" || true)"
-  if [ "$hits" -lt 3 ]; then
-    echo "identity guard FAILED: matched $hits of 3 known samples. It is inert."
+  if [ "$hits" -lt "$EXPECT" ]; then
+    echo "identity guard FAILED: matched $hits of $EXPECT known samples. It is inert."
     fails=1
   else
-    echo "identity guard OK: $hits/3 known samples matched."
+    echo "identity guard OK: $hits/$EXPECT known samples matched."
+  fi
+
+  # When the relaxation is on, PROVE it is the relaxation and not a broken
+  # pattern. Without this, a typo that made the whole guard inert would report
+  # exactly the same as a deliberate opt-out — which is the failure mode this
+  # file exists to prevent.
+  if [ "$ALLOW_CODES" = "1" ]; then
+    cprobe="$(printf 'zone %s1 x\n' "$B1")"
+    chits="$(printf '%s' "$cprobe" | grep -cE "$PATTERN" || true)"
+    if [ "$chits" -ne 0 ]; then
+      echo "relaxation FAILED: building codes still match despite hark.allowBuildingCodes=1."
+      fails=1
+    else
+      echo "identity guard: building codes ALLOWED here on purpose (hark.allowBuildingCodes=1)."
+      echo "                hostname + network still blocked; value guard untouched."
+    fi
   fi
 
   # Positive: a real threshold line must be caught.
