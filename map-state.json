@@ -1062,11 +1062,11 @@
       "x": 0.04,
       "y": 0.26,
       "type": "Commercial · Entitlement",
-      "status": "building",
-      "desc": "Signed licence with an expiry, verified on the box offline against a vendor key in the image. There is no inbound path: renewal is a new signed file and switching a box off is declining to issue the next one. Expiry blocks recording new data only — reading and export are literal true in the capability type, because EULA §6 says the grower owns their data. Bound to one box's key so a paid licence cannot be copied.",
+      "status": "live",
+      "desc": "Signed licence with an expiry, verified on the box offline against a vendor key in the image. There is no inbound path: renewal is a new signed file and switching a box off is declining to issue the next one. Expiry blocks recording new data only — reading and export are literal true in the capability type, because EULA §6 says the grower owns their data. Bound to one box's key so a paid licence cannot be copied across a shelf. Fleet reporting deliberately continues past expiry, so 'stopped paying' stays distinguishable from 'died'.",
       "tech": "Ed25519 · DSSE envelope · appliance/licence/ · npm run licence",
-      "notes": "2026-08-28: built and pushed. 55 tests. Vendor CLI (keygen/issue/inspect) proven end to end — a lapsed licence reports recording NO, another box's licence is refused subject-mismatch, a forged one bad-signature. A dead RTC reports clock-suspect and KEEPS RECORDING rather than reading as expired. Inert until HARK_VENDOR_PUBKEY + HARK_LICENCE_FILE + HARK_DEVICE_FINGERPRINT are all set. Not deployed: no vendor keypair generated yet.",
-      "dated": "2026-08-28"
+      "notes": "2026-08-28: built and pushed. 55 tests. Vendor CLI (keygen/issue/inspect) proven end to end. 2026-08-29: FIRST LICENCE ISSUED AND ENFORCING. Max's ruling — the box is R&D but gets a real licence and is treated as a unit in the field, so it runs the real gate rather than a bypass. Proven both directions before being trusted: with the box's own fingerprint it reads active and recording yes; with any other fingerprint it reads INVALID — subject-mismatch. The box reports its licence to the fleet centre per tick, through the SAME env parsing the gate uses, so what it reports can never drift from what it enforces. ⛔ The middleware must register AFTER the last app.use and BEFORE the first route — behind the routes it gates nothing while looking installed. ⛔ The vendor private key lives on the Mac only, never in a repo and never on a box. It is the only thing that can mint or refuse a licence.",
+      "dated": "2026-08-29"
     },
     {
       "id": "hark-fleet",
@@ -1076,11 +1076,11 @@
       "x": 0.04,
       "y": 0.33,
       "type": "Commercial · Vendor Infrastructure",
-      "status": "building",
-      "desc": "The vendor's own server. Boxes post signed health reports; a sweeper turns silence into a row, because a dead box and a healthy box otherwise look identical. Carries no facility data by construction — the wire holds a check id and a verdict, and the grower-facing sentence is excluded from the allow-list so a room name cannot ride out in prose.",
-      "tech": "Express · Postgres · DSSE · Docker · appliance/fleet/centre/",
-      "notes": "2026-08-28: HTTP door, sweep timer, Dockerfile and deploy README built and pushed. Boots and serves, proven against a real schema over real HTTP. Measured payload 2,841 bytes per report; 20 boxes is 1.85 GB of envelope bytes a year, so 1 vCPU / 1 GB / 20 GB covers well past 100 customers — the reason to care about the host is uptime, not size. NOT DEPLOYED: no host, DATABASE_URL and FLEET_VIEW_TOKEN unset. Never on a production facility machine.",
-      "dated": "2026-08-28"
+      "status": "live",
+      "desc": "The vendor's own server, LIVE at hark-fleet-centre.vercel.app. Boxes post signed health reports; a sweeper turns silence into a row, because a dead box and a healthy box otherwise look identical. Carries no facility data by construction — the wire holds a check id and a verdict, and the grower-facing sentence is excluded from the allow-list so a room name cannot ride out in prose. Its database is a Neon project of its own, never a corner of a facility one.",
+      "tech": "Express · Neon Postgres · DSSE · Vercel · appliance/fleet/centre/",
+      "notes": "2026-08-28: HTTP door, sweep timer, Dockerfile and deploy README built and pushed. 2026-08-29: DEPLOYED and PROVEN END TO END, tag proven-2026-08-29-fleet-centre-live. Nothing needed building — both halves already existed and were tested; the only gap was that none of it was deployed. Red then green, and the red half is the one that matters: with the consent switch off the box built a real report, the door REFUSED it, and the refusal was written to the ledger — which is what proves the switch is not decorative. Then consent on, 2,784 bytes sent, signature verified in production, device enrolled on first contact. Licence columns landed the same night: the report grew to 3,024 bytes and the fleet view can now tell 'gone quiet' from 'stopped paying'. ⚠️ KNOWN GAP, ACCEPTED: the free plan permits only a DAILY cron, so a dead box can go unnoticed for up to 24 hours. Ingest is unaffected — only the alarm is blunted. Max: revisit at the first customer unit, not at a date. The fix is a host move, not a rewrite; the Dockerfile beside it runs the same centre with its own 5-minute timer. ⛔ TRAP: the platform SILENTLY no-ops its own Deploy button on a sub-daily cron — no error, no network request. It reads as a permissions problem and is not.",
+      "dated": "2026-08-29"
     },
     {
       "id": "hark-brain",
@@ -1093,8 +1093,22 @@
       "status": "building",
       "desc": "Boxes contribute what they learned — controller shapes, the capabilities they proved, and industry vocabulary — so the next site with the same hardware works on day one. Nothing is published until k independent DEVICES agree, enforced by the primary key rather than by application code, so one talkative box cannot promote its own room name. Boxes submit controllers they DID recognise: two boxes disagreeing about one shape is the bug report, and a fleet of confident boxes that never speak up cannot disagree.",
       "tech": "k-anonymity · DSSE · derived not redacted · appliance/fleet/*-share.ts",
-      "notes": "2026-08-28: filters, storage, sender, receiver, distribution and the device-is-authority adoption all built and pushed. Four channels reached the same rule independently — structured fields travel, prose never does: the health sentence, the controller page body, the dossier notes and the matcher reasons are each excluded. A downloaded signature is a CANDIDATE until the box matches it against hardware it can see. NOT RUNNING: consent.sharedLearning is false by default and no centre exists to talk to.",
-      "dated": "2026-08-28"
+      "notes": "2026-08-28: filters, storage, sender, receiver, distribution and the device-is-authority adoption all built and pushed. Four channels reached the same rule independently — structured fields travel, prose never does. A downloaded signature is a CANDIDATE until the box matches it against hardware it can see. 2026-08-29: the 'no centre exists to talk to' half of the blocker is GONE — the fleet centre is live and the contribution endpoint is deployed. STILL NOT RUNNING, for two honest reasons: knowledge needs k independent DEVICES agreeing (k=5) and there is exactly one box, so nothing sent could ever cross the line; and the centre holds no vendor signing key, so it cannot send knowledge back — the box's own boot log says 'contributing only — no vendor key, so it will not learn'. Turning the switch on now would send real data for zero benefit, so it stays off.",
+      "dated": "2026-08-29"
+    },
+    {
+      "id": "neon-fleet",
+      "label": "Neon\n/ fleet centre",
+      "cat": "data",
+      "sz": 15,
+      "x": 0.04,
+      "y": 0.405,
+      "type": "Vendor · Database",
+      "status": "live",
+      "desc": "Where the fleet's records live: enrolled devices and their keys, every report as it arrived, one row per health-state transition, and the sweeper's own heartbeat. A Neon project of its OWN — never a corner of a facility database, because these tables are the vendor's and a grower's box must never carry them or need them to work.",
+      "tech": "Neon serverless Postgres · fleet_devices / fleet_reports / fleet_observations / fleet_watchdog",
+      "notes": "2026-08-29: created and schema applied by booting the real centre against it rather than by hand — a real boot of the real code proves more than a migration step nobody watches. Seven tables live. Rejected reports are STORED, never dropped: 'no box is reporting' and 'something is reporting badly' are different emergencies and wake different people. Nothing is ever deleted from the reports table.",
+      "dated": "2026-08-29"
     }
   ],
   "edges": [
@@ -2352,6 +2366,12 @@
       "t": "hark-brain",
       "label": "same centre",
       "pulse": false
+    },
+    {
+      "s": "hark-fleet",
+      "t": "neon-fleet",
+      "label": "stores",
+      "pulse": true
     }
   ],
   "_saved": "2026-08-10T09:01:18.863Z"
