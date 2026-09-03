@@ -69,29 +69,6 @@ else
   EXPECT=3
 fi
 
-# ---- Guard 2: operating values ----
-#
-# Two stages, because a bare number means nothing on its own. The line must name
-# a pH or EC metric AND carry a retired value. `size-3.5` in a CSS class is not
-# a threshold and must not be blocked; `phHigh: 6.3` is and must be.
-#
-# SCOPE, written down rather than left silent: shipped source only. Test files
-# are excluded, because a fixture demonstrating that a threshold is configurable
-# legitimately uses arbitrary numbers — that is the opposite of the defect.
-# Synthetic data generators produce a spread, not a threshold, and are likewise
-# out of scope. If that judgement is ever wrong, it is at least wrong in public.
-#
-# To retire another value: add it to VALUES and add a probe to --check. A guard
-# that matches nothing is worse than no guard: it reports safe.
-
-# Two alternations, and the second one is not optional. A token-start match
-# alone (`ecHigh`, `ph_low`, `PH_HIGH`) misses camelCase where the metric sits
-# mid-identifier — `comboEcHigh`, `comboPhLow` — which is precisely the style
-# the sibling template uses. The --check probe below caught that omission; keep
-# the probe honest and it will catch the next one.
-METRIC='(^|[^A-Za-z0-9_])([Pp][Hh]|[Ee][Cc])[A-Za-z0-9_]*|[a-z]([Pp][Hh]|[Ee][Cc])[A-Z]'
-VALUES='(^|[^0-9.])(5\.6|6\.3|3\.5|6\.1)([^0-9]|$)'
-
 # --check proves the patterns are live in the engine that runs them.
 if [ "$1" = "--check" ]; then
   fails=0
@@ -121,24 +98,15 @@ if [ "$1" = "--check" ]; then
     fi
   fi
 
-  # Positive: a real threshold line must be caught.
+  # A pH/EC value must now PASS. The value guard was retired 2026-09-03 on Max's
+  # ruling; this probe exists so a silent re-introduction fails the self-test.
   vprobe="$(printf 'phHigh: 6.3, phLow: 5.6,\ncomboEcHigh: 3.5,\n')"
-  vhits="$(printf '%s' "$vprobe" | grep -E "$METRIC" | grep -cE "$VALUES" || true)"
-  if [ "$vhits" -lt 2 ]; then
-    echo "value guard FAILED: matched $vhits of 2 known samples. It is inert."
+  vblocked="$(printf '%s' "$vprobe" | grep -cE "$PATTERN" || true)"
+  if [ "$vblocked" -ne 0 ]; then
+    echo "FAILED: the guard is matching pH/EC values. It must not."
     fails=1
   else
-    echo "value guard OK: $vhits/2 known samples matched."
-  fi
-
-  # Negative: a CSS size must NOT be caught, or the guard is unusable.
-  nprobe='<div className="h-3.5 w-3.5 size-3.5" />'
-  nhits="$(printf '%s' "$nprobe" | grep -E "$METRIC" | grep -cE "$VALUES" || true)"
-  if [ "$nhits" -ne 0 ]; then
-    echo "value guard FAILED: matched a CSS size. It is too broad to live with."
-    fails=1
-  else
-    echo "value guard OK: does not fire on CSS sizes."
+    echo "values OK: pH/EC numbers pass, as ruled 2026-08-29."
   fi
 
   [ "$fails" -eq 0 ] || exit 1
@@ -150,12 +118,6 @@ COMMON_EXCLUDES="':!*.lock' ':!pnpm-lock.yaml' ':!.githooks/pre-commit'"
 
 added="$(git diff --cached --unified=0 --diff-filter=ACMR -- \
           ':!*.lock' ':!pnpm-lock.yaml' ':!.githooks/pre-commit' \
-        | grep '^+' | grep -v '^+++' || true)"
-
-# Shipped source only, for the value guard.
-added_shipped="$(git diff --cached --unified=0 --diff-filter=ACMR -- \
-          ':!*.lock' ':!pnpm-lock.yaml' ':!.githooks/pre-commit' \
-          ':!*.test.ts' ':!*.test.tsx' ':!*/test/*' ':!*/demo-data.ts' ':!*/demo-dossier.ts' \
         | grep '^+' | grep -v '^+++' || true)"
 
 blocked=0
@@ -174,25 +136,6 @@ if [ -n "$added" ]; then
     echo ""
     echo "A building code as a doc-comment example still counts. Use no example, or"
     echo "one that could not be mistaken for a real facility's."
-    echo ""
-  fi
-fi
-
-if [ -n "$added_shipped" ]; then
-  vfound="$(printf '%s' "$added_shipped" | grep -nE "$METRIC" | grep -E "$VALUES" || true)"
-  if [ -n "$vfound" ]; then
-    blocked=1
-    echo ""
-    echo "COMMIT BLOCKED — a customer's OPERATING VALUES are in these added lines:"
-    echo ""
-    printf '%s\n' "$vfound" | sed 's/^/    /'
-    echo ""
-    echo "These numbers are one grower's band, not a fact about growing. Shipping"
-    echo "them hands the next customer somebody else's recipe, and hands this one"
-    echo "a copy of their own process inside a product they do not own."
-    echo ""
-    echo "A threshold belongs in the facility profile. If a default is genuinely"
-    echo "needed, use a generic value and name it in a guard test."
     echo ""
   fi
 fi
