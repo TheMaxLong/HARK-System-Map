@@ -1140,6 +1140,20 @@
    "tech": "Static pages + engine · shape declared in a profile rather than in the type system",
    "notes": "2026-09-05: Rescued and templated on the same day. ⭐ THE FINDING THAT MATTERED: the pages existed in exactly one place and had never been committed anywhere — the kind of thing nobody notices until the hardware fails. Templating them was the second step; getting them into version control was the first, and the more urgent. ⚠️ The engine assumed one site's shape in its TYPE SYSTEM rather than in configuration, which is the harder kind of hard-coding to find: it does not read as a setting anyone chose, so nothing suggests it could be different. ⛔ Status is building, not live — no customer box ships these pages yet.",
    "dated": "2026-09-05"
+  },
+  {
+   "id": "hark-backlog",
+   "label": "HARK Backlog",
+   "cat": "app",
+   "sz": 15,
+   "x": 0.63,
+   "y": 0.56,
+   "type": "Standing record · what is done, next and stuck",
+   "status": "live",
+   "desc": "The standing record of where HARK actually is: what shipped and was proven on real equipment, what is next, what is waiting on a decision from Max, and the mistakes that each cost real time and must not be repeated. It is a page rather than a file so it can be read on a phone. Cyclops has its own lane at the foot so a parked project stops falling off the edge.",
+   "tech": "Published page, private. Six lanes - in progress, need to do, waiting on you, shipped, do not regress, Cyclops. Lane counts are computed from the rows so a heading can never disagree with what is under it. A separate capture box at the very bottom keeps its own list inside the browser and is not part of the written record.",
+   "dated": "2026-09-10",
+   "notes": "Written 2026-08-30 after an earlier attempt to keep this in a hosted board went nowhere. It is deliberately the opposite of a ticket system: no assignees, no estimates, no points. A row is a paragraph that says what is true and how it was checked.\n\n⭐ THE RULE THAT MAKES IT WORTH KEEPING: a correction stays visible. When a row turns out to have been wrong, the row says so in its own words - \"this used to read X, and that was wrong the day it was written\" - rather than being quietly rewritten into looking right all along. Twice now that has caught a claim that contradicted what was on screen for days. A record that only ever shows the current story teaches nobody anything.\n\nEvery row also has to say what it does NOT prove. A green result and a demonstrated feature are different things, and the page keeps them apart on purpose.\n\n2026-09-10: brought up to date after nine days. Three things added to what has shipped - the box now asks about the words it cannot read, the dashboard that could never build its own database from nothing, and the written history of how that database gets built, which had gone stale and lost two of its own steps. Two more added to the mistakes not to repeat: a file sitting on a machine is not a program running on it, and a program that catches an error and carries on regardless can hide a failure far longer than a crash would. One new decision is waiting - the vocabulary work can only be demonstrated where there is real irrigation to read, and filling the second box with invented runs to make the row look finished is not an option."
   }
  ],
  "edges": [
@@ -2421,6 +2435,24 @@
    "t": "cannamax-template",
    "label": "reads from",
    "dash": true
+  },
+  {
+   "s": "hark-backlog",
+   "t": "noema",
+   "label": "sibling records - one tracks repositories, the other tracks decisions",
+   "pulse": false
+  },
+  {
+   "s": "hark-backlog",
+   "t": "cyclops",
+   "label": "keeps the parked project visible",
+   "pulse": false
+  },
+  {
+   "s": "hark-box",
+   "t": "hark-backlog",
+   "label": "most of what it records",
+   "pulse": false
   }
  ],
  "_saved": "2026-08-30T01:06:47.118230Z"
