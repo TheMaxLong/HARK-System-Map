@@ -1202,8 +1202,8 @@
    "status": "live",
    "desc": "What each finished crop produced beside how its run went: lb per light, grams per sq ft, per-strain lines with plant counts, rankings. Numbers travel as the audited original text. Also carries the strain registry.",
    "tech": "one self-contained page · embedded JSON blocks (yields, meta, strain registry, what is missing, room maps) · rebuilt by hand with auto-update.sh when new data lands (the daily job is off since 2026-09-25)",
-   "notes": "2026-09-25: added to the map (it was live and linked from the kiosk but had no node). Nisaba reads it for yield answers and the strain registry; a code-computed strain ranking filters lots under 30 plants. 2026-10-02: the yield page gained high-temp ceiling-hit flags per crop (a light-starved crop is marked so it is not read as a fair strain or feed comparison), a 'what's missing' rescan list beside the numbers with unweighed harvests shown as 'not weighed yet' plus their expected dates, and a harvest card in the page palette replacing the gray tooltip. Round 3 weights loaded -- 41 weighed -- and cross-checked identical against the Seagate copy. 2026-10-18: a weighed crop sheet now shows its full room map beside What was planted, never merged with it; none yet, because no mapped crop has been weighed. The page audit reads every map figure off the screen against the store and plants a wrong digit to prove it catches one. The rebuild also re-ran the analysis: every weight unchanged, the finished-crop pack grew from 38 to 44, so distance-from-typical scores and correlations moved (PR #12, 37dcaf1).",
-   "dated": "2026-10-18"
+   "notes": "2026-09-25: added to the map (it was live and linked from the kiosk but had no node). Nisaba reads it for yield answers and the strain registry; a code-computed strain ranking filters lots under 30 plants. 2026-10-02: the yield page gained high-temp ceiling-hit flags per crop (a light-starved crop is marked so it is not read as a fair strain or feed comparison), a 'what's missing' rescan list beside the numbers with unweighed harvests shown as 'not weighed yet' plus their expected dates, and a harvest card in the page palette replacing the gray tooltip. Round 3 weights loaded -- 41 weighed -- and cross-checked identical against the Seagate copy. 2026-10-18: a weighed crop sheet now shows its full room map beside What was planted, never merged with it; none yet, because no mapped crop has been weighed. The page audit reads every map figure off the screen against the store and plants a wrong digit to prove it catches one. The rebuild also re-ran the analysis: every weight unchanged, the finished-crop pack grew from 38 to 44, so distance-from-typical scores and correlations moved (PR #12, 37dcaf1). 2026-10-21: Round 4 of the campus harvest weights (AB, EF, GH harvests 9/7 to 9/28) was transcribed and audited: 87 sheet lines, 952 arithmetic checks pass and 0 fail, 6 blind readers, every disagreement settled by arithmetic or read off the image. Staged; not loaded yet. A separate QUEENS space was added to the Yield Project (sister facility, off campus): its round 1 (QUEENS tab, harvests 8/24 to 9/21, 10 weighed room blocks) was transcribed and audited the same way, 800 checks pass and 0 fail. Its own strain archive is being built the same way as the campus one.",
+   "dated": "2026-10-21"
   },
   {
    "id": "hark-traffic-monitor",
@@ -1260,6 +1260,20 @@
    "tech": "room-maps.json built from audited batches (build_store.py refuses a batch that changes a stored map) · two copies on the primary: beside the dossier builder and in the Observatory web folder (mirrored to apsu-backup) · intake steps in the Yield Project room_maps README",
    "notes": "2026-10-18: first batch -- 33 photos, 16 rooms, 255 entries. Every count stood up to the audit; 8 spellings were corrected to the back-of-room text and one printed entry restored. Where a sheet disagrees with itself (back-of-room sum vs printed total on 7 rooms) it is recorded as a check, never fixed. Shown three ways: on every new harvest dossier, as a summary on the Observatory room card, and on the yield page once a crop is weighed. 76 strain spellings wait on a name confirmation.",
    "dated": "2026-10-18"
+  },
+  {
+   "id": "queens",
+   "label": "QUEENS\n(sister facility)",
+   "cat": "site",
+   "sz": 20,
+   "x": 0.25,
+   "y": 0.55,
+   "type": "Facility",
+   "status": "live",
+   "desc": "Sister facility, off campus. Building where Hark Box #2 is located. Harvest weights live on the QUEENS tab of the same harvest sheet as AB, EF and GH.",
+   "tech": "Autonomous cultivation facility with Hark Box #2",
+   "notes": "2026-10-21: Sister facility added to the map. QUEENS is off-campus and the building where Hark Box #2 is located. Harvest transcription and auditing uses the same process as the campus AB, EF, GH buildings.",
+   "dated": "2026-10-21"
   }
  ],
  "edges": [
@@ -2769,6 +2783,14 @@
    "t": "yield-projector",
    "label": "full map once weighed",
    "pulse": false
+  },
+  {
+   "src": "queens",
+   "dst": "hark-box"
+  },
+  {
+   "src": "queens",
+   "dst": "yield-projector"
   }
  ],
  "_saved": "2026-08-30T01:06:47.118230Z"
