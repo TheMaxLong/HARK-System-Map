@@ -496,6 +496,9 @@ function label(s, x, y, size, o = {}) {
 const TAG_FONT = '"Avenir Next Condensed", "Helvetica Neue", "Arial Narrow", Arial, sans-serif', TAG_RED = '#e5322d';
 function placeTags(items, obstacles) {
   const u = lay.u, b = lay.band, placed = [], out = [];
+  // a half-faded tag read as an empty dark-red box (black text vanishes on black): a tag is either readable or not drawn,
+  // and the focused / must-show ones are always fully legible
+  items = items.map(it => ({ ...it, ga: it.must ? Math.max(0.9, Math.min(1, it.ga ?? 1)) : Math.min(1, it.ga ?? 1) })).filter(it => it.must || it.ga >= 0.45);
   const hit = (r, list) => list.reduce((s, o) => s + Math.max(0, Math.min(r[0] + r[2], o[0] + o[2]) - Math.max(r[0], o[0])) * Math.max(0, Math.min(r[1] + r[3], o[1] + o[3]) - Math.max(r[1], o[1])), 0);
   for (const it of items.sort((p, q) => q.pri - p.pri)) {
     g.font = `${it.weight || 300} ${it.size}px ${TAG_FONT}`; g.letterSpacing = (it.track || 0) + 'px';
@@ -521,9 +524,30 @@ function placeTags(items, obstacles) {
   }
   g.globalAlpha = 1;
 }
+// the globe's outline: the sphere's true silhouette (a unit sphere seen from the camera is a circle whose edge is the
+// tangent point at acos(1/D) from the view axis), drawn as a crisp hairline with a soft halo so the globe always reads as
+// a globe, even where its sparse back side would otherwise fade into the ground. Skipped once the camera is inside it.
+function drawLimb(view, a) {
+  const D = view.position.length(); if (a < 0.02 || D < 1.05) return;
+  const toCam = view.position.clone().normalize(), right = new THREE.Vector3(1, 0, 0).applyQuaternion(view.quaternion).normalize();
+  const th = Math.acos(1 / D), edge = toCam.clone().multiplyScalar(Math.cos(th)).add(right.multiplyScalar(Math.sin(th)));
+  const b = lay.band, sc = v => { const q = v.clone().project(view); return [b.x + (q.x + 1) / 2 * b.w, b.y + (1 - q.y) / 2 * b.h]; };
+  const [cx, cy] = sc(new THREE.Vector3()), [ex, ey] = sc(edge), r = Math.hypot(ex - cx, ey - cy), u = lay.u;
+  const dark = scheme === 'dark', k = Math.min(1, a) * Math.min(1, (D - 1.05) / 0.4);
+  const halo = g.createRadialGradient(cx, cy, r * 0.94, cx, cy, r * 1.07);   // atmosphere: brightest just inside the edge
+  halo.addColorStop(0, dark ? 'rgba(242,240,234,0)' : 'rgba(10,10,10,0)');
+  halo.addColorStop(0.45, dark ? `rgba(242,240,234,${0.07 * k})` : `rgba(10,10,10,${0.06 * k})`);
+  halo.addColorStop(1, dark ? 'rgba(242,240,234,0)' : 'rgba(10,10,10,0)');
+  g.fillStyle = halo; g.beginPath(); g.arc(cx, cy, r * 1.07, 0, tau); g.fill();
+  g.strokeStyle = dark ? `rgba(242,240,234,${0.42 * k})` : `rgba(10,10,10,${0.45 * k})`; g.lineWidth = 1 * u;
+  g.beginPath(); g.arc(cx, cy, r, 0, tau); g.stroke();
+  g.strokeStyle = dark ? `rgba(227,189,92,${0.18 * k})` : `rgba(156,116,24,${0.2 * k})`; g.lineWidth = 0.6 * u;   // a whisper of gold just outside
+  g.beginPath(); g.arc(cx, cy, r + 3 * u, 0, tau); g.stroke();
+}
 function drawOverlay(view, st, now) {
   const u = lay.u, boxes = [], detail = st.detail, F = live.focus;
   const gA = 1 - detail;
+  drawLimb(view, gA);
   if (gA > 0.01) {
     const fc = F ? (F.kind === 'node' ? F.n.cont : F.c) : null, fn = F && F.kind === 'node' ? F.n : null;
     const nb = new Set(fn ? M.adj.get(fn.id).map(a => a.id) : []), items = [], obstacles = [];
