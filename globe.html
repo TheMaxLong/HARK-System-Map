@@ -1,0 +1,752 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>System Map — Globe</title>
+<style>
+:root{
+  --ink:#0a0a0a; --paper:#f2f0ea; --line:rgba(255,255,255,.1); --dim:rgba(255,255,255,.45); --faint:rgba(255,255,255,.22);
+  --gold:linear-gradient(100deg,#6f5214 0%,#c99a35 22%,#f6dc8a 42%,#fff3c4 50%,#d8ad4e 62%,#8a6420 100%);
+  --gold-solid:#d6b057;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{width:100%;height:100%;background:var(--ink);color:#fff;overflow:hidden;font-family:system-ui,-apple-system,'Helvetica Neue',sans-serif}
+canvas{position:absolute;left:0;top:0;display:block}
+#hud{pointer-events:none}
+#globe{touch-action:none}
+.gold{background:var(--gold);-webkit-background-clip:text;background-clip:text;color:transparent}
+.mono{font-family:Menlo,ui-monospace,monospace}
+#header{position:absolute;left:0;right:0;top:0;height:64px;display:flex;align-items:center;gap:14px;padding:0 16px;z-index:5;
+  background:linear-gradient(180deg,rgba(10,10,10,.96) 70%,rgba(10,10,10,0));pointer-events:none}
+#header > *{pointer-events:auto}
+#brand{font-size:11px;letter-spacing:.3em;font-weight:800;text-transform:uppercase;white-space:nowrap}
+#brand small{font-weight:600;letter-spacing:.2em;color:var(--dim);margin-left:8px}
+#crumb{font-size:15px;font-weight:700;letter-spacing:.04em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0;flex:1}
+#crumb .sep{color:var(--faint);margin:0 8px;font-weight:400}
+#stats{display:flex;gap:16px;flex-shrink:0}
+.stat{text-align:right}.stat b{display:block;font-size:15px;line-height:1}.stat span{font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--faint)}
+.btn{padding:6px 11px;border-radius:6px;font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;
+  border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.04);color:rgba(255,255,255,.75);white-space:nowrap}
+.btn:hover{background:rgba(255,255,255,.1);color:#fff}
+#depth{display:flex;gap:2px;align-items:center}
+#depth button{font:700 9px Menlo,monospace;letter-spacing:.1em;padding:5px 7px;border-radius:4px;border:1px solid transparent;background:none;color:var(--faint);cursor:pointer}
+#depth button.on{color:#000;background:var(--gold);border-color:#c99a35}
+.panel{position:absolute;z-index:4;background:rgba(10,10,10,.9);border:1px solid var(--line);border-radius:10px;backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);overflow:hidden;display:flex;flex-direction:column}
+#card{left:14px;top:74px;bottom:14px;width:350px}
+#index{right:14px;top:74px;bottom:14px;width:320px}
+.ph{padding:12px 14px 10px;border-bottom:1px solid var(--line);flex-shrink:0}
+.ph .k{font:700 9px Menlo,monospace;letter-spacing:.16em;color:var(--faint);text-transform:uppercase}
+.pb{padding:12px 14px 16px;overflow-y:auto;flex:1;-webkit-overflow-scrolling:touch}
+.pb::-webkit-scrollbar{width:6px}.pb::-webkit-scrollbar-thumb{background:rgba(255,255,255,.15);border-radius:3px}
+#c-title{font-size:21px;font-weight:750;line-height:1.15;margin:6px 0 3px}
+#c-type{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--dim)}
+.badge{display:inline-flex;align-items:center;gap:6px;margin-top:8px;font:700 9px Menlo,monospace;letter-spacing:.12em;text-transform:uppercase;color:var(--dim)}
+.mark{width:9px;height:9px;border-radius:50%;display:inline-block;flex-shrink:0}
+.mark.live{background:var(--gold)}
+.mark.hollow{border:1.5px solid var(--gold-solid)}
+.mark.dotted{border:1.5px dotted var(--gold-solid)}
+.sec{margin-top:14px}.sec h4{font:700 9px Menlo,monospace;letter-spacing:.16em;text-transform:uppercase;color:var(--faint);margin-bottom:6px}
+.sec p{font-size:12.5px;line-height:1.55;color:rgba(255,255,255,.82)}
+.sec .tech{font-size:11.5px;font-style:italic;color:var(--dim)}
+.note{border-left:1px solid rgba(214,176,87,.45);padding:2px 0 2px 10px;margin:6px 0}
+.note summary{cursor:pointer;font:700 10px Menlo,monospace;letter-spacing:.06em;color:var(--gold-solid);list-style:none}
+.note summary::-webkit-details-marker{display:none}
+.note div{font-size:12px;line-height:1.5;color:rgba(255,255,255,.75);margin-top:4px;white-space:pre-wrap}
+.conn{display:flex;gap:8px;align-items:baseline;padding:5px 6px;border-radius:5px;cursor:pointer;font-size:12px}
+.conn:hover{background:rgba(255,255,255,.06)}
+.conn .d{font:700 11px Menlo,monospace;color:var(--gold-solid);width:12px;flex-shrink:0}
+.conn .n{font-weight:650;flex-shrink:0}.conn .l{color:var(--faint);font-size:11px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#search{width:100%;margin-top:8px;padding:7px 9px;border-radius:6px;border:1px solid var(--line);background:rgba(255,255,255,.04);color:#fff;font:12px Menlo,monospace}
+#search:focus{outline:none;border-color:#c99a35}
+.cont{border-bottom:1px solid var(--line)}
+.cont > summary{list-style:none;cursor:pointer;padding:9px 4px 8px;display:flex;justify-content:space-between;align-items:baseline}
+.cont > summary::-webkit-details-marker{display:none}
+.cont > summary b{font-size:11px;letter-spacing:.18em;text-transform:uppercase}
+.cont > summary span{font:10px Menlo,monospace;color:var(--faint)}
+.cont.on > summary b{filter:brightness(1.15)}
+.row{display:grid;grid-template-columns:14px 1fr;gap:2px 7px;padding:5px 6px;border-radius:6px;cursor:pointer}
+.row:hover{background:rgba(255,255,255,.06)}
+.row.on{background:rgba(214,176,87,.14);box-shadow:inset 2px 0 0 #d6b057}
+.row .mark{margin-top:3px}.row .nm{font-size:12px;font-weight:650}
+.row .sm{grid-column:2;font-size:10.5px;color:var(--faint);line-height:1.35;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#hint{position:absolute;left:50%;transform:translateX(-50%);bottom:18px;z-index:3;font:700 10px Menlo,monospace;letter-spacing:.14em;color:rgba(255,255,255,.55);transition:opacity 1.2s;pointer-events:none;white-space:nowrap}
+#msg{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font:12px Menlo,monospace;color:var(--dim);z-index:9}
+#tabs{display:none}
+#c-close{position:absolute;right:10px;top:8px;background:none;border:0;color:var(--faint);font-size:18px;cursor:pointer}#c-close:hover{color:#fff}
+#card .ph{position:relative}
+.rtabs{display:flex;gap:4px;margin-bottom:2px}.rtabs button{flex:1;font:700 9px Menlo,monospace;letter-spacing:.12em;text-transform:uppercase;padding:6px 4px;border-radius:5px;border:1px solid var(--line);background:none;color:var(--faint);cursor:pointer}
+.rtabs button.on{color:#000;background:var(--gold);border-color:#c99a35}
+#index:not(.idx) #search{display:none}
+.kv{display:grid;grid-template-columns:auto 1fr;gap:3px 12px;font-size:11.5px}.kv dt{color:var(--faint);font:10px Menlo,monospace;letter-spacing:.06em;padding-top:2px}.kv dd{color:rgba(255,255,255,.85)}
+.big{display:flex;gap:14px;margin:4px 0 2px}.big div b{display:block;font-size:19px;line-height:1.1}.big div span{font:9px Menlo,monospace;letter-spacing:.1em;color:var(--faint);text-transform:uppercase}
+.spark{display:block;margin-top:6px}
+.li{display:flex;gap:8px;align-items:baseline;padding:4px 4px;border-radius:5px;cursor:pointer;font-size:12px}.li:hover{background:rgba(255,255,255,.06)}
+.li .n{font-weight:620;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.li .v{font:10.5px Menlo,monospace;color:var(--dim);flex-shrink:0}
+.scs{display:flex;flex-wrap:wrap;gap:4px 12px;margin-top:6px;font:10px Menlo,monospace;color:var(--dim);text-transform:uppercase;letter-spacing:.06em}.scs > span{display:inline-flex;align-items:center;gap:5px}
+.src{font:9px Menlo,monospace;color:var(--faint);margin-top:4px;line-height:1.4}
+@media (max-width: 899px){
+  #header{height:56px;gap:8px;padding:0 10px}
+  #stats,#brand small{display:none}
+  #crumb{font-size:13px}
+  #card,#index{left:8px;right:8px;width:auto;top:auto;bottom:8px;height:calc(42vh - 44px)}
+  #index{display:none}
+  body.tab-index #index{display:flex} body.tab-index #card{display:none}
+  #tabs{display:flex;position:absolute;left:8px;right:8px;bottom:calc(42vh - 32px);z-index:5;gap:6px}
+  #tabs .btn{flex:1;background:rgba(10,10,10,.94);color:#fff}
+  #hint{display:none}
+  #crumb{display:none}
+  #brand{font-size:9px;letter-spacing:.16em;flex:1;overflow:hidden;text-overflow:ellipsis}
+  #depth button{padding:4px 4px;font-size:8px;letter-spacing:.04em}
+  #graph-btn{padding:5px 7px}
+}
+</style>
+<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js"}}</script>
+</head><body>
+<div id="header">
+  <div id="brand"><span id="brand-t">System Map</span><small>· GLOBE</small></div>
+  <div id="crumb"></div>
+  <div id="depth"></div>
+  <div id="stats"></div>
+  <button class="btn" id="graph-btn" title="Back to the graph view of this map">⟵ Graph</button>
+</div>
+<div class="panel" id="card"><div class="ph"><button id="c-close" title="Clear focus (Esc)">×</button><div class="k" id="c-kind">Focus</div><div id="c-title"></div><div id="c-type"></div><div id="c-badge"></div></div><div class="pb" id="c-body"></div></div>
+<div class="panel" id="index"><div class="ph"><div class="rtabs"><button data-r="metrics" class="on">Metrics</button><button data-r="index">Index · <span id="i-count"></span></button></div>
+  <input id="search" placeholder="/ to search · Enter to fly" autocomplete="off" spellcheck="false"></div><div class="pb" id="m-body"></div><div class="pb" id="i-body" style="display:none"></div></div>
+<div id="tabs"><button class="btn" data-tab="card">Card</button><button class="btn" data-tab="index">Index</button></div>
+<div id="hint">DRAG TO SPIN · PINCH OR SCROLL TO ZOOM · / TO SEARCH</div>
+<div id="msg">loading the map…</div>
+<script type="module">
+// globe.html — a globe view of a system map (the HARK map or any map in maps/). The map's own data, nothing invented:
+// continents = clusters (HARK map: one per category; maps with orbit hubs: one per hub), islands = nodes, the centre
+// node (Cannamax / NOEMA) at the north pole, and the map's real edges drawn as great-circle strands between the exact
+// islands. Hairline contour strands draw the land; open ocean keeps only faint decorative webbing. Black, white and
+// metallic gold only: gold marks the islands, continent names, the focus reticle and the focused node's real edges.
+// Depth levels [globe, lens, dome, detail]: the dark ball from outside → a lens opens onto the light interior → the dome
+// close-up → DETAIL, a crisp radial breakdown of the focused node and everything it is really wired to. Physics: still
+// at rest; drag spins with momentum and friction and settles onto the nearest island / continent; pinch or scroll zooms
+// through the depth levels; the index flies anywhere in one click; ?focus=<id> deep-links.
+import * as THREE from 'three';
+THREE.ColorManagement.enabled = false;
+const q = new URLSearchParams(location.search), slug = q.get('map') || '';
+const REPO = 'TheMaxLong/HARK-System-Map', FILE = slug ? `maps/${slug}.json` : 'map-state.json';
+const tau = Math.PI * 2, deg = Math.PI / 180;
+const $ = id => document.getElementById(id);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const clean = s => String(s ?? '').replace(/\s*\n\s*/g, ' ').trim();
+const clamp01 = x => Math.max(0, Math.min(1, x)), ease = x => x * x * (3 - 2 * x), ramp = (x, w) => clamp01(x / w);
+
+// ---------------------------------------------------------------- data: the same file the graph app reads (raw main),
+// with the file next to this page as the fallback (a local checkout, or GitHub being unreachable)
+async function getJSON(path) {
+  const tries = [`https://raw.githubusercontent.com/${REPO}/main/${path}?t=${Date.now()}`, path];
+  for (const u of tries) { try { const c = new AbortController(), to = setTimeout(() => c.abort(), 6000); const r = await fetch(u, { signal: c.signal, cache: 'no-store' }); clearTimeout(to); if (r.ok) return await r.json(); } catch (e) {} }
+  return null;
+}
+const HARK_CATS = { flagship: 'Flagship', app: 'Applications', data: 'Data Pipeline', display: 'Display / Mobile', infra: 'Infrastructure', hardware: 'Hardware',
+  external: 'External', future: 'Future Platform', origin: 'Origin', dream: 'Dream / Vision', market: 'Market / Opp', commercial: 'HARK Box · Commercial', site: 'Site' };
+const statusKind = s => ({ live: 0, installed: 0, building: 0, wip: 0, parked: 1, archived: 1, retiring: 1, disarmed: 1, idea: 2, dream: 2, planned: 2 }[s] ?? 0);
+const markClass = s => ['live', 'hollow', 'dotted'][statusKind(s)];
+function parseNotes(notes) {                                    // the dated changelog inside a node's notes, newest first
+  const t = String(notes || '').trim(); if (!t) return [];
+  const parts = t.split(/(?=(?:^|\s)\d{4}-\d{2}-\d{2}\b[^:]{0,80}:)/).map(s => s.trim()).filter(Boolean);
+  return parts.map((p, i) => { const m = p.match(/^(\d{4}-\d{2}-\d{2})([^:]{0,80}):\s*([\s\S]*)$/); return m ? { date: m[1], tag: m[2].trim(), text: m[3].trim(), i } : { date: '', tag: '', text: p, i }; })
+    .sort((a, b) => (b.date || '').localeCompare(a.date || '') || b.i - a.i);
+}
+const firstLine = (s, n = 90) => { const t = clean(s); const one = t.split(/(?<=[.!?])\s/)[0] || t; return one.length > n ? one.slice(0, n - 1).trimEnd() + '…' : one; };
+
+// ---------------------------------------------------------------- model: continents, islands, pole, real edges
+function buildModel(d) {
+  const nodes = (d.nodes || []).map((n, i) => ({ ...n, i, name: clean(n.label) || n.id }));
+  const byId = new Map(nodes.map(n => [n.id, n]));
+  const edges = (d.edges || []).filter(e => byId.has(e.s) && byId.has(e.t) && e.s !== e.t);
+  const adj = new Map(nodes.map(n => [n.id, []]));
+  edges.forEach((e, k) => { adj.get(e.s).push({ id: e.t, dir: 'out', label: e.label || '', k }); adj.get(e.t).push({ id: e.s, dir: 'in', label: e.label || '', k }); });
+  const hubs = nodes.filter(n => /^orbit-/.test(n.id));
+  let pole = null, continents = [];
+  if (hubs.length) {                                            // orbit maps: NOEMA-style centre at the pole, one continent per hub
+    const hubIds = new Set(hubs.map(h => h.id));
+    pole = nodes.find(n => !hubIds.has(n.id) && hubs.every(h => adj.get(n.id).some(a => a.id === h.id))) || null;
+    const taken = new Set([...(pole ? [pole.id] : []), ...hubIds]);
+    continents = hubs.map(h => ({ id: h.id, name: h.name, hub: h, members: [] }));
+    for (const c of continents) for (const a of adj.get(c.hub.id)) { if (!taken.has(a.id)) { taken.add(a.id); c.members.push(byId.get(a.id)); } }
+    const rest = nodes.filter(n => !taken.has(n.id)); if (rest.length) continents.push({ id: 'other', name: 'Unassigned', hub: null, members: rest });
+  } else {                                                      // the HARK map: one continent per category, the flagship at the pole
+    const flag = nodes.filter(n => n.cat === 'flagship'); pole = flag[0] || null;
+    const order = Object.keys(HARK_CATS), cats = [...new Set(nodes.map(n => n.cat))].filter(c => !(c === 'flagship' && flag.length === 1));
+    cats.sort((a, b) => (order.indexOf(a) + 99 * (order.indexOf(a) < 0)) - (order.indexOf(b) + 99 * (order.indexOf(b) < 0)));
+    continents = cats.map(c => ({ id: 'cat-' + c, name: HARK_CATS[c] || c, hub: null, members: nodes.filter(n => n.cat === c && n !== pole) }));
+  }
+  continents.forEach(c => c.members.sort((a, b) => (b.sz || 0) - (a.sz || 0) || a.name.localeCompare(b.name)));
+  nodes.forEach(n => { n.cont = continents.find(c => c.hub === n || c.members.includes(n)) || null; });
+  const dated = nodes.map(n => n.dated || '').filter(Boolean).sort().pop() || '', saved = (d._saved || '').slice(0, 10);
+  return { nodes, byId, edges, adj, pole, continents, meta: d.meta || null, updated: [dated, saved].sort().pop() || '—' };
+}
+
+// ---------------------------------------------------------------- geography: seeded, so the same map always draws the
+// same world. Continent centres in one or two rings round the globe; each continent a noise-edged mainland with its
+// islands offshore on a sunflower spiral (biggest nearest the coast); the hub node (if any) sits on the mainland.
+function rng(seed) { let a = seed >>> 0; return () => { a = (a + 0x6D2B79F5) >>> 0; let t = a; t = Math.imul(t ^ (t >>> 15), t | 1); t ^= t + Math.imul(t ^ (t >>> 7), t | 61); return ((t ^ (t >>> 14)) >>> 0) / 4294967296; }; }
+const hashStr = s => { let h = 2166136261; for (const ch of s) h = Math.imul(h ^ ch.charCodeAt(0), 16777619); return h >>> 0; };
+const sph = (lon, lat) => new THREE.Vector3(Math.cos(lat) * Math.sin(lon), Math.sin(lat), Math.cos(lat) * Math.cos(lon));
+function frame(c) { const up = Math.abs(c.y) > 0.95 ? new THREE.Vector3(1, 0, 0) : new THREE.Vector3(0, 1, 0); const e1 = up.clone().cross(c).normalize(), e2 = c.clone().cross(e1); return { c, e1, e2 }; }
+const offset = (f, rho, th) => f.c.clone().multiplyScalar(Math.cos(rho)).add(f.e1.clone().multiplyScalar(Math.cos(th) * Math.sin(rho))).add(f.e2.clone().multiplyScalar(Math.sin(th) * Math.sin(rho))).normalize();
+function blob(f, r, seed) { const R = rng(seed), k = [2, 3, 4, 5, 7].map(n => ({ n, a: (0.16 + R() * 0.1) / Math.sqrt(n), p: R() * tau })); return { f, r, edge: th => r * (1 + k.reduce((s, q) => s + q.a * Math.sin(q.n * th + q.p), 0)) }; }
+function layoutWorld(M) {
+  // the whole sphere: a Fibonacci spread of continent centres (south pole included, a cap kept clear round the north
+  // pole node), then a size-aware relaxation so every continent's islands have room
+  const K = M.continents.length, R = rng(hashStr(slug || 'hark')), north = new THREE.Vector3(0, 1, 0);
+  const est = c => 0.055 + 0.019 * Math.sqrt(c.members.length + (c.hub ? 2 : 0)) + 0.05 + 0.047 * Math.sqrt(c.members.length + 0.35);
+  const order = [...M.continents].sort((a, b) => est(b) - est(a));
+  order.forEach((c, i) => { const y = 0.72 - 1.66 * (i + 0.5) / K, r = Math.sqrt(1 - y * y), th = i * 2.39996 + 0.6; c.p = new THREE.Vector3(r * Math.sin(th), y, r * Math.cos(th)); c.est = est(c); });
+  for (let it = 0; it < 300; it++) for (const a of M.continents) {
+    const push = new THREE.Vector3();
+    for (const b of M.continents) { if (a === b) continue; const ang = a.p.angleTo(b.p), want = a.est + b.est + 0.05; if (ang < want) push.add(a.p.clone().sub(b.p).normalize().multiplyScalar((want - ang) * 0.5)); }
+    if (M.pole) { const ang = a.p.angleTo(north), want = a.est + 0.16; if (ang < want) push.add(a.p.clone().sub(north).normalize().multiplyScalar((want - ang) * 0.5)); }
+    a.p.add(push.multiplyScalar(0.5)).normalize();
+  }
+  M.continents.forEach(c => {
+    c.f = frame(c.p);
+    const n = c.members.length; c.rm = 0.055 + 0.019 * Math.sqrt(n + (c.hub ? 2 : 0));
+    c.land = blob(c.f, c.rm, hashStr(c.id));
+    if (c.hub) { c.hub.p = c.p.clone(); c.hub.r = 0.03; }
+    const th0 = R() * tau;
+    c.members.forEach((m, j) => { const th = th0 + j * 2.39996, base = c.land.edge(th); m.p = offset(c.f, base + 0.045 + 0.047 * Math.sqrt(j + 0.35), th); m.r = 0.014 + 0.0008 * (m.sz || 14); });
+    c.reach = Math.max(c.rm, ...c.members.map(m => m.p.angleTo(c.p) + m.r));
+  });
+  if (M.pole) { M.pole.p = new THREE.Vector3(0, 1, 0); M.pole.r = 0.05; }
+  M.nodes.forEach(n => { if (!n.p) { n.p = sph(R() * tau, (R() * 2 - 1) * 0.5); n.r = 0.015; } n.f = frame(n.p); n.land = blob(n.f, n.r, hashStr(n.id)); });
+}
+
+// ---------------------------------------------------------------- renderer + overlay
+const W = innerWidth, H = innerHeight;
+const renderer = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true }); renderer.setPixelRatio(Math.min(2, devicePixelRatio)); renderer.setSize(W, H);
+renderer.autoClear = false; renderer.domElement.id = 'globe'; document.body.prepend(renderer.domElement);
+const DPR = renderer.getPixelRatio();
+const hud = document.createElement('canvas'); hud.id = 'hud'; hud.width = W * DPR; hud.height = H * DPR; hud.style.width = W + 'px'; hud.style.height = H + 'px';
+renderer.domElement.after(hud); const g = hud.getContext('2d'); g.scale(DPR, DPR);
+const scene = new THREE.Scene(), spin = new THREE.Group(); scene.add(spin);   // the globe's whole orientation is one quaternion (free trackball)
+const cam = new THREE.PerspectiveCamera(50, 1, 0.02, 20), darkCam = new THREE.PerspectiveCamera(40, 1, 0.02, 20);
+const INK = new THREE.Color('#0a0a0a'), PAPER = new THREE.Color('#f2f0ea'), GOLD_D = new THREE.Color('#e3bd5c'), GOLD_L = new THREE.Color('#9c7418');
+const U = { ink: { value: new THREE.Color() }, gain: { value: 1 }, gold: { value: new THREE.Color() }, focus: { value: -1 }, focusCont: { value: -1 }, hasFocus: { value: 0 },
+  detail: { value: 0 }, px: { value: 1 }, glowPass: { value: 0 } };
+const facingGlsl = `float facingOf(vec4 wp){ return dot(normalize(wp.xyz), normalize(cameraPosition - wp.xyz)); }`;
+
+// strands (land contours, coast hairs, land webbing, faint ocean webbing, graticule) — all decorative, all mono
+let strands, realEdges, islands, compass, landFill;
+function buildGeometry(M) {
+  const R = rng(hashStr('strands' + slug)), P = [], A = [];
+  const seg = (a, b, al) => { P.push(a.x, a.y, a.z, b.x, b.y, b.z); A.push(al, al); };
+  const ring = (bl, s, n, al) => { let prev = null; for (let i = 0; i <= n; i++) { const th = i / n * tau, p = offset(bl.f, bl.edge(th) * s, th); if (prev) seg(prev, p, al); prev = p; } };
+  const insideLand = p => M.continents.some(c => { const ang = p.angleTo(c.p); if (ang > c.rm * 1.5) return false; const loc = p.clone().sub(c.p.clone().multiplyScalar(p.dot(c.p))); const th = Math.atan2(loc.dot(c.f.e2), loc.dot(c.f.e1)); return ang < c.land.edge(th); });
+  const FP = [], FA = [];                                        // a faint land tint under the strands (fans per blob)
+  const fill = (bl, n, al) => { for (let i = 0; i < n; i++) { const t0 = i / n * tau, t1 = (i + 1) / n * tau, a = offset(bl.f, bl.edge(t0), t0), b = offset(bl.f, bl.edge(t1), t1); FP.push(bl.f.c.x, bl.f.c.y, bl.f.c.z, a.x, a.y, a.z, b.x, b.y, b.z); FA.push(al, al * 0.6, al * 0.6); } };
+  for (const c of M.continents) {                               // mainland: coast contours, coast hairs, interior webbing
+    fill(c.land, 96, 0.13);
+    [[1, 0.75], [0.96, 0.42], [0.91, 0.3], [0.85, 0.22], [0.78, 0.16], [0.7, 0.11], [0.6, 0.08]].forEach(([s, al]) => ring(c.land, s, 120, al));
+    for (let i = 0; i < 60; i++) { const th = R() * tau, e = c.land.edge(th); seg(offset(c.f, e * 0.995, th), offset(c.f, e * (0.86 - R() * 0.06), th + (R() - 0.5) * 0.05), 0.22); }
+    const pts = Array.from({ length: Math.round(80 + 800 * c.rm * c.rm * 30) }, () => { const th = R() * tau; return offset(c.f, Math.sqrt(R()) * c.land.edge(th) * 0.9, th); });
+    pts.forEach((p, i) => { for (let k = 0; k < 2; k++) { const o = pts[Math.floor(R() * pts.length)]; if (o !== p && o.angleTo(p) < c.rm * 0.3) seg(p, o, 0.07 + R() * 0.07); } });
+  }
+  for (const n of M.nodes) { if (n === M.pole || (n.cont && n.cont.hub === n)) continue; fill(n.land, 28, 0.12); ring(n.land, 1, 32, 0.6); ring(n.land, 0.86, 28, 0.3); ring(n.land, 0.7, 24, 0.18);
+    for (let i = 0; i < 5; i++) { const th = R() * tau, th2 = th + 1.5 + R() * 3; seg(offset(n.f, n.land.edge(th) * 0.8, th), offset(n.f, n.land.edge(th2) * 0.8, th2), 0.14); } }
+  if (M.pole) { const pf = frame(M.pole.p), pb = blob(pf, 0.06, 7); fill(pb, 64, 0.12); [[1, 0.7], [0.88, 0.35], [0.75, 0.2]].forEach(([s, al]) => ring(pb, s, 64, al)); }
+  for (let i = 0; i < 380; i++) {                               // open ocean: sparse, short, faint — never mistakable for a link
+    const p = sph(R() * tau, Math.asin(R() * 2 - 1)); if (insideLand(p)) continue;
+    const o = offset(frame(p), 0.03 + R() * 0.07, R() * tau); seg(p, o, 0.035 + R() * 0.025);
+  }
+  for (const latD of [-60, -30, 0, 30, 60]) { let prev = null; for (let i = 0; i <= 180; i++) { const p = sph(i / 180 * tau, latD * deg); if (prev && i % 2) seg(prev, p, 0.035); prev = p; } }   // dashed graticule
+  const sGeo = new THREE.BufferGeometry(); sGeo.setAttribute('position', new THREE.Float32BufferAttribute(P, 3)); sGeo.setAttribute('a', new THREE.Float32BufferAttribute(A, 1));
+  strands = new THREE.LineSegments(sGeo, new THREE.ShaderMaterial({ uniforms: U, transparent: true, depthTest: false, depthWrite: false,
+    vertexShader: `attribute float a; uniform float gain; uniform float detail; varying float va; ${facingGlsl}
+      void main(){ vec4 wp = modelMatrix * vec4(position, 1.); va = a * gain * (1. - 0.85 * detail) * mix(0.05, 1., smoothstep(-0.15, 0.35, facingOf(wp)));   /* strands behind the horizon fade almost out */ gl_Position = projectionMatrix * viewMatrix * wp; }`,
+    fragmentShader: `uniform vec3 ink; varying float va; void main(){ gl_FragColor = vec4(ink, clamp(va, 0., 1.)); }` }));
+  const fGeo = new THREE.BufferGeometry(); fGeo.setAttribute('position', new THREE.Float32BufferAttribute(FP, 3)); fGeo.setAttribute('a', new THREE.Float32BufferAttribute(FA, 1));
+  landFill = new THREE.Mesh(fGeo, new THREE.ShaderMaterial({ uniforms: U, transparent: true, depthTest: false, depthWrite: false, side: THREE.DoubleSide,
+    vertexShader: `attribute float a; uniform float detail; varying float va; ${facingGlsl} void main(){ vec4 wp = modelMatrix * vec4(position * 1.001, 1.); va = a * (1. - 0.85 * detail) * smoothstep(-0.05, 0.3, facingOf(wp)); gl_Position = projectionMatrix * viewMatrix * wp; }`,
+    fragmentShader: `uniform vec3 ink; varying float va; void main(){ gl_FragColor = vec4(ink, va); }` }));
+  // real edges: lifted great-circle arcs between the exact islands; the focused node's edges turn gold
+  const EP = [], ES = [], ET = [], EC = [], ED = [];
+  for (const e of M.edges) { const a = M.byId.get(e.s), b = M.byId.get(e.t), ang = a.p.angleTo(b.p), n = Math.max(8, Math.ceil(ang / 0.05)), lift = 0.02 + 0.09 * Math.min(1, ang / 1.4);
+    let prev = null; for (let i = 0; i <= n; i++) { const u = i / n, p = slerp(a.p, b.p, u).multiplyScalar(1.004 + lift * Math.sin(Math.PI * u)); if (prev) { EP.push(prev.x, prev.y, prev.z, p.x, p.y, p.z); ES.push(a.i, a.i); ET.push(b.i, b.i); EC.push(M.continents.indexOf(a.cont), M.continents.indexOf(a.cont)); ED.push(M.continents.indexOf(b.cont), M.continents.indexOf(b.cont)); } prev = p; } }
+  const eGeo = new THREE.BufferGeometry(); eGeo.setAttribute('position', new THREE.Float32BufferAttribute(EP, 3)); eGeo.setAttribute('es', new THREE.Float32BufferAttribute(ES, 1)); eGeo.setAttribute('et', new THREE.Float32BufferAttribute(ET, 1)); eGeo.setAttribute('ec', new THREE.Float32BufferAttribute(EC, 1)); eGeo.setAttribute('ed', new THREE.Float32BufferAttribute(ED, 1));
+  realEdges = new THREE.LineSegments(eGeo, new THREE.ShaderMaterial({ uniforms: U, transparent: true, depthTest: false, depthWrite: false,
+    vertexShader: `attribute float es; attribute float et; attribute float ec; attribute float ed; uniform float focus; uniform float focusCont; uniform float hasFocus; uniform float detail; varying float va; varying float vh; ${facingGlsl}
+      void main(){ vec4 wp = modelMatrix * vec4(position, 1.); vh = (abs(es - focus) < .5 || abs(et - focus) < .5) ? 1. : 0.;
+        float inC = (abs(ec - focusCont) < .5 || abs(ed - focusCont) < .5) ? 1. : 0., f = mix(0.06, 1., smoothstep(-0.2, 0.3, facingOf(wp)));
+        float base = mix(0.1, 0.32, inC) * (1. - 0.45 * hasFocus) * (1. - 0.9 * detail);   // unfocused wiring stays quiet; the focus's own edges go gold
+        va = mix(base, 0.95 * (1. - detail), vh) * f; gl_Position = projectionMatrix * viewMatrix * wp; }`,
+    fragmentShader: `uniform vec3 ink; uniform vec3 gold; varying float va; varying float vh; void main(){ gl_FragColor = vec4(mix(ink, gold, vh), clamp(va, 0., 1.)); }` }));
+  // islands: metallic gold markers; solid = live / building, hollow = parked / archived, dotted = idea / dream / planned
+  const IP = [], IS = [], IK = [], II = [], IC = [];
+  for (const n of M.nodes) { IP.push(n.p.x * 1.003, n.p.y * 1.003, n.p.z * 1.003); IS.push(n === M.pole ? 16 : n.cont && n.cont.hub === n ? 13 : 5 + 0.22 * (n.sz || 14)); IK.push(statusKind(n.status)); II.push(n.i); IC.push(n.cont ? M.continents.indexOf(n.cont) : -1); }
+  const iGeo = new THREE.BufferGeometry(); iGeo.setAttribute('position', new THREE.Float32BufferAttribute(IP, 3)); iGeo.setAttribute('size', new THREE.Float32BufferAttribute(IS, 1));
+  iGeo.setAttribute('kind', new THREE.Float32BufferAttribute(IK, 1)); iGeo.setAttribute('idx', new THREE.Float32BufferAttribute(II, 1)); iGeo.setAttribute('ct', new THREE.Float32BufferAttribute(IC, 1));
+  iGeo.setAttribute('rel', new THREE.Float32BufferAttribute(new Float32Array(M.nodes.length).fill(1), 1));
+  islands = new THREE.Points(iGeo, new THREE.ShaderMaterial({ uniforms: U, transparent: true, depthTest: false, depthWrite: false,
+    vertexShader: `attribute float size; attribute float kind; attribute float idx; attribute float ct; attribute float rel; uniform float px; uniform float focus; uniform float focusCont; uniform float detail; uniform float glowPass;
+      varying float vk; varying float vf; varying float vd; ${facingGlsl}
+      void main(){ vec4 wp = modelMatrix * vec4(position, 1.); float foc = abs(idx - focus) < .5 ? 1. : 0., inC = abs(ct - focusCont) < .5 ? 1. : 0.;
+        vf = smoothstep(-0.12, 0.25, facingOf(wp)); vk = kind; vd = mix(1., mix(0.12, 1., rel), detail);
+        gl_PointSize = size * px * (1. + 0.55 * foc + 0.12 * inC) * (1. + glowPass); gl_Position = projectionMatrix * viewMatrix * wp; }`,
+    fragmentShader: `uniform float glowPass; varying float vk; varying float vf; varying float vd;
+      void main(){ vec2 q = gl_PointCoord * 2. - 1.; float r = length(q); if (r > 1.) discard;
+        vec3 L = normalize(vec3(-0.45, 0.55, 0.7)), n = vec3(q.x, -q.y, sqrt(max(0., 1. - r * r)));
+        float dif = clamp(dot(n, L), 0., 1.), spec = pow(max(0., dot(reflect(-L, n), vec3(0., 0., 1.))), 22.);
+        vec3 gold = mix(vec3(0.36, 0.25, 0.06), vec3(0.92, 0.74, 0.33), dif) + spec * vec3(1., 0.94, 0.78) * 0.9;
+        float disc = 1. - smoothstep(0.8, 1., r), ring = smoothstep(0.52, 0.64, r) * (1. - smoothstep(0.86, 1., r));
+        float dots = ring * step(0.5, fract(atan(q.y, q.x) / 6.2831853 * 10.));
+        float m = vk < .5 ? disc : vk < 1.5 ? ring : dots; vec3 c = vk < .5 ? gold : vec3(0.85, 0.68, 0.3);
+        if (glowPass > .5) { gl_FragColor = vec4(vec3(0.95, 0.75, 0.35) * exp(-r * r * 3.) * vf * vd, 1.); return; }
+        gl_FragColor = vec4(c, m * vf * vd); }` }));
+  // the compass ring round the pole node
+  const CP = []; for (let i = 0; i < 96; i++) { const a = sph(i / 96 * tau, 81 * deg), b = sph((i + 1) / 96 * tau, 81 * deg); if (i % 4 !== 3) CP.push(a.x, a.y, a.z, b.x, b.y, b.z); }
+  for (let k = 0; k < 4; k++) { const a = sph(k / 4 * tau, 77 * deg), b = sph(k / 4 * tau, 84.5 * deg); CP.push(a.x, a.y, a.z, b.x, b.y, b.z); }
+  const cGeo = new THREE.BufferGeometry(); cGeo.setAttribute('position', new THREE.Float32BufferAttribute(CP, 3));
+  compass = new THREE.LineSegments(cGeo, new THREE.ShaderMaterial({ uniforms: U, transparent: true, depthTest: false, depthWrite: false,
+    vertexShader: `uniform float detail; varying float va; ${facingGlsl} void main(){ vec4 wp = modelMatrix * vec4(position, 1.); va = 0.85 * (1. - detail) * smoothstep(-0.2, 0.3, facingOf(wp)); gl_Position = projectionMatrix * viewMatrix * wp; }`,
+    fragmentShader: `uniform vec3 gold; varying float va; void main(){ gl_FragColor = vec4(gold, va); }` }));
+  [landFill, strands, realEdges, compass, islands].forEach(o => { o.frustumCulled = false; spin.add(o); });
+}
+function slerp(a, b, u) { const ang = a.angleTo(b); if (ang < 1e-6) return a.clone(); const s = Math.sin(ang); return a.clone().multiplyScalar(Math.sin((1 - u) * ang) / s).add(b.clone().multiplyScalar(Math.sin(u * ang) / s)); }
+
+// ---------------------------------------------------------------- passes: dark (outside) and light (inside) views into
+// their own targets, the islands' gold glow for the dark view, then one composite through the lens circle
+const mk = (w, h, s) => new THREE.WebGLRenderTarget(w, h, { samples: s, type: THREE.UnsignedByteType });
+const RW = Math.round(W * DPR), RH = Math.round(H * DPR);
+const darkRT = mk(RW, RH, 4), lightRT = mk(RW, RH, 4), glowA = mk(RW >> 1, RH >> 1, 0), glowB = mk(RW >> 1, RH >> 1, 0);
+const flatCam = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1), tri = new THREE.BufferGeometry().setAttribute('position', new THREE.Float32BufferAttribute([-1, -1, 0, 3, -1, 0, -1, 3, 0], 3));
+const flatVert = 'void main(){ gl_Position = vec4(position.xy, 0., 1.); }';
+const blurMat = new THREE.ShaderMaterial({ uniforms: { src: { value: null }, dir: { value: new THREE.Vector2() }, res: { value: new THREE.Vector2() } }, depthTest: false, depthWrite: false, vertexShader: flatVert,
+  fragmentShader: `uniform sampler2D src; uniform vec2 dir; uniform vec2 res; void main(){ vec2 uv = gl_FragCoord.xy / res; vec3 c = texture2D(src, uv).rgb * 0.227;
+    c += (texture2D(src, uv + dir).rgb + texture2D(src, uv - dir).rgb) * 0.1945; c += (texture2D(src, uv + 2. * dir).rgb + texture2D(src, uv - 2. * dir).rgb) * 0.1216;
+    c += (texture2D(src, uv + 3. * dir).rgb + texture2D(src, uv - 3. * dir).rgb) * 0.054; c += (texture2D(src, uv + 4. * dir).rgb + texture2D(src, uv - 4. * dir).rgb) * 0.0162; gl_FragColor = vec4(c, 1.); }` });
+const compMat = new THREE.ShaderMaterial({ uniforms: { dark: { value: darkRT.texture }, light: { value: lightRT.texture }, glow: { value: glowA.texture }, res: { value: new THREE.Vector2(RW, RH) },
+  center: { value: new THREE.Vector2() }, lens: { value: 0 }, useDark: { value: 1 }, useLight: { value: 0 }, glowAmt: { value: 1 }, ringA: { value: 0 }, ringCol: { value: new THREE.Color('#d6b057') } },
+  depthTest: false, depthWrite: false, vertexShader: flatVert,
+  fragmentShader: `uniform sampler2D dark, light, glow; uniform vec2 res, center; uniform float lens, useDark, useLight, glowAmt, ringA; uniform vec3 ringCol;
+    void main(){ vec2 uv = gl_FragCoord.xy / res; vec3 L = vec3(0.), D = vec3(0.), c;
+      if (useLight > .5) L = texture2D(light, uv).rgb;
+      if (useDark > .5) D = texture2D(dark, uv).rgb + texture2D(glow, uv).rgb * glowAmt;
+      if (useDark < .5) c = L; else if (useLight < .5) c = D;
+      else { float d = length(gl_FragCoord.xy - center); c = mix(D, L, 1. - smoothstep(lens - 1.5, lens + 1.5, d));
+        float ring = 1. - smoothstep(1.2, 3., abs(d - lens)), halo = exp(-pow((d - lens) / 18., 2.)) * step(lens, d);
+        c = mix(c, ringCol, ring * ringA); c = mix(c, ringCol * 0.6, halo * ringA * 0.25); }
+      gl_FragColor = vec4(min(c, vec3(1.)), 1.); }` });
+const blurScene = new THREE.Scene(), compScene = new THREE.Scene();
+for (const [sc, m] of [[blurScene, blurMat], [compScene, compMat]]) { const o = new THREE.Mesh(tri, m); o.frustumCulled = false; sc.add(o); }
+function blurPass(src, dst, dx, dy) { blurMat.uniforms.src.value = src.texture; blurMat.uniforms.res.value.set(dst.width, dst.height); blurMat.uniforms.dir.value.set(dx / dst.width, dy / dst.height); dst.viewport.set(0, 0, dst.width, dst.height); renderer.setRenderTarget(dst); renderer.render(blurScene, flatCam); }
+function renderView(rt, camera, ground, s = 1) {               // viewport only (a scissor would also clip the MSAA resolve)
+  const b = lay.band, k = DPR / s; rt.viewport.set(0, 0, rt.width, rt.height); renderer.setRenderTarget(rt); renderer.setClearColor(ground, 1); renderer.clear();
+  rt.viewport.set(b.x * k, (H - b.y - b.h) * k, b.w * k, b.h * k); renderer.setRenderTarget(rt); renderer.render(scene, camera);
+}
+
+// ---------------------------------------------------------------- layout: the globe lives in the band between the panels
+let lay;
+const narrow = W < 900;
+function layout() {
+  const b = narrow ? { x: 0, y: 56, w: W, h: Math.round(H * 0.58) - 64 } : { x: 378, y: 64, w: W - 378 - 348, h: H - 64 };
+  lay = { band: b, u: Math.max(0.75, Math.min(1.3, Math.min(b.w, b.h) / 800)) };
+  const asp = b.w / b.h, vHalf = Math.atan(Math.tan(30 * deg) / asp);
+  cam.fov = 2 * vHalf / deg; cam.aspect = asp; cam.updateProjectionMatrix();
+  lay.pitch = Math.max(0, Math.asin(1 / 1.58) - Math.atan(0.72 * Math.tan(vHalf)));
+  darkCam.fov = 2 * Math.atan(Math.tan(Math.asin(1 / 3.0)) * 1.08 * Math.max(1, 1 / asp)) / deg; darkCam.aspect = asp; darkCam.updateProjectionMatrix();
+  U.px.value = DPR * Math.max(0.8, Math.min(1.4, Math.min(b.w, b.h) / 760));
+}
+
+// ---------------------------------------------------------------- depth levels and the live physics (from the Creator's
+// agent hive, v4): depth z ∈ [0,3] over [globe, lens, dome, detail]; every motion is closed form from its start
+const levels = ['globe', 'lens', 'dome', 'detail'], maxDepth = levels.length - 1;
+function posState(z) { const a = ease(clamp01(z)), b = ease(clamp01(z - 1)), c = ease(clamp01(z - 2)); return { lens: 0.27 * a + 0.73 * b, darkD: 3.0 - 0.15 - 0.55 * a - 0.05 * b, detail: c }; }
+const live = { z: 0, q: new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(1, 0, 0), 0.25), cx: null, cy: null, drag: null, settle: null, motion: null, focus: null, focusA: 0, zoom: null, pinch: null, pointers: new Map(), pinned: false, lastNow: 0, born: performance.now(), detailFrom: null };
+// orientation = one quaternion q (world ← globe). Drag applies world-space increments about the camera's up/right axes
+// (a true trackball: any direction, poles included). A focus motion rotates by the vector r (axis·angle) from q0 to the
+// target, along x(s) ∈ [0,1] critically damped, x = 1 + (−1 + (v − ω)s)e^(−ωs), starting at the hand's speed along r.
+function viewOf(z) { const st = posState(z);
+  if (st.lens < 0.5) { const pos = new THREE.Vector3(0, 0, st.darkD); return { pos, dir: pos.clone().negate().normalize(), vHalf: darkCam.fov / 2 * deg, near: st.darkD - 1, up: new THREE.Vector3(0, 1, 0) }; }
+  const pos = new THREE.Vector3(0, -0.08, 1.58); return { pos, dir: new THREE.Vector3(0, Math.sin(lay.pitch), -Math.cos(lay.pitch)), vHalf: cam.fov / 2 * deg, near: 0.58, up: new THREE.Vector3(0, Math.cos(lay.pitch), Math.sin(lay.pitch)) }; }
+function centreDir(z) { const v = viewOf(z), b = v.pos.dot(v.dir), c = v.pos.lengthSq() - 1, disc = b * b - c; return v.pos.clone().addScaledVector(v.dir, disc >= 0 ? -b - Math.sqrt(disc) : -b).normalize(); }
+const pxPerRad = () => { const v = viewOf(live.z); return lay.band.h / 2 / Math.tan(v.vHalf) / Math.max(0.25, v.near); };
+const worldOf = (p, q = live.q) => p.clone().applyQuaternion(q);
+const rotVecQ = r => { const a = r.length(); return a < 1e-9 ? new THREE.Quaternion() : new THREE.Quaternion().setFromAxisAngle(r.clone().divideScalar(a), a); };
+const quatRotVec = qq => { const w = Math.max(-1, Math.min(1, qq.w)), a = 2 * Math.acos(Math.abs(w)), s = Math.sqrt(Math.max(0, 1 - w * w)) || 1, sg = w < 0 ? -1 : 1; return new THREE.Vector3(qq.x, qq.y, qq.z).multiplyScalar(sg * a / s); };
+function targetQ(sj, z = live.z, from = live.q) { return new THREE.Quaternion().setFromUnitVectors(worldOf(sj.p, from).normalize(), centreDir(z)).multiply(from); }
+const offCentre = (sj, z = live.z) => worldOf(sj.p).normalize().angleTo(centreDir(z));
+function axis(x0, to, v, wMin) { const d = x0 - to; if (v * d > 0) v = 0; return { to, d, v, w: Math.max(wMin, Math.abs(d) > 1e-6 ? Math.abs(v / d) : wMin) }; }
+const axisAt = (a, s) => a.to + (a.d + (a.v + a.w * a.d) * s) * Math.exp(-a.w * s);
+let M, subjects = [];
+function focusOn(sj, omega, now, zTarget) {                     // omega: world angular velocity (rad/s) the motion starts with
+  const qt = targetQ(sj, zTarget ?? live.z), r = quatRotVec(qt.clone().multiply(live.q.clone().invert())), th = r.length();
+  const om = omega || new THREE.Vector3(), slow = om.length() < 0.15, along = th > 1e-6 ? om.dot(r) / (th * th) : 0;   // speed along r, in units of the whole move per second
+  live.motion = { t0: now, sj, q0: live.q.clone(), r, x: axis(0, 1, along, slow ? 5 : 2.6) };
+  setFocus(sj, now);
+}
+function release(omega, now) {                                  // the subject nearest the centre where the coast would end
+  const qNat = rotVecQ(omega.clone().divideScalar(3)).multiply(live.q), c = centreDir(live.z); let best = null;
+  for (const sj of subjects) { if (sj.kind === 'continent' && live.z > 1.2) continue;
+    const ang = worldOf(sj.p, qNat).normalize().angleTo(c) - (sj.kind === 'continent' ? 0.02 : 0); if (!best || ang < best.ang) best = { sj, ang }; }
+  focusOn(best.sj, omega, now);
+}
+function settleTo(t, now) { live.settle = { from: live.z, to: Math.max(0, Math.min(maxDepth, t)), t0: now }; }
+function flyTo(sj, now = performance.now()) {                 // the index / deep links / detail clicks: rotate + set depth in one go
+  const want = sj.kind === 'continent' ? 0 : Math.max(2, Math.round(live.z) >= 3 ? 3 : 2);
+  live.zoom = null; live.pinned = false;
+  if (live.z <= 0.001 || live.z >= 1.999) { live.cx = lay.band.x + lay.band.w / 2; live.cy = lay.band.y + lay.band.h / 2; }
+  focusOn(sj, null, now, want); if (Math.abs(live.z - want) > 1e-3) settleTo(want, now);
+}
+function liveTick(now) {
+  const dt = live.lastNow ? Math.min(64, now - live.lastNow) : 16; live.lastNow = now;
+  const z = live.zoom;
+  if (z) { live.z += (z.target - live.z) * (1 - Math.exp(-dt / 1000 * 12));
+    if (now - z.last > 260 && !live.pinch) { live.zoom = null; const r = Math.round(z.target); if (Math.abs(z.target - r) > 1e-3 || Math.abs(live.z - r) > 1e-3) settleTo(r, now); else live.z = r; } }
+  const sd = live.settle;
+  if (sd) { const s = (now - sd.t0) / 1000, w = 7, d = sd.from - sd.to; live.z = sd.to + d * (1 + w * s) * Math.exp(-w * s); if (s > 1.4 || Math.abs(live.z - sd.to) < 1e-3) { live.z = sd.to; live.settle = null; } }
+  const m = live.motion;
+  if (m) { const s = (now - m.t0) / 1000, x = axisAt(m.x, s); live.q.copy(rotVecQ(m.r.clone().multiplyScalar(x)).multiply(m.q0));
+    if (s > 4 || (s > 0.1 && Math.abs(1 - x) * m.r.length() < 1e-3)) { live.q.copy(rotVecQ(m.r).multiply(m.q0)); live.motion = null; } }
+  else if (!live.drag && live.focus && !live.pinned && !live.zoom && !live.settle && offCentre(live.focus) > 2e-3) focusOn(live.focus, null, now);
+  const want = live.focus && !live.drag ? 1 : 0; live.focusA = want ? Math.min(1, live.focusA + dt / 450) : Math.max(0, live.focusA - dt / 200);
+  $('hint').style.opacity = now - live.born > 6000 ? 0 : 1;
+}
+function setFocus(sj, now) {
+  if (sj === live.focus) return;
+  const prev = live.focus; live.focus = sj; live.focusT = now;
+  if (live.z > 2.2 && prev) live.detailFrom = { t0: now, pos: new Map(detailPos) };
+  U.focus.value = sj && sj.kind === 'node' ? sj.n.i : -1; U.focusCont.value = sj ? M.continents.indexOf(sj.kind === 'node' ? sj.n.cont : sj.c) : -1; U.hasFocus.value = sj && sj.kind === 'node' ? 1 : 0;
+  const rel = islands.geometry.attributes.rel; rel.array.fill(sj && sj.kind === 'node' ? 0 : 1);
+  if (sj && sj.kind === 'node') { rel.array[sj.n.i] = 1; for (const a of M.adj.get(sj.n.id)) rel.array[M.byId.get(a.id).i] = 1; }
+  rel.needsUpdate = true;
+  renderCard(); renderSide(); markIndex();
+  const u = new URL(location.href); if (sj) u.searchParams.set('focus', sj.kind === 'node' ? sj.n.id : sj.c.id); else u.searchParams.delete('focus'); history.replaceState(null, '', u);
+}
+
+// ---------------------------------------------------------------- input: drag = spin, pinch / scroll = depth, keys
+function bindInput() {
+  const el = renderer.domElement, pinchDist = () => { const [a, b] = [...live.pointers.values()]; return Math.hypot(a.x - b.x, a.y - b.y); };
+  const zoomBy = (dz, px, py, now) => {
+    if (!live.zoom) { if ((live.z <= 0.001 || live.z >= 1.999) && px != null) { live.cx = px; live.cy = py; }
+      if (px != null && dz > 0 && !live.motion) { const hit = pick(px, py, 150); if (hit && hit !== live.focus) { setFocus(hit, now); live.pinned = true; } }
+      live.zoom = { target: live.z, last: now }; }
+    live.settle = null; live.zoom.target = Math.max(0, Math.min(maxDepth, live.zoom.target + dz)); live.zoom.last = now;
+  };
+  el.addEventListener('pointerdown', e => { live.pointers.set(e.pointerId, { x: e.clientX, y: e.clientY }); el.setPointerCapture(e.pointerId);
+    if (live.pointers.size === 2) { live.drag = null; const [a, b] = [...live.pointers.values()]; live.pinch = { d0: pinchDist(), last: 0 }; zoomBy(0, (a.x + b.x) / 2, (a.y + b.y) / 2, performance.now()); return; }
+    if (live.pointers.size > 2) return;
+    live.drag = { x0: e.clientX, y0: e.clientY, moved: false, rate: pxPerRad(), samples: [] }; });
+  el.addEventListener('pointermove', e => { if (live.pointers.has(e.pointerId)) live.pointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
+    if (live.pinch && live.pointers.size === 2) { const lv = Math.log2(pinchDist() / live.pinch.d0) * 1.6; zoomBy(lv - live.pinch.last, null, null, performance.now()); live.pinch.last = lv; return; }
+    const d = live.drag; if (!d) { hoverAt(e.clientX, e.clientY); return; }
+    const dx = e.clientX - d.x0, dy = e.clientY - d.y0;
+    if (!d.moved) { if (Math.hypot(dx, dy) < 6) return; d.moved = true; d.px = e.clientX; d.py = e.clientY; live.motion = null; live.pinned = false; live.focusA = Math.min(live.focusA, 0.99); return; }
+    if (live.z > 2.5) return;                                    // the detail view does not spin
+    const ix = e.clientX - d.px, iy = e.clientY - d.py; d.px = e.clientX; d.py = e.clientY; if (!ix && !iy) return;
+    const v = viewOf(live.z), right = new THREE.Vector3(1, 0, 0), rv = v.up.clone().multiplyScalar(ix / d.rate).add(right.multiplyScalar(iy / d.rate));   // trackball: the grabbed point follows the pointer
+    live.q.copy(rotVecQ(rv).multiply(live.q));
+    const now = performance.now(); d.samples.push({ t: now, rv }); while (d.samples.length > 2 && now - d.samples[0].t > 80) d.samples.shift(); });
+  const up = e => { live.pointers.delete(e.pointerId); if (live.pointers.size < 2) live.pinch = null; const d = live.drag; if (!d) return; live.drag = null; const now = performance.now();
+    if (d.moved && live.z <= 2.5) { const sm = d.samples.filter(s => now - s.t <= 80), span = sm.length > 1 ? (sm[sm.length - 1].t - sm[0].t) / 1000 : 0;
+      const om = new THREE.Vector3(); if (span > 0.008) { sm.slice(1).forEach(s => om.add(s.rv)); om.divideScalar(span); } release(om, now); return; }
+    if (d.moved) return;
+    const hit = live.z > 2.5 ? pickDetail(e.clientX, e.clientY) : pick(e.clientX, e.clientY, 34);   // a click on empty space does nothing
+    if (hit && hit !== live.focus) flyTo(hit, now); };
+  el.addEventListener('pointerup', up); el.addEventListener('pointercancel', up);
+  el.addEventListener('wheel', e => { e.preventDefault(); const dy = e.deltaMode === 1 ? e.deltaY * 16 : e.deltaY; zoomBy(-dy * (e.ctrlKey ? 0.012 : 0.004), e.clientX, e.clientY, performance.now()); }, { passive: false });
+  let gs = 1;
+  el.addEventListener('gesturestart', e => { e.preventDefault(); gs = 1; zoomBy(0, e.clientX, e.clientY, performance.now()); });
+  el.addEventListener('gesturechange', e => { e.preventDefault(); zoomBy(Math.log2(e.scale / gs) * 1.6, null, null, performance.now()); gs = e.scale; });
+  const step = dir => { const now = performance.now(), from = live.settle ? live.settle.to : Math.round(live.z); live.zoom = null; live.pinned = false;
+    if (live.z <= 0.001 || live.z >= 1.999) { live.cx = lay.band.x + lay.band.w / 2; live.cy = lay.band.y + lay.band.h / 2; } settleTo(from + dir, now); };
+  addEventListener('keydown', e => { if (e.target === $('search')) { if (e.key === 'Escape') $('search').blur(); return; }
+    if (e.key === '/') { e.preventDefault(); showRight('index'); if (narrow) document.body.classList.add('tab-index'); $('search').focus(); return; }
+    if (e.key === 'Escape') { live.motion = null; setFocus(null, performance.now()); return; }
+    if (e.key === 'ArrowRight' || e.key === '+' || e.key === '=') step(1); else if (e.key === 'ArrowLeft' || e.key === '-') step(-1); });
+  levels.forEach((lv, i) => { const b = document.createElement('button'); b.textContent = lv.toUpperCase(); b.onclick = () => { live.zoom = null; live.pinned = false; if (live.z <= 0.001 || live.z >= 1.999) { live.cx = lay.band.x + lay.band.w / 2; live.cy = lay.band.y + lay.band.h / 2; } settleTo(i, performance.now()); }; $('depth').appendChild(b); });
+}
+function currentView() { return posState(live.z).lens >= 0.5 ? cam : darkCam; }
+function pick(px, py, radius) { const view = currentView(); let hit = null, bd = radius;
+  for (const sj of subjects) { if (sj.kind === 'continent' && live.z > 1.2) continue; const s = proj(sj.p, view), dd = Math.hypot(s.x - px, s.y - py) + (sj.kind === 'continent' ? 12 : 0); if (s.facing > 0.15 && dd < bd) { bd = dd; hit = sj; } }
+  return hit; }
+function hoverAt(px, py) { renderer.domElement.style.cursor = (live.z > 2.5 ? pickDetail(px, py) : pick(px, py, 34)) ? 'pointer' : 'grab'; }
+
+// ---------------------------------------------------------------- projection
+const pw = new THREE.Vector3(), pv = new THREE.Vector3();
+function proj(p, view, lift = 1) { pw.copy(p).multiplyScalar(lift).applyMatrix4(spin.matrixWorld); const facing = pw.clone().normalize().dot(view.position.clone().sub(pw).normalize());
+  pv.copy(pw).project(view); const b = lay.band; return { x: b.x + (pv.x + 1) / 2 * b.w, y: b.y + (1 - pv.y) / 2 * b.h, facing }; }
+
+// ---------------------------------------------------------------- overlay: continent names, island names, the focus reticle,
+// the focused node's edge labels, and the DETAIL breakdown (focus in the centre, its real neighbours on a ring)
+let scheme = 'dark';
+const fgA = a => scheme === 'dark' ? `rgba(242,240,234,${a})` : `rgba(10,10,10,${a})`;
+const goldFill = (x, w) => { const gr = g.createLinearGradient(x, 0, x + Math.max(20, w), 0);
+  [[0, '#7a5a17'], [0.25, '#c99a35'], [0.45, '#f6dc8a'], [0.52, '#fff3c4'], [0.65, '#d8ad4e'], [1, '#8a6420']].forEach(([o, c]) => gr.addColorStop(o, c)); return gr; };
+const goldDeep = (x, w) => { const gr = g.createLinearGradient(x, 0, x + Math.max(20, w), 0); [[0, '#5e430e'], [0.45, '#a87d1e'], [0.55, '#c99a35'], [1, '#6f5214']].forEach(([o, c]) => gr.addColorStop(o, c)); return gr; };
+function label(s, x, y, size, o = {}) {
+  g.font = `${o.weight || 600} ${size}px ${o.mono ? 'Menlo, monospace' : 'system-ui, -apple-system, sans-serif'}`; g.letterSpacing = (o.track || 0) + 'px';
+  const w = g.measureText(s).width, x0 = o.align === 'center' ? x - w / 2 : o.align === 'right' ? x - w : x;
+  if (o.boxes) { const r = [x0 - 3, y - size, w + 6, size + 5]; if (o.boxes.some(b => r[0] < b[0] + b[2] && b[0] < r[0] + r[2] && r[1] < b[1] + b[3] && b[1] < r[1] + r[3])) return false; o.boxes.push(r); }
+  if (o.halo) { g.lineWidth = 3; g.strokeStyle = scheme === 'dark' ? 'rgba(10,10,10,.75)' : 'rgba(242,240,234,.85)'; g.strokeText(s, x0, y); }
+  g.fillStyle = o.gold ? (scheme === 'dark' ? goldFill(x0, w) : goldDeep(x0, w)) : fgA(o.alpha ?? 1); g.globalAlpha = o.ga ?? 1; g.fillText(s, x0, y); g.globalAlpha = 1; g.letterSpacing = '0px';
+  return true;
+}
+// label tags: a small red box, a 1 px black perimeter, the name in a thin black face, and a hairline leader to its spot.
+// One collision pass per frame: highest priority first, six candidate spots each; the focused node and its real
+// connections always show (least-overlap spot), everything else hides when crowded.
+const TAG_FONT = '"Avenir Next Condensed", "Helvetica Neue", "Arial Narrow", Arial, sans-serif', TAG_RED = '#e5322d';
+function placeTags(items, obstacles) {
+  const u = lay.u, b = lay.band, placed = [], out = [];
+  const hit = (r, list) => list.reduce((s, o) => s + Math.max(0, Math.min(r[0] + r[2], o[0] + o[2]) - Math.max(r[0], o[0])) * Math.max(0, Math.min(r[1] + r[3], o[1] + o[3]) - Math.max(r[1], o[1])), 0);
+  for (const it of items.sort((p, q) => q.pri - p.pri)) {
+    g.font = `${it.weight || 300} ${it.size}px ${TAG_FONT}`; g.letterSpacing = (it.track || 0) + 'px';
+    const w = g.measureText(it.text).width + 8 * u, h = it.size + 5 * u, d = (it.gap || 7) * u;
+    const cands = [[it.x + d, it.y - d - h], [it.x - d - w, it.y - d - h], [it.x + d, it.y + d], [it.x - d - w, it.y + d], [it.x + d, it.y - 2.6 * d - h], [it.x - w / 2, it.y - 2.2 * d - h]];
+    let best = null;
+    for (const [x, y] of cands) { const r = [x, y, w, h]; if (x < b.x + 2 || x + w > b.x + b.w - 2 || y < b.y + 2 || y + h > b.y + b.h - 2) continue;
+      const cost = hit(r, placed) * 4 + (it.must ? 0 : hit(r, obstacles.filter(o => o.id !== it.id)));
+      if (!best || cost < best.cost) best = { r, cost }; if (cost === 0) break; }
+    if (!best || (best.cost > 0 && !it.must)) continue;
+    placed.push(best.r); out.push({ it, r: best.r });
+  }
+  g.letterSpacing = '0px';
+  for (const { it, r } of out) {                                 // leaders first, then the tags on top
+    const cx = Math.max(r[0], Math.min(it.x, r[0] + r[2])), cy = Math.max(r[1], Math.min(it.y, r[1] + r[3]));
+    g.globalAlpha = it.ga ?? 1; g.strokeStyle = fgA(0.7); g.lineWidth = 0.8; g.beginPath(); g.moveTo(it.x, it.y); g.lineTo(cx, cy); g.stroke();
+  }
+  for (const { it, r } of out) {
+    g.globalAlpha = it.ga ?? 1; g.fillStyle = TAG_RED; g.fillRect(r[0], r[1], r[2], r[3]);
+    g.strokeStyle = '#000'; g.lineWidth = 1; g.strokeRect(Math.round(r[0]) + 0.5, Math.round(r[1]) + 0.5, Math.round(r[2]) - 1, Math.round(r[3]) - 1);
+    g.font = `${it.weight || 300} ${it.size}px ${TAG_FONT}`; g.letterSpacing = (it.track || 0) + 'px'; g.fillStyle = '#000'; g.textBaseline = 'middle';
+    g.fillText(it.text, r[0] + 4 * lay.u, r[1] + r[3] / 2 + 0.5); g.textBaseline = 'alphabetic'; g.letterSpacing = '0px';
+  }
+  g.globalAlpha = 1;
+}
+function drawOverlay(view, st, now) {
+  const u = lay.u, boxes = [], detail = st.detail, F = live.focus;
+  const gA = 1 - detail;
+  if (gA > 0.01) {
+    const fc = F ? (F.kind === 'node' ? F.n.cont : F.c) : null, fn = F && F.kind === 'node' ? F.n : null;
+    const nb = new Set(fn ? M.adj.get(fn.id).map(a => a.id) : []), items = [], obstacles = [];
+    for (const n of M.nodes) { const s = proj(n.p, view); if (s.facing < 0.3) continue; obstacles.push(Object.assign([s.x - 5, s.y - 5, 10, 10], { id: n.id }));
+      if (s.facing < 0.45 && n !== (F && F.kind === 'node' ? F.n : null)) continue;   // tags only where they read crisply: none near the limb
+      if (n.cont && n.cont.hub === n) continue;
+      const must = n === fn || nb.has(n.id);
+      items.push({ id: n.id, text: n === M.pole ? n.name.toUpperCase() : n.name, x: s.x, y: s.y, size: Math.round((n === fn || n === M.pole ? 12 : 10.5) * u), weight: n === fn ? 500 : 300,
+        track: n === M.pole ? 1.4 * u : 0.2 * u, pri: n === fn ? 1000 : n === M.pole ? 700 : must ? 600 : (n.cont === fc ? 300 : 0) + (n.sz || 10), must, ga: ramp(s.facing - 0.45, 0.08) * gA + (n === fn ? gA : 0) }); }
+    for (const c of M.continents) { const s = proj(c.p, view); if (s.facing < 0.4) continue;
+      items.push({ id: c.id, text: c.name.toUpperCase(), x: s.x, y: s.y, size: Math.round(12.5 * u), weight: 400, track: 1.6 * u, gap: 4, pri: c === fc ? 900 : 800, must: c === fc, ga: ramp(s.facing - 0.4, 0.08) * gA }); }
+    placeTags(items, obstacles);
+    if (fn && live.focusA > 0) {                                 // the focused node's real edges: label each at its arc's midpoint
+      for (const a of M.adj.get(fn.id)) { const o = M.byId.get(a.id), mid = slerp(fn.p, o.p, 0.5), ang = fn.p.angleTo(o.p), s = proj(mid, view, 1.004 + (0.02 + 0.09 * Math.min(1, ang / 1.4)));
+        if (s.facing < 0.1 || !a.label) continue; label((a.dir === 'out' ? '→ ' : '← ') + a.label, s.x, s.y, Math.round(9.5 * u), { mono: true, weight: 700, align: 'center', gold: true, ga: live.focusA * gA, halo: true, boxes }); } }
+    if (F && live.focusA > 0) {                                  // reticle: four gold corner brackets, easing in
+      const fa = ease(live.focusA), grow = 18 * (1 - fa) * u; let x0, y0, x1, y1;
+      if (F.kind === 'continent') { const ps = [F.c.p, ...F.c.members.map(m => m.p)].map(p => proj(p, view)).filter(s => s.facing > 0); x0 = Math.min(...ps.map(s => s.x)); x1 = Math.max(...ps.map(s => s.x)); y0 = Math.min(...ps.map(s => s.y)); y1 = Math.max(...ps.map(s => s.y)); const m = 22 * u + grow; x0 -= m; x1 += m; y0 -= m; y1 += m; }
+      else { const s = proj(F.p, view), rad = 16 * u + grow; x0 = s.x - rad; x1 = s.x + rad; y0 = s.y - rad; y1 = s.y + rad; }
+      g.strokeStyle = goldFill(x0, x1 - x0); g.lineWidth = 1.6 * u; g.globalAlpha = fa * gA; g.beginPath(); const L = Math.min(16 * u, (x1 - x0) * 0.3);
+      for (const [x, y, sx, sy] of [[x0, y0, 1, 1], [x1, y0, -1, 1], [x0, y1, 1, -1], [x1, y1, -1, -1]]) { g.moveTo(x + sx * L, y); g.lineTo(x, y); g.lineTo(x, y + sy * L); }
+      g.stroke(); g.globalAlpha = 1; }
+  }
+  if (detail > 0.001 && F && F.kind === 'node') drawDetail(view, detail, now);
+}
+const detailPos = new Map();
+function detailLayout() {                                       // the centre, the ring of real neighbours, a faint outer ring
+  const b = lay.band, cx = b.x + b.w / 2, cy = b.y + b.h / 2, R1 = Math.min(b.w, b.h) * 0.33, R2 = Math.min(b.w * 0.49, b.h * 0.47);
+  const F = live.focus.n, seen = new Map();
+  for (const a of M.adj.get(F.id)) { const e = seen.get(a.id) || { id: a.id, links: [] }; e.links.push(a); seen.set(a.id, e); }
+  const ring = [...seen.values()].sort((p, q) => { const A = M.byId.get(p.id), B = M.byId.get(q.id); return (M.continents.indexOf(A.cont) - M.continents.indexOf(B.cont)) || A.name.localeCompare(B.name); });
+  const out = { centre: { id: F.id, x: cx, y: cy }, ring: ring.map((r, i) => { const th = -Math.PI / 2 + i / Math.max(1, ring.length) * tau; return { ...r, x: cx + Math.cos(th) * R1, y: cy + Math.sin(th) * R1 * 0.92, th }; }), outer: [] };
+  const inRing = new Set([F.id, ...seen.keys()]);
+  for (const r of out.ring) for (const a of M.adj.get(r.id)) if (!inRing.has(a.id) && out.outer.length < 48) { inRing.add(a.id); out.outer.push({ id: a.id, via: r, th: r.th }); }
+  out.outer.forEach((o, i) => { const th = o.th + ((i % 3) - 1) * 0.12; o.x = cx + Math.cos(th) * R2; o.y = cy + Math.sin(th) * R2 * 0.92; });
+  return out;
+}
+function drawDetail(view, detail, now) {
+  const u = lay.u, L = detailLayout(), k = ease(detail), F = live.focus.n;
+  const from = live.detailFrom, ft = from ? ease(clamp01((now - from.t0) / 600)) : 1; if (from && ft >= 1) live.detailFrom = null;
+  const at = (id, x, y) => { const n = M.byId.get(id), s = proj(n.p, view); let px = s.x + (x - s.x) * k, py = s.y + (y - s.y) * k;   // grows out of the globe
+    if (from && from.pos.has(id)) { const o = from.pos.get(id); px = o.x + (px - o.x) * ft; py = o.y + (py - o.y) * ft; }
+    detailPos.set(id, { x: px, y: py }); return { x: px, y: py }; };
+  detailPos.clear();
+  const c = at(F.id, L.centre.x, L.centre.y), ring = L.ring.map(r => ({ r, p: at(r.id, r.x, r.y) })), outer = L.outer.map(o => ({ o, p: at(o.id, o.x, o.y) }));
+  g.save(); g.globalAlpha = k;
+  g.strokeStyle = fgA(0.14); g.lineWidth = 1; for (const { o, p } of outer) { const v = detailPos.get(o.via.id); g.beginPath(); g.moveTo(v.x, v.y); g.lineTo(p.x, p.y); g.stroke(); }
+  for (const { p } of outer) { g.fillStyle = fgA(0.3); g.beginPath(); g.arc(p.x, p.y, 2.2 * u, 0, tau); g.fill(); }
+  const eBoxes = [];                                            // edge labels sit out toward the neighbour and drop out rather than overlap
+  for (const { r, p } of ring) {                                // each real edge: a clean line, an arrow per direction, its label
+    const dx = p.x - c.x, dy = p.y - c.y, len = Math.hypot(dx, dy) || 1, ux = dx / len, uy = dy / len;
+    g.strokeStyle = goldDeep(Math.min(c.x, p.x), Math.abs(dx)); g.lineWidth = 1.4 * u; g.beginPath(); g.moveTo(c.x + ux * 14 * u, c.y + uy * 14 * u); g.lineTo(p.x - ux * 9 * u, p.y - uy * 9 * u); g.stroke();
+    for (const a of r.links) { const tip = a.dir === 'out' ? { x: p.x - ux * 10 * u, y: p.y - uy * 10 * u, sx: ux, sy: uy } : { x: c.x + ux * 15 * u, y: c.y + uy * 15 * u, sx: -ux, sy: -uy };
+      g.fillStyle = goldDeep(tip.x - 6, 12); g.beginPath(); g.moveTo(tip.x, tip.y); g.lineTo(tip.x - tip.sx * 8 * u - tip.sy * 4 * u, tip.y - tip.sy * 8 * u + tip.sx * 4 * u); g.lineTo(tip.x - tip.sx * 8 * u + tip.sy * 4 * u, tip.y - tip.sy * 8 * u - tip.sx * 4 * u); g.fill(); }
+    const lbl = [...new Set(r.links.map(a => a.label).filter(Boolean))].join(' · ');
+    if (lbl) { const f = L.ring.length > 10 ? 0.74 : 0.55, mx = c.x + dx * f, my = c.y + dy * f; label(lbl.length > 34 ? lbl.slice(0, 33) + '…' : lbl, mx, my - 3 * u, Math.round(9 * u), { mono: true, weight: 600, align: 'center', alpha: 0.72, halo: true, boxes: eBoxes }); }
+  }
+  const tags = [];
+  for (const { r, p } of ring) { const n = M.byId.get(r.id), right = Math.cos(r.th) >= -0.05;
+    drawMark(p.x, p.y, 6.5 * u, statusKind(n.status));
+    label((n.cont ? n.cont.name : '') + (n.status ? ' · ' + n.status : ''), p.x + (right ? 12 : -12) * u, p.y + 22 * u, Math.round(9 * u), { mono: true, weight: 500, align: right ? 'left' : 'right', alpha: 0.55, halo: true });
+    tags.push({ id: n.id, text: n.name, x: p.x, y: p.y, size: Math.round(11.5 * u), weight: 400, pri: 500, must: true, gap: 8 }); }
+  drawMark(c.x, c.y, 13 * u, statusKind(F.status));
+  tags.push({ id: F.id, text: F.name, x: c.x, y: c.y, size: Math.round(15 * u), weight: 500, pri: 1000, must: true, gap: 12 });
+  placeTags(tags, []);
+  label(clean(F.type), c.x, c.y + 32 * u, Math.round(10 * u), { mono: true, weight: 600, align: 'center', alpha: 0.6, halo: true });
+  if (!L.ring.length) label('no connections on this map', c.x, c.y + 48 * u, Math.round(10 * u), { mono: true, align: 'center', alpha: 0.5 });
+  g.restore();
+}
+function drawMark(x, y, r, kind) {
+  const gr = g.createRadialGradient(x - r * 0.35, y - r * 0.4, r * 0.1, x, y, r); [[0, '#fff3c4'], [0.35, '#e3bd5c'], [0.8, '#a87d1e'], [1, '#6f5214']].forEach(([o, c]) => gr.addColorStop(o, c));
+  g.beginPath(); g.arc(x, y, r, 0, tau);
+  if (kind === 0) { g.fillStyle = gr; g.fill(); } else { g.strokeStyle = gr; g.lineWidth = Math.max(1.5, r * 0.28); if (kind === 2) g.setLineDash([r * 0.35, r * 0.35]); g.stroke(); g.setLineDash([]); }
+}
+function pickDetail(px, py) { let hit = null, bd = 26 * lay.u; for (const [id, p] of detailPos) { if (id === live.focus?.n?.id) continue; const d = Math.hypot(p.x - px, p.y - py); if (d < bd) { bd = d; hit = id; } } return hit ? subjects.find(s => s.kind === 'node' && s.n.id === hit) : null; }
+
+// ---------------------------------------------------------------- panels: the focused node's card / write-up, the index
+// history helpers: the metrics file (aggregates from git + NOEMA, built by globe-metrics.py) and the dated notes
+let MX = {};
+const today = () => new Date().toISOString().slice(0, 10);
+const daysSince = d => d ? Math.floor((Date.now() - Date.parse(d + 'T12:00:00Z')) / 864e5) : Infinity;
+const noteDates = n => parseNotes(n.notes).map(e => e.date).filter(Boolean);
+const lastNote = n => [n.dated, ...noteDates(n).slice(0, 1)].filter(Boolean).sort().pop() || '';
+const lastAct = n => MX[n.id]?.lastCommit || lastNote(n);      // git's last commit when a repo matched, else the newest dated note
+const firstSeen = n => [MX[n.id]?.firstCommit, ...noteDates(n)].filter(Boolean).sort()[0] || '';
+const fmtD = d => d ? d : '—';
+function sparkSvg(weeks, w = 300, h = 34) {
+  const mx = Math.max(1, ...weeks), bw = w / weeks.length;
+  return `<svg class="spark" width="${w}" height="${h + 12}" viewBox="0 0 ${w} ${h + 12}"><defs><linearGradient id="sg" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#fff0b3"/><stop offset=".5" stop-color="#d6b057"/><stop offset="1" stop-color="#7a5a17"/></linearGradient></defs>` +
+    weeks.map((v, i) => { const bh = v ? Math.max(2, v / mx * h) : 1; return `<rect x="${(i * bw + 1).toFixed(1)}" y="${(h - bh).toFixed(1)}" width="${(bw - 2).toFixed(1)}" height="${bh.toFixed(1)}" fill="${v ? 'url(#sg)' : 'rgba(255,255,255,.18)'}"><title>${v} commits</title></rect>`; }).join('') +
+    `<text x="0" y="${h + 11}" fill="rgba(255,255,255,.35)" font-family="Menlo" font-size="8.5">12 wk ago</text><text x="${w}" y="${h + 11}" text-anchor="end" fill="rgba(255,255,255,.35)" font-family="Menlo" font-size="8.5">this week · peak ${mx}</text></svg>`;
+}
+function historyHtml(n) {
+  const m = MX[n.id], notes = noteDates(n);
+  let h = `<div class="sec"><h4>History</h4><dl class="kv"><dt>first seen</dt><dd>${fmtD(firstSeen(n))}</dd><dt>last activity</dt><dd>${fmtD(lastAct(n))}${lastAct(n) ? ` · ${daysSince(lastAct(n))} d ago` : ''}${m ? ' (git)' : ' (notes)'}</dd><dt>last note</dt><dd>${fmtD(lastNote(n))}</dd><dt>dated notes</dt><dd>${notes.length}</dd></dl>`;
+  if (m) h += `<div class="big"><div><b>${m.commits7}</b><span>7 d</span></div><div><b>${m.commits30}</b><span>30 d</span></div><div><b>${m.commits90}</b><span>90 d</span></div><div><b>${m.commits}</b><span>all commits</span></div></div>${sparkSvg(m.weeks)}
+    <dl class="kv" style="margin-top:6px">${m.repo ? `<dt>repo</dt><dd>${esc(m.repo)}</dd>` : ''}<dt>first commit</dt><dd>${fmtD(m.firstCommit)}</dd><dt>last commit</dt><dd>${fmtD(m.lastCommit)}</dd><dt>contributors</dt><dd>${m.contributors}</dd>
+    <dt>branch</dt><dd>${esc(m.branch || '—')}${m.dirty ? ` · ${m.dirty} uncommitted` : ' · clean'}${m.ahead ? ` · ${m.ahead} ahead` : ''}${m.behind ? ` · ${m.behind} behind` : ''}</dd></dl>`;
+  else h += `<p class="src">no git repo matched for this node</p>`;
+  return h + '</div>';
+}
+function renderCard() {
+  const F = live.focus, body = $('c-body'); $('c-close').style.display = F ? '' : 'none';
+  if (!F) {                                                     // nothing focused: the map itself
+    $('c-kind').textContent = 'Map'; $('c-title').innerHTML = `<span class="gold">${esc((M.meta && M.meta.brand) || 'HARK · System Map')}</span>`; $('c-type').textContent = `${M.nodes.length} nodes · ${M.edges.length} edges · ${M.continents.length} continents`; $('c-badge').innerHTML = '';
+    body.innerHTML = `${M.meta && M.meta.tagline ? `<div class="sec"><p>${esc(M.meta.tagline)}</p></div>` : ''}<div class="sec"><h4>Continents</h4>${M.continents.map(c => `<div class="li" data-cont="${esc(c.id)}"><span class="mark live"></span><span class="n">${esc(c.name)}</span><span class="v">${c.members.length}</span></div>`).join('')}</div>
+      <div class="sec"><h4>How to read it</h4><p class="tech">Continents are clusters, islands are nodes, gold strands are a focused node's real edges. Drag to spin, pinch or scroll to zoom, / to search, Esc to clear focus.</p></div>`;
+    $('crumb').innerHTML = `<span class="gold">Overview</span>`;
+  } else if (F.kind === 'continent') { const c = F.c, ns = c.hub ? [c.hub, ...c.members] : c.members, counts = {};
+    ns.forEach(n => { counts[n.status || 'live'] = (counts[n.status || 'live'] || 0) + 1; });
+    const ids = new Set(ns.map(n => n.id)), inner = M.edges.filter(e => ids.has(e.s) && ids.has(e.t)).length, outer = M.edges.filter(e => ids.has(e.s) !== ids.has(e.t)).length;
+    $('c-kind').textContent = 'Continent'; $('c-title').innerHTML = `<span class="gold">${esc(c.name)}</span>`; $('c-type').textContent = `${c.members.length} islands${c.hub ? ' · hub ' + c.hub.name : ''}`;
+    $('c-badge').innerHTML = `<div class="badge">${Object.entries(counts).map(([s, n]) => `<span class="mark ${markClass(s)}"></span>${n} ${esc(s)}`).join(' &nbsp; ')}</div>`;
+    body.innerHTML = (c.hub && c.hub.desc ? `<div class="sec"><h4>What it is</h4><p>${esc(clean(c.hub.desc))}</p></div>` : '') +
+      `<div class="sec"><h4>Wiring</h4><p>${inner} edges inside · ${outer} edges to other continents</p></div>` +
+      `<div class="sec"><h4>Islands</h4>${c.members.map(n => `<div class="conn" data-id="${esc(n.id)}"><span class="mark ${markClass(n.status)}" style="margin-top:3px"></span><span class="n">${esc(n.name)}</span><span class="l">${esc(firstLine(n.desc, 60))}</span></div>`).join('')}</div>`;
+    $('crumb').innerHTML = `<span class="gold">${esc(c.name)}</span>`;
+  } else { const n = F.n, notes = parseNotes(n.notes), conns = M.adj.get(n.id), ins = conns.filter(a => a.dir === 'in').length;
+    $('c-kind').innerHTML = esc(n.cont ? n.cont.name : (n === M.pole ? 'Pole' : '')) + ' › Island';
+    $('c-title').textContent = n.name; $('c-type').textContent = clean(n.type);
+    $('c-badge').innerHTML = `<div class="badge"><span class="mark ${markClass(n.status)}"></span>${esc(n.status || 'live')}${n.dated ? ' · updated ' + esc(n.dated) : ''}</div>`;
+    const tl = notes.map((e, i) => { const head = firstLine(e.text, 110); return `<details class="note" ${i === 0 ? 'open' : ''}><summary>${esc(e.date || 'note')}${e.tag ? ' ' + esc(e.tag) : ''} — <span style="color:rgba(255,255,255,.8);font-weight:400">${esc(head)}</span></summary><div>${esc(e.text)}</div></details>`; }).join('');
+    body.innerHTML = (n.desc ? `<div class="sec"><h4>What it does</h4><p>${esc(n.desc)}</p></div>` : '') + (n.tech ? `<div class="sec"><h4>Stack</h4><p class="tech">${esc(n.tech)}</p></div>` : '') +
+      historyHtml(n) +
+      `<div class="sec"><h4>Connections · ${conns.length} (${conns.length - ins} out · ${ins} in)</h4>${conns.length ? conns.map(a => { const o = M.byId.get(a.id); return `<div class="conn" data-id="${esc(o.id)}"><span class="d">${a.dir === 'out' ? '→' : '←'}</span><span class="n">${esc(o.name)}</span><span class="l">${esc(a.label)}</span></div>`; }).join('') : '<p class="tech">none on this map</p>'}</div>` +
+      (notes.length ? `<div class="sec"><h4>Timeline · ${notes.length} dated entr${notes.length === 1 ? 'y' : 'ies'}</h4>${tl}</div>` : '');
+    $('crumb').innerHTML = `<span class="gold">${esc(n.cont ? n.cont.name : M.pole === n ? 'Pole' : '')}</span><span class="sep">›</span>${esc(n.name)}`;
+  }
+  body.querySelectorAll('[data-id]').forEach(el => el.onclick = () => { const s = subjects.find(q => q.kind === 'node' && q.n.id === el.dataset.id); if (s) flyTo(s); });
+  body.querySelectorAll('[data-cont]').forEach(el => el.onclick = () => { const s = subjects.find(q => q.kind === 'continent' && q.c.id === el.dataset.cont); if (s) flyTo(s); });
+}
+// the right panel's METRICS tab: the focused node's neighbourhood, a continent's members, or the whole map
+function renderSide() {
+  const F = live.focus, body = $('m-body'), row = (n, v) => `<div class="li" data-id="${esc(n.id)}"><span class="mark ${markClass(n.status)}"></span><span class="n">${esc(n.name)}</span><span class="v">${esc(v)}</span></div>`;
+  const byAct = ns => [...ns].sort((a, b) => lastAct(b).localeCompare(lastAct(a)));
+  const statusCounts = ns => { const c = {}; ns.forEach(n => { c[n.status || 'live'] = (c[n.status || 'live'] || 0) + 1; }); return '<div class="scs">' + Object.entries(c).sort((a, b) => b[1] - a[1]).map(([s, k]) => `<span><span class="mark ${markClass(s)}"></span>${k} ${esc(s)}</span>`).join('') + '</div>'; };
+  const active = ns => ns.filter(n => MX[n.id] && MX[n.id].commits7 > 0).sort((a, b) => MX[b.id].commits7 - MX[a.id].commits7);
+  const stale = ns => ns.filter(n => lastAct(n) && daysSince(lastAct(n)) > 30).sort((a, b) => lastAct(a).localeCompare(lastAct(b)));   // undated is unknown, not stale
+  let html = '';
+  if (F && F.kind === 'node') { const n = F.n, nb = [...new Set(M.adj.get(n.id).map(a => a.id))].map(id => M.byId.get(id)), recent = byAct(nb)[0], st = stale(nb);
+    html = `<div class="sec"><h4>Neighbourhood of ${esc(n.name)}</h4><div class="big"><div><b>${nb.length}</b><span>connected</span></div><div><b>${active(nb).length}</b><span>active 7 d</span></div><div><b>${st.length}</b><span>stale &gt; 30 d</span></div></div>${statusCounts(nb)}</div>` +
+      (recent ? `<div class="sec"><h4>Most recently active neighbour</h4>${row(recent, lastAct(recent))}</div>` : '') +
+      `<div class="sec"><h4>Connected projects · by last activity</h4>${byAct(nb).map(o => row(o, lastAct(o) || 'undated')).join('') || '<p class="tech">none</p>'}</div>` +
+      (st.length ? `<div class="sec"><h4>Stale neighbours · no activity in 30 d</h4>${st.map(o => row(o, daysSince(lastAct(o)) + ' d')).join('')}</div>` : '');
+  } else if (F && F.kind === 'continent') { const ns = F.c.hub ? [F.c.hub, ...F.c.members] : F.c.members, act = active(ns), st = stale(ns);
+    html = `<div class="sec"><h4>${esc(F.c.name)}</h4><div class="big"><div><b>${ns.length}</b><span>nodes</span></div><div><b>${act.length}</b><span>active 7 d</span></div><div><b>${st.length}</b><span>stale &gt; 30 d</span></div></div>${statusCounts(ns)}</div>` +
+      `<div class="sec"><h4>Most active this week · commits</h4>${act.slice(0, 6).map(o => row(o, MX[o.id].commits7 + ' in 7 d')).join('') || '<p class="tech">no commits in the last 7 days</p>'}</div>` +
+      `<div class="sec"><h4>Recently updated</h4>${byAct(ns).slice(0, 6).map(o => row(o, fmtD(lastAct(o)))).join('')}</div>` +
+      (st.length ? `<div class="sec"><h4>Stale · no activity in 30 d</h4>${st.slice(0, 8).map(o => row(o, daysSince(lastAct(o)) + ' d')).join('')}</div>` : '');
+  } else { const ns = M.nodes, act = active(ns), st = stale(ns), newest = [...ns].filter(n => firstSeen(n)).sort((a, b) => firstSeen(b).localeCompare(firstSeen(a))).slice(0, 6);
+    const wk = ns.reduce((s, n) => s + (MX[n.id]?.commits7 || 0), 0);
+    html = `<div class="sec"><h4>The whole map</h4><div class="big"><div><b>${ns.length}</b><span>nodes</span></div><div><b>${M.edges.length}</b><span>edges</span></div><div><b>${M.continents.length}</b><span>continents</span></div></div>${statusCounts(ns)}</div>` +
+      `<div class="sec"><h4>Most active this week · ${wk} commits across ${act.length} projects</h4>${act.slice(0, 6).map(o => row(o, MX[o.id].commits7 + ' in 7 d')).join('') || '<p class="tech">no commits in the last 7 days</p>'}</div>` +
+      `<div class="sec"><h4>Recently updated · dated notes</h4>${[...ns].filter(n => n.dated).sort((a, b) => b.dated.localeCompare(a.dated)).slice(0, 6).map(o => row(o, o.dated)).join('')}</div>` +
+      `<div class="sec"><h4>Stale · ${st.length} with no activity in 30 d</h4>${st.slice(0, 6).map(o => row(o, daysSince(lastAct(o)) + ' d')).join('')}</div>` +
+      `<div class="sec"><h4>Newest · by first appearance</h4>${newest.map(o => row(o, firstSeen(o))).join('')}</div>`;
+  }
+  body.innerHTML = html + `<p class="src">Sources: the map file (desc · status · dated notes) and ${MX.__generated ? `maps/metrics file, built ${esc(MX.__generated)} from git (aggregates only)` : 'no metrics file'}. Today ${today()}.</p>`;
+  body.querySelectorAll('[data-id]').forEach(el => el.onclick = () => { const s = subjects.find(q => q.kind === 'node' && q.n.id === el.dataset.id); if (s) flyTo(s); });
+}
+function buildIndex() {
+  const body = $('i-body'); $('i-count').textContent = M.nodes.length;
+  const groups = [...(M.pole ? [{ c: null, name: 'Pole', members: [M.pole] }] : []), ...M.continents.map(c => ({ c, name: c.name, members: c.hub ? [c.hub, ...c.members] : c.members }))];
+  body.innerHTML = groups.map((gp, gi) => `<details class="cont" data-g="${gi}"><summary><b class="gold" data-cont="${gp.c ? esc(gp.c.id) : ''}">${esc(gp.name)}</b><span>${gp.members.length}</span></summary>${gp.members.map(n =>
+    `<div class="row" data-id="${esc(n.id)}" data-q="${esc((n.name + ' ' + (n.type || '')).toLowerCase())}"><span class="mark ${markClass(n.status)}"></span><span class="nm">${esc(n.name)}</span><span class="sm">${esc(firstLine(n.desc))}</span></div>`).join('')}</details>`).join('');
+  body.querySelectorAll('.row').forEach(el => el.onclick = () => { const s = subjects.find(q => q.kind === 'node' && q.n.id === el.dataset.id); if (s) flyTo(s); });
+  body.querySelectorAll('summary b[data-cont]').forEach(el => { if (!el.dataset.cont) return; el.onclick = e => { e.preventDefault(); const s = subjects.find(q => q.kind === 'continent' && q.c.id === el.dataset.cont); if (s) flyTo(s); }; });
+  const search = $('search');
+  document.querySelectorAll('.rtabs button').forEach(b => b.onclick = () => showRight(b.dataset.r));
+  search.oninput = () => { const t = search.value.trim().toLowerCase();
+    body.querySelectorAll('.cont').forEach(d => { let any = false; d.querySelectorAll('.row').forEach(r => { const ok = !t || r.dataset.q.includes(t); r.style.display = ok ? '' : 'none'; any ||= ok && !!t; }); d.style.display = !t || any ? '' : 'none'; if (t) d.open = any; }); };
+  search.onkeydown = e => { if (e.key === 'Enter') { const r = [...body.querySelectorAll('.row')].find(r => r.style.display !== 'none'); if (r) { r.click(); search.blur(); } } };
+}
+function showRight(which) { document.querySelectorAll('.rtabs button').forEach(b => b.classList.toggle('on', b.dataset.r === which)); $('m-body').style.display = which === 'metrics' ? '' : 'none'; $('i-body').style.display = which === 'index' ? '' : 'none'; $('index').classList.toggle('idx', which === 'index'); }
+function markIndex() {
+  const F = live.focus, id = F && F.kind === 'node' ? F.n.id : null, cid = F ? (F.kind === 'node' ? F.n.cont?.id : F.c.id) : null;
+  document.querySelectorAll('#i-body .row').forEach(r => r.classList.toggle('on', r.dataset.id === id));
+  document.querySelectorAll('#i-body .cont').forEach(d => { const b = d.querySelector('b'), mine = !!F && ((b.dataset.cont && b.dataset.cont === cid) || (!b.dataset.cont && F?.n === M.pole)); d.classList.toggle('on', mine); if (mine && !$('search').value) d.open = true; });
+  const on = document.querySelector('#i-body .row.on'); if (on) on.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+}
+
+// ---------------------------------------------------------------- frame
+function frameAt(now) {
+  liveTick(now);
+  const st = posState(live.z), b = lay.band;
+  spin.quaternion.copy(live.q);
+  cam.position.set(0, -0.08, 1.58 - 0.08 * st.detail); cam.rotation.set(lay.pitch, 0, 0);
+  darkCam.position.set(0, 0, st.darkD); darkCam.lookAt(0, 0, 0);
+  cam.updateMatrixWorld(); darkCam.updateMatrixWorld(); scene.updateMatrixWorld(true);
+  U.detail.value = st.detail;
+  const useDark = st.lens < 1, useLight = st.lens > 0;
+  if (useDark) { U.ink.value.copy(PAPER); U.gold.value.copy(GOLD_D); U.gain.value = 1.15; U.glowPass.value = 0; renderView(darkRT, darkCam, INK);
+    strands.visible = realEdges.visible = compass.visible = landFill.visible = false; U.glowPass.value = 1; renderView(glowA, darkCam, INK.clone().setRGB(0, 0, 0), 2); U.glowPass.value = 0; strands.visible = realEdges.visible = compass.visible = landFill.visible = true;
+    blurPass(glowA, glowB, 2, 0); blurPass(glowB, glowA, 0, 2); blurPass(glowA, glowB, 4.5, 0); blurPass(glowB, glowA, 0, 4.5); }
+  if (useLight) { U.ink.value.copy(INK); U.gold.value.copy(GOLD_L); U.gain.value = 1; renderView(lightRT, cam, PAPER); }
+  const cx = live.cx ?? b.x + b.w / 2, cy = live.cy ?? b.y + b.h / 2, cover = Math.max(...[[0, 0], [W, 0], [0, H], [W, H]].map(([x, y]) => Math.hypot(x - cx, y - cy))) + 6, r = st.lens * cover;
+  const cu = compMat.uniforms; cu.useDark.value = useDark ? 1 : 0; cu.useLight.value = useLight ? 1 : 0; cu.lens.value = r * DPR; cu.center.value.set(cx * DPR, (H - cy) * DPR);
+  cu.ringA.value = ramp(st.lens, 0.03) * (1 - ramp(st.lens - 0.97, 0.03)); cu.glowAmt.value = 0.9;
+  renderer.setRenderTarget(null); renderer.setViewport(0, 0, W, H); renderer.render(compScene, flatCam);
+  g.clearRect(0, 0, W, H);
+  if (useDark) { scheme = 'dark'; drawOverlay(darkCam, st, now); }
+  if (useLight) { g.save(); if (useDark) { g.beginPath(); g.arc(cx, cy, r, 0, tau); g.clip(); g.clearRect(0, 0, W, H); } scheme = 'light'; drawOverlay(cam, st, now); g.restore(); }
+  document.querySelectorAll('#depth button').forEach((bt, i) => bt.classList.toggle('on', Math.round(live.z) === i));
+  if ((live.z > 2.4) !== !!renderCard.deep) renderCard();
+  requestAnimationFrame(frameAt);
+}
+
+// ---------------------------------------------------------------- boot
+const data = await getJSON(FILE);
+if (!data || !Array.isArray(data.nodes)) { $('msg').textContent = 'could not load ' + FILE; throw new Error('no data'); }
+M = buildModel(data); layoutWorld(M); layout(); buildGeometry(M); bindInput();
+subjects = [...M.continents.map(c => ({ kind: 'continent', c, p: c.p, name: c.name })), ...M.nodes.map(n => ({ kind: 'node', n, p: n.p, name: n.name }))];
+const brand = (M.meta && M.meta.brand) || 'HARK · System Map'; $('brand-t').textContent = brand; document.title = brand + ' — Globe';
+$('stats').innerHTML = [[M.nodes.length, 'Nodes'], [M.edges.length, 'Edges'], [M.continents.length, 'Continents'], [M.updated.slice(5).replace('-', '/'), 'Updated']].map(([n, l]) => `<div class="stat"><b>${esc(n)}</b><span>${esc(l)}</span></div>`).join('');
+$('graph-btn').onclick = () => { try { if (slug) localStorage.setItem('hark-current-map-slug', slug); else localStorage.removeItem('hark-current-map-slug'); } catch (e) {} location.href = 'index.html'; };
+document.querySelectorAll('#tabs .btn').forEach(b => b.onclick = () => document.body.classList.toggle('tab-index', b.dataset.tab === 'index'));
+buildIndex();
+{ const mx = await getJSON(`maps/metrics-${slug || 'hark'}.json`); if (mx && mx.nodes) { MX = mx.nodes; MX.__generated = mx.generated; } }
+$('c-close').onclick = () => { live.motion = null; setFocus(null, performance.now()); };
+const want = q.get('focus'), start = subjects.find(s => (s.kind === 'node' && s.n.id === want) || (s.kind === 'continent' && s.c.id === want));
+if (start) { const z0 = start.kind === 'node' ? 2 : 0; live.z = z0; live.q.copy(targetQ(start, z0)); setFocus(start, performance.now()); live.focusA = 1; }
+else { const big = [...M.continents].sort((a, b) => b.members.length - a.members.length)[0]; live.q.copy(targetQ({ p: big.p }, 0)); live.focus = 1; setFocus(null, performance.now()); }
+$('msg').remove();
+window.__globe = () => ({ z: live.z, q: live.q.toArray(), moving: !!live.motion || !!live.settle || !!live.zoom, focus: live.focus ? (live.focus.kind === 'node' ? live.focus.n.id : live.focus.c.id) : null,
+  centred: live.focus ? offCentre(live.focus) < 2e-3 : false,
+  detail: [...detailPos.entries()].map(([id, p]) => ({ id, x: p.x, y: p.y })), edges: M.edges.length, nodes: M.nodes.length });
+requestAnimationFrame(frameAt);
+window.__ready = true;
+</script>
+</body></html>

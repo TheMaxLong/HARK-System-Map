@@ -256,6 +256,7 @@ select.mi { background:#0c1018; cursor:pointer; }
     <button class="tb-btn" onclick="setupSync()">⚙</button>
     <label class="tb-btn" style="cursor:pointer" title="Import JSON file">↑ Import<input type="file" accept=".json" style="display:none" onchange="doImport(event)"></label>
     <button class="tb-btn" onclick="openMapPicker()">Maps</button>
+    <button class="tb-btn" title="Open this map as a globe" onclick="location.href='globe.html'+(_currentMapSlug?'?map='+encodeURIComponent(_currentMapSlug):'')">◍ Globe</button>
     <span id="save-indicator">● synced</span>
   </div>
   <div id="stats">
