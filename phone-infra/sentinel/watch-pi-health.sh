@@ -18,9 +18,9 @@ source ~/sentinel/lib/common.sh
 WATCHER=pi-health
 STATE_FILE="$STATE_DIR/$WATCHER.json"
 
-ANDERSON_HOST="anderson-hub.tailf0f27a.ts.net"
+ANDERSON_HOST="<hub>.<tailnet>"
 ANDERSON_SSH="pi"                # long-standing ssh alias for anderson-hub
-BACKUP_HOST="hub-backup.tailf0f27a.ts.net"
+BACKUP_HOST="<backup-hub>.<tailnet>"
 BACKUP_SSH="hub-backup"          # ssh legs self-park if this alias isn't configured
 
 # Helper: any HTTP response code 1xx-5xx means the server is alive.

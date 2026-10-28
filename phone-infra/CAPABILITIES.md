@@ -31,7 +31,7 @@
 
 ## Detailed Findings
 
-### Pixel 6 (100.72.211.71:8022)
+### Pixel 6 (<tailnet-ip>:8022)
 - **Termux:API Status:** APK installed (version code 1002, dated Sep 2025)
 - **Location Services:** Hangs on network provider query (30s timeout). May require:
   - Device location settings enabled
@@ -44,7 +44,7 @@
 - **Sensors:** Accelerometer, Magnetometer, Light, Proximity, Gyro, Barometer
 - **Hardware:** Pixel 6 (oriole), Android 14+
 
-### Pixel 10 (100.75.250.48:8022)
+### Pixel 10 (<tailnet-ip>:8022)
 - **Termux:API Status:** APK **NOT installed**. CLI wrapper scripts present (`/data/data/com.termux/files/usr/bin/termux-*`) but daemon bridge missing.
 - **Error Message:** "Termux:API is not yet available on Google Play - see https://github.com/termux-play-store/termux-apps/issues/29 for updates"
 - **Workaround Path:** 

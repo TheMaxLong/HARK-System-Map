@@ -3,7 +3,7 @@
 # next harvest day. Fetches from the Pi (Facility Tracker API).
 
 # FT api is hosted on Pi at port 8080 behind nginx, or 3000 direct
-URL="https://anderson-hub.tailf0f27a.ts.net/api/rooms"
+URL="https://<hub>.<tailnet>/api/rooms"
 
 DATA=$(curl -s --max-time 8 -H 'Accept: application/json' "$URL" 2>/dev/null)
 

@@ -187,7 +187,7 @@
    "type": "Infrastructure · Mesh VPN",
    "status": "live",
    "desc": "Private encrypted mesh. Mac + Pi + Pixel 10. No open ports, no firewall rules. Just works.",
-   "tech": "WireGuard · Tailscale Serve · MagicDNS · apsu.tailf0f27a.ts.net (primary, post-2026-05-28 flip-back)",
+   "tech": "WireGuard · Tailscale Serve · MagicDNS · apsu.<tailnet> (primary, post-2026-05-28 flip-back)",
    "notes": "2026-05-28: Subnet routing live. apsu-backup advertises 10.x.x.x/24 + 10.x.x.x/24 — Mac and Pixel now reach facility controllers directly (AB/EF/GH web UIs) via their LAN IPs over the tailnet. No nginx proxy, no port forwarding.\n\n2026-08-27: ⚠️⚠️ THERE ARE FOUR NGINX SERVER BLOCKS BEHIND tailscale serve, AND :443 IS NOT THE ONE MAX USES. :443 maps to localhost:80 (sites-enabled/fluxuum, tailnet only); :10000 to 127.0.0.1:5052 (public-readonly, FUNNEL, public internet); :10000/cannamax to :5053 (cannamax-readonly, FUNNEL); :8443 to 127.0.0.1:5051 (recipe-readonly, FUNNEL); plus :3035 and :3036 for the OCR. A per-server-block change therefore fixes ONE url only -- verify every change on :10000 too, not just the bare hostname. This was found ONLY because Max screenshotted a dead Status page on :10000 while :443 looked perfect. See the nginx funnel node. Separately, on the box a stale tailscale serve mapping held :8088 and blocked hark-setup from starting until the serve config was reset from a real terminal -- and Harvest Archive on the box still needs a sudo tailscale serve of :3040 before it is reachable over the tunnel at all.\n\n2026-09-15: the mesh boundary became load-bearing. The irrigation dashboard lost its client-side password that day, so for anyone arriving on the dashboard listener the mesh is now the only thing between them and seven previously gated tabs. That listener is a SERVE mapping -- mesh only -- and NOT a funnel. ⛔ Any future change that turns it into a funnel publishes those seven tabs, and nothing in the app would object. The mesh is NOT the only way to those tabs and was never meant to be: the share door on the outward-facing listener has served the same dashboard publicly since 2026-07-15, read-only, so a co-worker needs no mesh account. The mesh door is the read-and-write one. Outward exposure is a per-PORT switch rather than per-path, and only three ports may carry it, which is why each read-only front lives on its own port instead of on a path of the writable door.",
    "dated": "2026-09-15"
   },
@@ -333,7 +333,7 @@
    "status": "live",
    "desc": "Claude's phone. On Tailscale mesh. Runs Possession Daemon (Czech TTS p=0.15 r=0.35 — demonic Latin incantations at random intervals). Also outputs Seaman's voice via SSH + termux-tts-speak (Italian locale p=0.55 r=0.70).",
    "tech": "Pixel 6 · Termux · termux-tts-speak · Tailscale · SSH :8022 · hark-possession.sh",
-   "notes": "2026-05-24: Possession daemon upgraded to Czech locale at extreme low pitch — genuinely demonic. Seaman companion routes fish TTS here via SSH. Always on tailnet at 100.72.211.71."
+   "notes": "2026-05-24: Possession daemon upgraded to Czech locale at extreme low pitch — genuinely demonic. Seaman companion routes fish TTS here via SSH. Always on tailnet at <tailnet-ip>."
   },
   {
    "id": "project-seaman",
@@ -383,7 +383,7 @@
    "y": 0.10973850676924941,
    "type": "Edge Device · Primary Phone",
    "status": "live",
-   "desc": "Max's primary phone. Hosts Drift Report widget, FacilityCheck, Hub-Status, Read-Cycle, ntfy listener. On Tailscale at 100.75.250.48.",
+   "desc": "Max's primary phone. Hosts Drift Report widget, FacilityCheck, Hub-Status, Read-Cycle, ntfy listener. On Tailscale at <tailnet-ip>.",
    "tech": "Pixel 10 · Termux · Termux:API · termux-job-scheduler · Tailscale",
    "notes": "2026-05-28: Drift Report widget rewritten — voice → Whisper pipeline. Fixed Hub-Status and Read-Cycle to point to apsu-backup (apsu dead). Old widget backup at ~/.shortcuts-backups/. 2026-06-25: Termux 'FacilityCheck' home-screen button wired — publishes to the trigger topic; Mac runs the sweep and returns a result digest on the recipe tripwire topic. 2026-07-20: the three personas (Tia / Sensei / Habibi) had been serving canned FALLBACK -- two faults fixed: the shared LM Studio :1234 was down 13h (see LM Studio Watchdog node) AND qwen3.5-9b is a reasoning model that returned empty content until reasoning_effort:none was set (the mandatory fix; /no_think and enable_thinking:false do not work). Google STT deafness (the mic blinking on then off) was not repaired but REPLACED by a hold-to-talk app (Pocket -- Whisper on the Mac at :9090, ~3s release-to-speech, proven on Max real speech). STILL OPEN: STT below the app layer; button redesign + a home-screen hold-to-talk widget.\n\n2026-08-01 (git): repo TheMaxLong/pixel-10-project @ main 048817e as of 04:00 PT — last commit 2026-06-03, no new work in this window. This repo also carries the voice infrastructure the Pixel 6 runs (personas, push-to-talk bridge, Termux widgets); the Pixel 6 has no repo of its own."
   },
@@ -398,7 +398,7 @@
    "status": "live",
    "desc": "whisper.cpp HTTP server on Max's Mac. Tailscale-bound. Auth via bearer token. 90s of audio transcribed in ~3-5s with full sentences and punctuation.",
    "tech": "whisper.cpp · ggml-small.en · Python http.server · ffmpeg · launchd KeepAlive",
-   "notes": "2026-05-28: Deployed at ~/.local/hark-whisper/. Bound to Tailscale IP 100.65.146.120:9090. Auto-restart on crash. Audit log at ~/Library/Logs/hark-drift-transcripts.log."
+   "notes": "2026-05-28: Deployed at ~/.local/hark-whisper/. Bound to Tailscale IP <tailnet-ip>:9090. Auto-restart on crash. Audit log at ~/Library/Logs/hark-drift-transcripts.log."
   },
   {
    "id": "neon-hark",

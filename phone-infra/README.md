@@ -82,7 +82,7 @@ Each heartbeat includes:
 
 Example message:
 ```
-Device: Pixel 6 | Battery: 87% | Charging: no | Network: WiFi | Tailscale: 100.72.211.71 | 2026-05-19T16:16:16Z
+Device: Pixel 6 | Battery: 87% | Charging: no | Network: WiFi | Tailscale: <tailnet-ip> | 2026-05-19T16:16:16Z
 ```
 
 ## Logs

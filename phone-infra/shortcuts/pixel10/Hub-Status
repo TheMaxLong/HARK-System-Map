@@ -2,8 +2,8 @@
 # Hub-Status — Quick health snapshot of the Pi (Anderson hub) via Tailscale.
 # Speaks a short status summary.
 
-PI_HOST="anderson-hub.tailf0f27a.ts.net"
-PI_IP="100.123.152.77"
+PI_HOST="<hub>.<tailnet>"
+PI_IP="<tailnet-ip>"
 
 REPORT=""
 

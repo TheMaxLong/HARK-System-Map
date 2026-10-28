@@ -38,7 +38,7 @@
       "status": "live",
       "desc": "Grow recipe hub. Cycle tracking, arc charts, drift detection, field notes. Scrapes live controller data. 2026-06-01: HydroZ trial active on AB only (port 15, 5 phases — D 1-7→D 21-28 @2.0 mL/Gal + DRIP VEG @1.0). EF/GH no HydroZ by design.",
       "tech": "Python · Flask · SQLite (recipe_book.db) · controller HTTP scrapers · recipe_drift queue runner · Neon HARK mirror",
-      "notes": "2026-06-01: FacilityCheck run + 832b111 sync commit pushed. All review items (C1-C3, H1-H4, M1) shipped + verified. Mac→Pi deploy SHA-verified both Pis. Webpage at http://anderson-hub.tailf0f27a.ts.net:5050 serves current state."
+      "notes": "2026-06-01: FacilityCheck run + 832b111 sync commit pushed. All review items (C1-C3, H1-H4, M1) shipped + verified. Mac→Pi deploy SHA-verified both Pis. Webpage at http://<hub>.<tailnet>:5050 serves current state."
     },
     {
       "id": "trellis",
@@ -197,7 +197,7 @@
       "type": "Infrastructure · Mesh VPN",
       "status": "live",
       "desc": "Private encrypted mesh. Mac + Pi + Pixel 10. No open ports, no firewall rules. Just works.",
-      "tech": "WireGuard · Tailscale Serve · MagicDNS · anderson-hub.tailf0f27a.ts.net (primary, post-2026-05-28 flip-back)",
+      "tech": "WireGuard · Tailscale Serve · MagicDNS · <hub>.<tailnet> (primary, post-2026-05-28 flip-back)",
       "notes": ""
     },
     {
