@@ -194,7 +194,11 @@ function layoutWorld(M) {
   // the whole sphere: a Fibonacci spread of continent centres (south pole included, a cap kept clear round the north
   // pole node), then a size-aware relaxation so every continent's islands have room
   const K = M.continents.length, R = rng(hashStr(slug || 'hark')), north = new THREE.Vector3(0, 1, 0);
-  const est = c => 0.055 + 0.019 * Math.sqrt(c.members.length + (c.hub ? 2 : 0)) + 0.05 + 0.047 * Math.sqrt(c.members.length + 0.35);
+  // a sparser map gets bigger islands set closer to their coast, so the globe reads full rather than scattered
+  // (Personal, 55 nodes → 1.5×; the 96-node HARK map keeps 1×)
+  const IS = M.nodes.length < 70 ? 1.5 : 1, GAP = 0.045 - 0.015 * (IS - 1) * 2, STEP = 0.047 * (1 + 0.12 * (IS - 1) * 2);
+  M.islandScale = IS;
+  const est = c => 0.055 + 0.019 * Math.sqrt(c.members.length + (c.hub ? 2 : 0)) + GAP + (IS - 1) * 0.01 + STEP * Math.sqrt(c.members.length + 0.35);
   const order = [...M.continents].sort((a, b) => est(b) - est(a));
   order.forEach((c, i) => { const y = 0.72 - 1.66 * (i + 0.5) / K, r = Math.sqrt(1 - y * y), th = i * 2.39996 + 0.6; c.p = new THREE.Vector3(r * Math.sin(th), y, r * Math.cos(th)); c.est = est(c); });
   for (let it = 0; it < 300; it++) for (const a of M.continents) {
@@ -209,7 +213,7 @@ function layoutWorld(M) {
     c.land = blob(c.f, c.rm, hashStr(c.id));
     if (c.hub) { c.hub.p = c.p.clone(); c.hub.r = 0.03; }
     const th0 = R() * tau;
-    c.members.forEach((m, j) => { const th = th0 + j * 2.39996, base = c.land.edge(th); m.p = offset(c.f, base + 0.045 + 0.047 * Math.sqrt(j + 0.35), th); m.r = 0.014 + 0.0008 * (m.sz || 14); });
+    c.members.forEach((m, j) => { const th = th0 + j * 2.39996, base = c.land.edge(th); m.r = (0.014 + 0.0008 * (m.sz || 14)) * IS; m.p = offset(c.f, base + GAP + (IS - 1) * 1.2 * m.r + STEP * Math.sqrt(j + 0.35), th); });
     c.reach = Math.max(c.rm, ...c.members.map(m => m.p.angleTo(c.p) + m.r));
   });
   if (M.pole) { M.pole.p = new THREE.Vector3(0, 1, 0); M.pole.r = 0.05; }
