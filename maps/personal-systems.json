@@ -1,0 +1,542 @@
+{
+  "nodes": [
+    {
+      "id": "the-world",
+      "label": "The World\n/ Trip World",
+      "cat": "flagship",
+      "sz": 24,
+      "x": 0.24,
+      "y": 0.3,
+      "type": "Browser 3D World Hub",
+      "status": "live",
+      "desc": "The home for every personal world: a psychedelic Trip World with a bus that carries you to a central hub, doors out to the other worlds, residents that roam the hub, and a talking driver at the terminal.",
+      "tech": "three.js · browser · local voice · Mac-only install",
+      "notes": "2026-10-28 (NOEMA): repo the-world · branch main · last commit 2026-10-26 · 6 uncommitted files · no remote. Worktrees the-world-doors, -perf, -buddy and -trip carry the bus doors, hub batching, roaming residents and arcade art (10/20 to 10/25). Unreal forest and Night Drive were scrapped 10/22; no Unreal doors.",
+      "dated": "2026-10-28"
+    },
+    {
+      "id": "the-gallery",
+      "label": "The Gallery",
+      "cat": "app",
+      "sz": 19,
+      "x": 0.1,
+      "y": 0.18,
+      "type": "Walk-through 3D Gallery",
+      "status": "live",
+      "desc": "A browser walk-through gallery: wings of exhibits around a court and a small model garden (ten plants at most across every wing). Its own project; tied to The World only by a hub door.",
+      "tech": "three.js · browser · static pages",
+      "notes": "2026-10-28 (NOEMA): repo the-gallery · branch main · last commit 2026-10-24 · 738 uncommitted files · ahead 0 / behind 0 · GitHub remote. Garden work also sits in the the-gallery-ops clone (branch garden-1to8). The talking tree was taken out 10/24 on Max's call.",
+      "dated": "2026-10-28"
+    },
+    {
+      "id": "the-gallery-unreal",
+      "label": "The Gallery\n(Unreal)",
+      "cat": "app",
+      "sz": 13,
+      "x": 0.08,
+      "y": 0.4,
+      "type": "Unreal 5.8 Clone",
+      "status": "parked",
+      "desc": "An Unreal 5.8 rebuild of The Gallery with a walk-in model garden. The packaged app still runs; the engine was deleted 10/22 and there is no rebuild.",
+      "tech": "Unreal Engine 5.8 · Lumen",
+      "notes": "2026-10-28 (NOEMA): repo the-gallery-unreal · branch main · last commit 2026-10-19 · 0 uncommitted files · no remote. Max 10/22: Unreal is not going to work on this Mac. Working copy kept; the Seagate holds the mirror.",
+      "dated": "2026-10-28"
+    },
+    {
+      "id": "mosaic-grove",
+      "label": "Mosaic Grove",
+      "cat": "app",
+      "sz": 14,
+      "x": 0.36,
+      "y": 0.1,
+      "type": "Public Share World",
+      "status": "live",
+      "desc": "A public share-link 3D world made for a friend: three mosaic images as sculptures on a plaza. Separate from The World, and public, so nothing personal goes on it.",
+      "tech": "three.js · Vercel",
+      "notes": "2026-10-28 (NOEMA): repo mosaic-grove · branch main · last commit 2026-10-05 · 0 uncommitted files · no remote.",
+      "dated": "2026-10-28"
+    },
+    {
+      "id": "seagate",
+      "label": "Seagate\nLibrary",
+      "cat": "hardware",
+      "sz": 15,
+      "x": 0.14,
+      "y": 0.56,
+      "type": "External Drive · Reference Library",
+      "status": "live",
+      "desc": "The external drive that holds the reference library of every world building block, big renders and the retired Unreal images, so the Mac keeps a lean runnable install.",
+      "tech": "external SSD",
+      "notes": "2026-10-28: no repo; storage only. Rule: dev and builds go here, the Mac keeps room to spare.",
+      "dated": "2026-10-28"
+    },
+    {
+      "id": "anim-kit",
+      "label": "The Creator\n/ R&D Dept",
+      "cat": "app",
+      "sz": 21,
+      "x": 0.62,
+      "y": 0.2,
+      "type": "Motion + Visual Studio",
+      "status": "live",
+      "desc": "The R&D package for creative tech: The Creator (animation presets, tuning, transparent export), the Liquid Chrome effects with a shared beat engine, and the visualizer makers aimed at gallery-wall art.",
+      "tech": "JavaScript · WebGL · local web app",
+      "notes": "2026-10-28 (NOEMA): repo anim-kit · branch main · last commit 2026-10-28 · 26 uncommitted files · no remote. Latest: glass-cards, UI cards on a ring around the camera. Current sole focus is the visualizer makers (10/25).",
+      "dated": "2026-10-28"
+    },
+    {
+      "id": "mcp-for-blender",
+      "label": "Blender MCP",
+      "cat": "external",
+      "sz": 11,
+      "x": 0.8,
+      "y": 0.1,
+      "type": "Tool · Blender bridge",
+      "status": "live",
+      "desc": "Lets Claude drive Blender for models and renders used across the creative work.",
+      "tech": "Python · MCP · Blender",
+      "notes": "2026-10-28 (NOEMA): repo mcp-for-blender · branch main · last commit 2026-10-06 · 0 uncommitted files · ahead 0 / behind 0 · GitHub remote.",
+      "dated": "2026-10-28"
+    },
+    {
+      "id": "sand-mandala",
+      "label": "Sand Mandala",
+      "cat": "app",
+      "sz": 12,
+      "x": 0.86,
+      "y": 0.26,
+      "type": "Art App",
+      "status": "live",
+      "desc": "A sand mandala temple to sit with: realistic sand, sparkle and a slow build.",
+      "tech": "three.js · Blender pipeline",
+      "notes": "2026-10-28 (NOEMA): repo sand-mandala · branch main · last commit 2026-10-07 · 0 uncommitted files · no remote.",
+      "dated": "2026-10-28"
+    },
+    {
+      "id": "universe-25",
+      "label": "Universe 25",
+      "cat": "app",
+      "sz": 12,
+      "x": 0.9,
+      "y": 0.42,
+      "type": "3D Simulator",
+      "status": "live",
+      "desc": "A 3D simulator of the 1968 Universe 25 mouse experiment, every number and dated log entry tagged with its source.",
+      "tech": "three.js · postprocessing · bun · single file",
+      "notes": "2026-10-28 (NOEMA): repo universe-25 · branch main · last commit 2026-09-30 · 0 uncommitted files · ahead 0 / behind 0 · GitHub remote.",
+      "dated": "2026-10-28"
+    },
+    {
+      "id": "whatarewewatching",
+      "label": "What Are We\nWatching",
+      "cat": "display",
+      "sz": 12,
+      "x": 0.7,
+      "y": 0.36,
+      "type": "Movie Chooser",
+      "status": "live",
+      "desc": "A movie chooser with a CRT video-store look.",
+      "tech": "Blender · three.js",
+      "notes": "2026-10-28 (NOEMA): repo WhatAreWeWatchingv503 · branch crt-video-store · last commit 2026-09-27 · 0 uncommitted files · ahead 0 / behind 0 · GitHub remote.",
+      "dated": "2026-10-28"
+    },
+    {
+      "id": "lego-builder",
+      "label": "Lego Builder",
+      "cat": "app",
+      "sz": 12,
+      "x": 0.52,
+      "y": 0.06,
+      "type": "Mac App · CAD",
+      "status": "parked",
+      "desc": "A personal Lego CAD app, installed as a Mac app.",
+      "tech": "Mac app",
+      "notes": "2026-10-28 (NOEMA): repo lego-builder · branch main · last commit 2026-09-27 · 0 uncommitted files · ahead 0 / behind 0 · GitHub remote. Parked 2026-09-27.",
+      "dated": "2026-10-28"
+    },
+    {
+      "id": "long-way-home",
+      "label": "The Long Way\nHome",
+      "cat": "app",
+      "sz": 11,
+      "x": 0.92,
+      "y": 0.14,
+      "type": "Browser Game (artifact)",
+      "status": "parked",
+      "desc": "An Oregon-Trail-style rave-to-home road trip game with an 8-bit look; version 5 is live as an artifact.",
+      "tech": "single-page artifact",
+      "notes": "2026-10-28: no repo of its own; it lives as an artifact. Parked 2026-10-14.",
+      "dated": "2026-10-28"
+    },
+    {
+      "id": "project-seaman",
+      "label": "Seaman\n(Claude fish)",
+      "cat": "app",
+      "sz": 17,
+      "x": 0.66,
+      "y": 0.66,
+      "type": "Dreamcast Game Mod",
+      "status": "live",
+      "desc": "The Dreamcast game Seaman, modded so the fish is Claude: it hears through the mic and talks back in a local voice, and the save survives the creature dying.",
+      "tech": "Flycast · local TTS · Python bridge",
+      "notes": "2026-10-28 (NOEMA): repo project-seaman · branch claude/autopilot-decision-layer · last commit 2026-10-04 · 0 uncommitted files · ahead 0 / behind 0 · GitHub remote.",
+      "dated": "2026-10-28"
+    },
+    {
+      "id": "flycast",
+      "label": "Flycast\n(fork)",
+      "cat": "external",
+      "sz": 11,
+      "x": 0.82,
+      "y": 0.58,
+      "type": "Emulator Fork",
+      "status": "live",
+      "desc": "The Dreamcast emulator, with a branch that keeps the game clock offset when a savestate loads.",
+      "tech": "C++",
+      "notes": "2026-10-28 (NOEMA): repo flycast · branch seaman-clock-offset · last commit 2026-09-12 · 0 uncommitted files · GitHub remote.",
+      "dated": "2026-10-28"
+    },
+    {
+      "id": "tank",
+      "label": "Tank",
+      "cat": "future",
+      "sz": 14,
+      "x": 0.8,
+      "y": 0.76,
+      "type": "Own Seaman · Godot",
+      "status": "planned",
+      "desc": "Our own Seaman: a Godot tank with Claude inside and faces built from a photo by local 3D AI. Design approved section by section; waiting on spec review before the plan.",
+      "tech": "Godot · Python helper",
+      "notes": "2026-10-28 (NOEMA): repo tank · branch main · last commit 2026-09-24 · 7 uncommitted files · ahead 0 / behind 0 · GitHub remote.",
+      "dated": "2026-10-28"
+    },
+    {
+      "id": "applio",
+      "label": "Applio\nVoice Lab",
+      "cat": "external",
+      "sz": 11,
+      "x": 0.5,
+      "y": 0.58,
+      "type": "Local Voice Conversion",
+      "status": "parked",
+      "desc": "Local voice conversion used for the Trip World driver. Voice output stays on the Mac and is never published.",
+      "tech": "Python · local models",
+      "notes": "2026-10-28 (NOEMA): repo applio · branch detached · last commit 2026-09-19 · 8 uncommitted files · GitHub remote.",
+      "dated": "2026-10-28"
+    },
+    {
+      "id": "economy-watchdog",
+      "label": "Economy\nWatchdog",
+      "cat": "market",
+      "sz": 14,
+      "x": 0.62,
+      "y": 0.9,
+      "type": "Side Business · Game Servers",
+      "status": "planned",
+      "desc": "A read-only economy watchdog for GTA V roleplay servers: watches a server economy for money exploits. Design plans 2A and 2B are written.",
+      "tech": "Python · read-only",
+      "notes": "2026-10-28 (NOEMA): repo economy-watchdog · branch main · last commit 2026-10-01 · 0 uncommitted files · ahead 0 / behind 59 · GitHub remote.",
+      "dated": "2026-10-28"
+    },
+    {
+      "id": "revenue-engine",
+      "label": "Revenue\nEngine",
+      "cat": "market",
+      "sz": 10,
+      "x": 0.74,
+      "y": 0.96,
+      "type": "Side Income Plan",
+      "status": "parked",
+      "desc": "An agent system and runbook for a small monthly side income. Untouched since May.",
+      "tech": "docs · agents",
+      "notes": "2026-10-28 (NOEMA): repo revenue-engine · branch main · last commit 2026-05-30 · 0 uncommitted files · ahead 0 / behind 1 · GitHub remote.",
+      "dated": "2026-10-28"
+    },
+    {
+      "id": "duncan",
+      "label": "Duncan",
+      "cat": "app",
+      "sz": 19,
+      "x": 0.24,
+      "y": 0.74,
+      "type": "Personal Resident Agent",
+      "status": "live",
+      "desc": "A personal agent that lives on the old Air: it posts, keeps mail and a hub page, and is the same character as the Trip World bus driver.",
+      "tech": "Claude · runs on the old Air",
+      "notes": "2026-10-28 (NOEMA): repo duncan · branch main · last commit 2026-10-28 · 0 uncommitted files · no remote.",
+      "dated": "2026-10-28"
+    },
+    {
+      "id": "duncan-pixel",
+      "label": "Duncan\nPhone App",
+      "cat": "display",
+      "sz": 12,
+      "x": 0.1,
+      "y": 0.88,
+      "type": "Companion App + Widget",
+      "status": "live",
+      "desc": "The phone side of Duncan: a home-screen widget, periodic checks and alerts, including the one that waits for Max's OK.",
+      "tech": "Android · widget",
+      "notes": "2026-10-28 (NOEMA): repo duncan-pixel · branch main · last commit 2026-10-27 · 0 uncommitted files · no remote.",
+      "dated": "2026-10-28"
+    },
+    {
+      "id": "old-air",
+      "label": "Old MacBook\nAir",
+      "cat": "hardware",
+      "sz": 15,
+      "x": 0.08,
+      "y": 0.7,
+      "type": "Home Machine",
+      "status": "live",
+      "desc": "The old laptop that stays home. Hosts Duncan; the plan is for it to keep the Seagate reachable while the main Mac travels.",
+      "tech": "macOS",
+      "notes": "2026-10-28: no repo; host only.",
+      "dated": "2026-10-28"
+    },
+    {
+      "id": "killdozer",
+      "label": "Killdozer",
+      "cat": "display",
+      "sz": 13,
+      "x": 0.38,
+      "y": 0.88,
+      "type": "Desktop Pet",
+      "status": "live",
+      "desc": "A chameleon desktop pet for the Mac that takes drops: YouTube to MP3, PDFs and links.",
+      "tech": "Tauri",
+      "notes": "2026-10-28 (NOEMA): repo Killdozer · branch main · last commit 2026-10-17 · 0 uncommitted files · ahead 0 / behind 0 · GitHub remote. Built in Codex, maintained by Claude since 10/17.",
+      "dated": "2026-10-28"
+    },
+    {
+      "id": "desko",
+      "label": "Desko",
+      "cat": "display",
+      "sz": 11,
+      "x": 0.4,
+      "y": 0.68,
+      "type": "Spare-Phone Desk Dashboard",
+      "status": "live",
+      "desc": "Turns a spare phone into a desk dashboard: music with lyrics, computer vitals and git status, a clock.",
+      "tech": "web · phone",
+      "notes": "2026-10-28 (NOEMA): repo Desko · branch local/macos-desk · last commit 2026-09-03 · 0 uncommitted files · GitHub remote.",
+      "dated": "2026-10-28"
+    },
+    {
+      "id": "dab-timer",
+      "label": "Dab Timer",
+      "cat": "display",
+      "sz": 10,
+      "x": 0.3,
+      "y": 0.96,
+      "type": "Desktop Widget",
+      "status": "live",
+      "desc": "A Mac desktop widget that walks the cool-down timer and glows green in the sweet spot.",
+      "tech": "Mac widget",
+      "notes": "2026-10-28 (NOEMA): repo Dab_Timer_Mac · branch main · last commit 2026-09-23 · 5 uncommitted files · no remote.",
+      "dated": "2026-10-28"
+    },
+    {
+      "id": "govee-vibes",
+      "label": "Govee Vibes",
+      "cat": "app",
+      "sz": 11,
+      "x": 0.5,
+      "y": 0.96,
+      "type": "Home Lights Engine",
+      "status": "live",
+      "desc": "Drives the home LED lights with live effects, a calibration step and a setup page.",
+      "tech": "Python · local server",
+      "notes": "2026-10-28 (NOEMA): repo govee-vibes · branch main · last commit 2026-09-29 · 0 uncommitted files · ahead 0 / behind 0 · GitHub remote.",
+      "dated": "2026-10-28"
+    },
+    {
+      "id": "mac",
+      "label": "Main Mac",
+      "cat": "hardware",
+      "sz": 18,
+      "x": 0.46,
+      "y": 0.44,
+      "type": "Daily Machine",
+      "status": "live",
+      "desc": "The main laptop. Runs the worlds, The Creator, the desk widgets and NOEMA; big files go to the Seagate.",
+      "tech": "macOS",
+      "notes": "2026-10-28: no repo; host only.",
+      "dated": "2026-10-28"
+    },
+    {
+      "id": "noema",
+      "label": "NOEMA",
+      "cat": "infra",
+      "sz": 17,
+      "x": 0.4,
+      "y": 0.24,
+      "type": "Project Memory · Repo Index",
+      "status": "live",
+      "desc": "Local project memory: indexes every repo every five minutes, splits work from personal, keeps re-entry notes and research packets. This map is drawn from its index.",
+      "tech": "Node · launchd · desk widget",
+      "notes": "2026-10-28 (NOEMA): repo Project Organizer · branch main · last commit 2026-08-07 · 0 uncommitted files · ahead 0 / behind 0 · GitHub remote. Note: its work/personal tag is not reliable; about 20 repos it tags personal are work and were left off this map.",
+      "dated": "2026-10-28"
+    }
+  ],
+  "edges": [
+    {
+      "s": "the-world",
+      "t": "the-gallery",
+      "label": "hub door",
+      "pulse": false
+    },
+    {
+      "s": "anim-kit",
+      "t": "the-world",
+      "label": "Creator exports become hub residents",
+      "pulse": true
+    },
+    {
+      "s": "duncan",
+      "t": "the-world",
+      "label": "same character: the bus driver",
+      "pulse": true
+    },
+    {
+      "s": "applio",
+      "t": "the-world",
+      "label": "driver voice (local only)",
+      "pulse": false
+    },
+    {
+      "s": "the-gallery",
+      "t": "the-gallery-unreal",
+      "label": "Unreal clone of the content",
+      "pulse": false,
+      "dash": true
+    },
+    {
+      "s": "the-world",
+      "t": "seagate",
+      "label": "building-block library",
+      "pulse": false
+    },
+    {
+      "s": "the-gallery-unreal",
+      "t": "seagate",
+      "label": "mirror copy",
+      "pulse": false,
+      "dash": true
+    },
+    {
+      "s": "sand-mandala",
+      "t": "seagate",
+      "label": "Blender pipeline",
+      "pulse": false
+    },
+    {
+      "s": "old-air",
+      "t": "duncan",
+      "label": "hosts",
+      "pulse": true
+    },
+    {
+      "s": "old-air",
+      "t": "seagate",
+      "label": "home hub (planned)",
+      "pulse": false,
+      "dash": true
+    },
+    {
+      "s": "duncan",
+      "t": "duncan-pixel",
+      "label": "alerts + widget",
+      "pulse": true
+    },
+    {
+      "s": "flycast",
+      "t": "project-seaman",
+      "label": "runs the game",
+      "pulse": true
+    },
+    {
+      "s": "project-seaman",
+      "t": "tank",
+      "label": "own-engine successor",
+      "pulse": false,
+      "dash": true
+    },
+    {
+      "s": "mcp-for-blender",
+      "t": "anim-kit",
+      "label": "Blender from Claude",
+      "pulse": false,
+      "dash": true
+    },
+    {
+      "s": "revenue-engine",
+      "t": "economy-watchdog",
+      "label": "side-income track",
+      "pulse": false,
+      "dash": true
+    },
+    {
+      "s": "mac",
+      "t": "the-world",
+      "label": "Mac-only install",
+      "pulse": false
+    },
+    {
+      "s": "mac",
+      "t": "anim-kit",
+      "label": "Creator runs locally",
+      "pulse": false
+    },
+    {
+      "s": "mac",
+      "t": "noema",
+      "label": "runs + desk widget",
+      "pulse": false
+    },
+    {
+      "s": "mac",
+      "t": "killdozer",
+      "label": "desktop pet",
+      "pulse": false
+    },
+    {
+      "s": "mac",
+      "t": "dab-timer",
+      "label": "desktop widget",
+      "pulse": false
+    },
+    {
+      "s": "mac",
+      "t": "desko",
+      "label": "vitals + git status",
+      "pulse": true
+    },
+    {
+      "s": "mac",
+      "t": "seagate",
+      "label": "external drive",
+      "pulse": false
+    },
+    {
+      "s": "mac",
+      "t": "project-seaman",
+      "label": "emulator + voice",
+      "pulse": false
+    },
+    {
+      "s": "mac",
+      "t": "lego-builder",
+      "label": "installed app",
+      "pulse": false
+    },
+    {
+      "s": "mac",
+      "t": "govee-vibes",
+      "label": "runs from",
+      "pulse": false,
+      "dash": true
+    }
+  ],
+  "_saved": "2026-10-28T19:47:50.000Z"
+}
