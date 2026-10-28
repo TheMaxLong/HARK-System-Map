@@ -323,20 +323,6 @@
       "dated": "2026-10-28"
     },
     {
-      "id": "dab-timer",
-      "label": "Dab Timer",
-      "cat": "display",
-      "sz": 10,
-      "x": 0.3,
-      "y": 0.96,
-      "type": "Desktop Widget",
-      "status": "live",
-      "desc": "A Mac desktop widget that walks the cool-down timer and glows green in the sweet spot.",
-      "tech": "Mac widget",
-      "notes": "2026-10-28 (NOEMA): repo Dab_Timer_Mac · branch main · last commit 2026-09-23 · 5 uncommitted files · no remote.",
-      "dated": "2026-10-28"
-    },
-    {
       "id": "govee-vibes",
       "label": "Govee Vibes",
       "cat": "app",
@@ -498,12 +484,6 @@
       "s": "mac",
       "t": "killdozer",
       "label": "desktop pet",
-      "pulse": false
-    },
-    {
-      "s": "mac",
-      "t": "dab-timer",
-      "label": "desktop widget",
       "pulse": false
     },
     {
