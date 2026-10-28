@@ -1,4 +1,20 @@
 {
+  "meta": {
+    "title": "Personal Systems — Map",
+    "brand": "Personal · Systems Map",
+    "tagline": "Everything built on the side, in six orbits around NOEMA: the Creator and its recipes, the worlds, the companions, the games, the tools, and the parked ideas.",
+    "stats": [
+      [
+        "6",
+        "Orbits"
+      ],
+      [
+        "10/28",
+        "Updated"
+      ]
+    ],
+    "hideRisk": true
+  },
   "nodes": [
     {
       "id": "noema",
