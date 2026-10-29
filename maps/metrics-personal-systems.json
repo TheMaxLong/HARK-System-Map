@@ -1,5 +1,5 @@
 {
- "generated": "2026-10-29T10:11Z",
+ "generated": "2026-10-29T13:12Z",
  "source": "NOEMA project index + git log on the maintainer's Mac — aggregates only (dates, counts, a 12-week sparkline)",
  "matched": 23,
  "nodes": {
@@ -63,11 +63,11 @@
   },
   "trip-world": {
    "firstCommit": "2026-10-04",
-   "lastCommit": "2026-10-28",
-   "commits": 232,
-   "commits7": 43,
-   "commits30": 232,
-   "commits90": 232,
+   "lastCommit": "2026-10-29",
+   "commits": 233,
+   "commits7": 44,
+   "commits30": 233,
+   "commits90": 233,
    "contributors": 1,
    "weeks": [
     0,
@@ -81,21 +81,21 @@
     154,
     6,
     29,
-    43
+    44
    ],
    "branch": "main",
    "dirty": 6,
    "ahead": null,
    "behind": null,
-   "lastActivity": "2026-10-28",
+   "lastActivity": "2026-10-29",
    "repo": "the-world"
   },
   "the-gallery": {
    "firstCommit": "2026-09-27",
    "lastCommit": "2026-10-24",
    "commits": 125,
-   "commits7": 2,
-   "commits30": 74,
+   "commits7": 1,
+   "commits30": 73,
    "commits90": 125,
    "contributors": 1,
    "weeks": [
@@ -109,8 +109,8 @@
     83,
     0,
     35,
-    5,
-    2
+    6,
+    1
    ],
    "branch": "main",
    "dirty": 738,
@@ -218,8 +218,8 @@
     0,
     0,
     0,
-    0,
     1,
+    0,
     0,
     0,
     0,
@@ -411,11 +411,11 @@
   },
   "duncan": {
    "firstCommit": "2026-10-26",
-   "lastCommit": "2026-10-28",
-   "commits": 75,
-   "commits7": 75,
-   "commits30": 75,
-   "commits90": 75,
+   "lastCommit": "2026-10-29",
+   "commits": 76,
+   "commits7": 76,
+   "commits30": 76,
+   "commits90": 76,
    "contributors": 1,
    "weeks": [
     0,
@@ -429,13 +429,13 @@
     0,
     0,
     0,
-    75
+    76
    ],
    "branch": "main",
    "dirty": 0,
    "ahead": null,
    "behind": null,
-   "lastActivity": "2026-10-28",
+   "lastActivity": "2026-10-29",
    "repo": "duncan"
   },
   "duncan-pixel": {
@@ -594,11 +594,11 @@
    "weeks": [
     2,
     0,
-    22,
-    10,
+    23,
+    9,
     5,
-    4,
-    7,
+    5,
+    6,
     0,
     0,
     0,
