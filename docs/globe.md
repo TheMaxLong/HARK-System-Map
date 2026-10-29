@@ -26,13 +26,14 @@ Controls:
 village's address, empty until it is published.
 
 - **Public site:** the toolbar gains one button, **Village ↗**. It links to the public village in a new tab, with the focused
-  continent. On the globe it stays greyed while `villagePublicUrl` is empty (on the graph it does nothing). The public pages never call `/api/` or this Mac.
+  continent. While `villagePublicUrl` is empty there is no Village button at all, on the globe or the graph. The public pages never call `/api/` or this Mac.
 - **Local mode:** the page is served from the Mac's loopback by the village feed (anim-kit `lab/agent-feed.mjs`, under
   `/map/`). The toolbar reads **Graph · Globe · Village**.
   - **Village** with a continent or island focused, or zooming on past DETAIL, dives in: one push toward the continent, a
     crossfade through white, then that continent's district of the village in a full-page layer.
   - **Esc**, or pinching out once the village is at its overview, plays it back to the globe exactly as it was.
-- The May `personal-projects` map is an archive: no Village.
+- The May `personal-projects` map (and any map other than HARK and Personal Systems) is an archive: no Village, on the
+  globe or the graph (the graph re-checks after every map load).
 
 ## History numbers: `globe-metrics.py`
 

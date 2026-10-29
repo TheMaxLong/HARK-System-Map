@@ -100,7 +100,7 @@ canvas{position:absolute;left:0;top:0;display:block}
 }
 /* the Village door (village-link.js) and local mode: Graph · Globe · Village and the dive layer */
 a.btn{text-decoration:none}
-#village-btn[aria-disabled="true"],#village-btn:disabled{opacity:.4;cursor:default}
+#village-btn:disabled{opacity:.4;cursor:default}
 .view.on{color:#000;background:var(--gold);border-color:#c99a35;cursor:default}
 #village-layer{position:fixed;inset:0;z-index:20;background:#fff;opacity:0}
 #village-layer iframe{position:absolute;inset:0;width:100%;height:100%;border:0;opacity:0;background:#fff}
@@ -745,28 +745,28 @@ function markIndex() {
 }
 
 // ---------------------------------------------------------------- local mode: the Village door and the dive
-// The toolbar. Public: one more button, Village, a link to the public village in a new tab (greyed until it has an
-// address). Local: Graph · Globe · Village. The archive maps get no Village.
+// The toolbar. Public: one more button, Village, a link to the public village in a new tab, and none at all until the
+// public village has an address (the page then stays exactly the approved globe). Local: Graph · Globe · Village. The
+// archive maps get no Village.
 function setupViews() {
   if (!ECO) return;
   const gb = $('graph-btn');
-  if (!LOCAL) { const a = document.createElement('a'); a.className = 'btn'; a.id = 'village-btn'; a.target = '_blank'; a.rel = 'noopener'; a.textContent = 'Village ↗'; gb.after(a); syncVillage(); return; }
+  if (!LOCAL) { if (!window.villagePublicUrl) return; const a = document.createElement('a'); a.className = 'btn'; a.id = 'village-btn'; a.target = '_blank'; a.rel = 'noopener'; a.textContent = 'Village ↗'; gb.after(a); syncVillage(); return; }
   gb.textContent = 'Graph'; gb.classList.add('view');
   const here = document.createElement('span'); here.className = 'btn view on'; here.textContent = 'Globe';
   const v = document.createElement('button'); v.className = 'btn view'; v.id = 'village-btn'; v.textContent = 'Village';
   v.title = 'Into the focused continent\'s village (or zoom on past DETAIL)'; v.onclick = () => diveIn(); gb.after(here, v);
   syncVillage();
 }
-function villageDistrict() {                                    // the dive's district: the focused continent, or the focused island's
-  const F = live.focus; if (!LOCAL || !ECO || !F) return null;
+function focusDistrict() {                                      // the focus's district: the focused continent, or the focused island's
+  const F = live.focus; if (!ECO || !F) return null;
   return F.kind === 'continent' ? F.c.id : F.n === M.pole ? 'pole' : F.n.cont?.id ?? null;
 }
+const villageDistrict = () => (LOCAL ? focusDistrict() : null);   // the dive is local only
 function syncVillage() {
   const v = $('village-btn'); if (!v) return;
   if (LOCAL) { v.disabled = !villageDistrict(); return; }
-  const F = live.focus, href = window.villageHref(ECO, F ? (F.kind === 'continent' ? F.c.id : F.n.cont?.id) : null);
-  if (href) { v.href = href; v.removeAttribute('aria-disabled'); v.title = 'The village, in a new tab'; }
-  else { v.removeAttribute('href'); v.setAttribute('aria-disabled', 'true'); v.title = 'The village opens on Max\'s Mac'; }
+  v.href = window.villageHref(ECO, focusDistrict()); v.title = 'The village, in a new tab';
 }
 // The dive: one continuous push into the focus (the globe scales up toward it while the page washes to white), then the
 // village of that district fades in over the white in a full-page layer. Esc, or pinching on out once the village is at its

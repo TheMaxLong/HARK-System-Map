@@ -3,7 +3,7 @@
 // opens the live village on the same origin. Anywhere else (the public site), Village is a link to the public village in a
 // new tab, and the public site never calls this Mac.
 // The public village's address: ONE constant, set when the public village is published. While it is empty the public
-// Village link shows greyed and goes nowhere.
+// pages show no Village at all (the approved look, unchanged).
 window.villagePublicUrl = '';
 window.villageLocal = /^(127\.0\.0\.1|localhost|\[::1\])$/.test(location.hostname);
 // the village a map opens: the HARK map (no slug) and Personal Systems; the May personal-projects map is an archive (none)

@@ -258,7 +258,7 @@ select.mi { background:#0c1018; cursor:pointer; }
     <label class="tb-btn" style="cursor:pointer" title="Import JSON file">↑ Import<input type="file" accept=".json" style="display:none" onchange="doImport(event)"></label>
     <button class="tb-btn" onclick="openMapPicker()">Maps</button>
     <button class="tb-btn" title="Open this map as a globe" onclick="location.href='globe.html'+(_currentMapSlug?'?map='+encodeURIComponent(_currentMapSlug):'')">◍ Globe</button>
-    <button class="tb-btn" id="village-btn" title="This ecosystem's village (on the Mac: here; public: a new tab; the archive map has none)" onclick="var e=villageEco(_currentMapSlug),h=villageHref(e);if(h){if(villageLocal)location.href=h;else open(h,'_blank','noopener')}">▦ Village</button>
+    <button class="tb-btn" id="village-btn" hidden title="This ecosystem's village (on the Mac: here; public: a new tab)" onclick="var h=villageHref(villageEco(_currentMapSlug));if(h){if(villageLocal)location.href=h;else open(h,'_blank','noopener')}">▦ Village</button>
     <span id="save-indicator">● synced</span>
   </div>
   <div id="stats">
@@ -1073,7 +1073,9 @@ function doImport(ev){
   r.readAsText(f); ev.target.value='';
 }
 
-function updateCount(){document.getElementById('stat-n').textContent=nodes.length;}
+function updateCount(){document.getElementById('stat-n').textContent=nodes.length;
+  // Village: only on a map that has one, and only where it can go (the first call runs before _currentMapSlug exists: stays hidden)
+  try{document.getElementById('village-btn').hidden=!villageHref(villageEco(_currentMapSlug));}catch(e){}}
 
 // ── CANVAS ──
 const canvas=document.getElementById('c'), ctx=canvas.getContext('2d');
