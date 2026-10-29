@@ -20,6 +20,20 @@ Controls:
 - ← → / + −: step one level
 - `/`: search the index; `Esc`: clear the focus
 
+## Village: the third view
+
+`village-link.js` holds the Village door for both pages, including the one constant `window.villagePublicUrl`: the public
+village's address, empty until it is published.
+
+- **Public site:** the toolbar gains one button, **Village ↗**. It links to the public village in a new tab, with the focused
+  continent. On the globe it stays greyed while `villagePublicUrl` is empty (on the graph it does nothing). The public pages never call `/api/` or this Mac.
+- **Local mode:** the page is served from the Mac's loopback by the village feed (anim-kit `lab/agent-feed.mjs`, under
+  `/map/`). The toolbar reads **Graph · Globe · Village**.
+  - **Village** with a continent or island focused, or zooming on past DETAIL, dives in: one push toward the continent, a
+    crossfade through white, then that continent's district of the village in a full-page layer.
+  - **Esc**, or pinching out once the village is at its overview, plays it back to the globe exactly as it was.
+- The May `personal-projects` map is an archive: no Village.
+
 ## History numbers: `globe-metrics.py`
 
 The History block and the Metrics tab read `maps/metrics-hark.json` and `maps/metrics-<slug>.json`. These are built on

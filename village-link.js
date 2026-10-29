@@ -1,0 +1,18 @@
+// The Village door, shared by globe.html and index.html (Graph · Globe · Village).
+// Local mode = the page is served from this Mac's loopback (the village feed serves this checkout under /map/): Village
+// opens the live village on the same origin. Anywhere else (the public site), Village is a link to the public village in a
+// new tab, and the public site never calls this Mac.
+// The public village's address: ONE constant, set when the public village is published. While it is empty the public
+// Village link shows greyed and goes nowhere.
+window.villagePublicUrl = '';
+window.villageLocal = /^(127\.0\.0\.1|localhost|\[::1\])$/.test(location.hostname);
+// the village a map opens: the HARK map (no slug) and Personal Systems; the May personal-projects map is an archive (none)
+window.villageEco = slug => !slug ? 'hark' : slug === 'personal-systems' ? 'personal' : null;
+// where Village goes for an ecosystem (and a continent = a district); '' = nowhere yet
+window.villageHref = (eco, district) => {
+  const base = window.villageLocal ? '/village.html' : window.villagePublicUrl;
+  if (!eco || !base) return '';
+  const u = new URL(base, location.href); u.searchParams.set('eco', eco);
+  if (district) u.searchParams.set('district', district);
+  return u.href;
+};

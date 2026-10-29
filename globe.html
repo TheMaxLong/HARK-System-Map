@@ -98,7 +98,14 @@ canvas{position:absolute;left:0;top:0;display:block}
   #depth button{padding:4px 4px;font-size:8px;letter-spacing:.04em}
   #graph-btn{padding:5px 7px}
 }
+/* the Village door (village-link.js) and local mode: Graph · Globe · Village and the dive layer */
+a.btn{text-decoration:none}
+#village-btn[aria-disabled="true"],#village-btn:disabled{opacity:.4;cursor:default}
+.view.on{color:#000;background:var(--gold);border-color:#c99a35;cursor:default}
+#village-layer{position:fixed;inset:0;z-index:20;background:#fff;opacity:0}
+#village-layer iframe{position:absolute;inset:0;width:100%;height:100%;border:0;opacity:0;background:#fff}
 </style>
+<script src="village-link.js"></script>
 <script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js"}}</script>
 </head><body>
 <div id="header">
@@ -127,6 +134,9 @@ canvas{position:absolute;left:0;top:0;display:block}
 import * as THREE from 'three';
 THREE.ColorManagement.enabled = false;
 const q = new URLSearchParams(location.search), slug = q.get('map') || '';
+// Local mode (village-link.js: served from this Mac's loopback): Graph · Globe · Village with the dive into the village.
+// The public site gets only a Village link and never calls /api/.
+const LOCAL = !!window.villageLocal, ECO = window.villageEco ? window.villageEco(slug) : null;
 const REPO = 'TheMaxLong/HARK-System-Map', FILE = slug ? `maps/${slug}.json` : 'map-state.json';
 const tau = Math.PI * 2, deg = Math.PI / 180;
 const $ = id => document.getElementById(id);
@@ -137,7 +147,7 @@ const clamp01 = x => Math.max(0, Math.min(1, x)), ease = x => x * x * (3 - 2 * x
 // ---------------------------------------------------------------- data: the same file the graph app reads (raw main),
 // with the file next to this page as the fallback (a local checkout, or GitHub being unreachable)
 async function getJSON(path) {
-  const tries = [`https://raw.githubusercontent.com/${REPO}/main/${path}?t=${Date.now()}`, path];
+  const raw = `https://raw.githubusercontent.com/${REPO}/main/${path}?t=${Date.now()}`, tries = LOCAL ? [path, raw] : [raw, path];   // local mode: this checkout first
   for (const u of tries) { try { const c = new AbortController(), to = setTimeout(() => c.abort(), 6000); const r = await fetch(u, { signal: c.signal, cache: 'no-store' }); clearTimeout(to); if (r.ok) return await r.json(); } catch (e) {} }
   return null;
 }
@@ -418,20 +428,23 @@ function setFocus(sj, now) {
   const rel = islands.geometry.attributes.rel; rel.array.fill(sj && sj.kind === 'node' ? 0 : 1);
   if (sj && sj.kind === 'node') { rel.array[sj.n.i] = 1; for (const a of M.adj.get(sj.n.id)) rel.array[M.byId.get(a.id).i] = 1; }
   rel.needsUpdate = true;
-  renderCard(); renderSide(); markIndex();
+  renderCard(); renderSide(); markIndex(); syncVillage();
   const u = new URL(location.href); if (sj) u.searchParams.set('focus', sj.kind === 'node' ? sj.n.id : sj.c.id); else u.searchParams.delete('focus'); history.replaceState(null, '', u);
 }
 
 // ---------------------------------------------------------------- input: drag = spin, pinch / scroll = depth, keys
 function bindInput() {
   const el = renderer.domElement, pinchDist = () => { const [a, b] = [...live.pointers.values()]; return Math.hypot(a.x - b.x, a.y - b.y); };
+  let over = 0, overT = 0;
   const zoomBy = (dz, px, py, now) => {
+    if (dive) return;
+    if (villageDistrict() && dz > 0 && live.z > maxDepth - 0.05) { over = (now - overT < 400 ? over : 0) + dz; overT = now; if (over > 0.5) { over = 0; diveIn(); return; } }
     if (!live.zoom) { if ((live.z <= 0.001 || live.z >= 1.999) && px != null) { live.cx = px; live.cy = py; }
       if (px != null && dz > 0 && !live.motion) { const hit = pick(px, py, 150); if (hit && hit !== live.focus) { setFocus(hit, now); live.pinned = true; } }
       live.zoom = { target: live.z, last: now }; }
     live.settle = null; live.zoom.target = Math.max(0, Math.min(maxDepth, live.zoom.target + dz)); live.zoom.last = now;
   };
-  el.addEventListener('pointerdown', e => { live.pointers.set(e.pointerId, { x: e.clientX, y: e.clientY }); el.setPointerCapture(e.pointerId);
+  el.addEventListener('pointerdown', e => { if (dive) return; live.pointers.set(e.pointerId, { x: e.clientX, y: e.clientY }); el.setPointerCapture(e.pointerId);
     if (live.pointers.size === 2) { live.drag = null; const [a, b] = [...live.pointers.values()]; live.pinch = { d0: pinchDist(), last: 0 }; zoomBy(0, (a.x + b.x) / 2, (a.y + b.y) / 2, performance.now()); return; }
     if (live.pointers.size > 2) return;
     live.drag = { x0: e.clientX, y0: e.clientY, moved: false, rate: pxPerRad(), samples: [] }; });
@@ -458,7 +471,8 @@ function bindInput() {
   el.addEventListener('gesturechange', e => { e.preventDefault(); zoomBy(Math.log2(e.scale / gs) * 1.6, null, null, performance.now()); gs = e.scale; });
   const step = dir => { const now = performance.now(), from = live.settle ? live.settle.to : Math.round(live.z); live.zoom = null; live.pinned = false;
     if (live.z <= 0.001 || live.z >= 1.999) { live.cx = lay.band.x + lay.band.w / 2; live.cy = lay.band.y + lay.band.h / 2; } settleTo(from + dir, now); };
-  addEventListener('keydown', e => { if (e.target === $('search')) { if (e.key === 'Escape') $('search').blur(); return; }
+  addEventListener('keydown', e => { if (dive) { if (e.key === 'Escape' && dive.state === 'village') diveOut(); return; }
+    if (e.target === $('search')) { if (e.key === 'Escape') $('search').blur(); return; }
     if (e.key === '/') { e.preventDefault(); showRight('index'); if (narrow) document.body.classList.add('tab-index'); $('search').focus(); return; }
     if (e.key === 'Escape') { live.motion = null; setFocus(null, performance.now()); return; }
     if (e.key === 'ArrowRight' || e.key === '+' || e.key === '=') step(1); else if (e.key === 'ArrowLeft' || e.key === '-') step(-1); });
@@ -567,9 +581,10 @@ function drawOverlay(view, st, now) {
       const fa = ease(live.focusA), grow = 18 * (1 - fa) * u; let x0, y0, x1, y1;
       if (F.kind === 'continent') { const ps = [F.c.p, ...F.c.members.map(m => m.p)].map(p => proj(p, view)).filter(s => s.facing > 0); x0 = Math.min(...ps.map(s => s.x)); x1 = Math.max(...ps.map(s => s.x)); y0 = Math.min(...ps.map(s => s.y)); y1 = Math.max(...ps.map(s => s.y)); const m = 22 * u + grow; x0 -= m; x1 += m; y0 -= m; y1 += m; }
       else { const s = proj(F.p, view), rad = 16 * u + grow; x0 = s.x - rad; x1 = s.x + rad; y0 = s.y - rad; y1 = s.y + rad; }
+      if (Number.isFinite(x0 + x1 + y0 + y1)) {                 // a continent wholly behind the globe has no reticle (it threw, and the frame loop died)
       g.strokeStyle = goldFill(x0, x1 - x0); g.lineWidth = 1.6 * u; g.globalAlpha = fa * gA; g.beginPath(); const L = Math.min(16 * u, (x1 - x0) * 0.3);
       for (const [x, y, sx, sy] of [[x0, y0, 1, 1], [x1, y0, -1, 1], [x0, y1, 1, -1], [x1, y1, -1, -1]]) { g.moveTo(x + sx * L, y); g.lineTo(x, y); g.lineTo(x, y + sy * L); }
-      g.stroke(); g.globalAlpha = 1; }
+      g.stroke(); g.globalAlpha = 1; } }
   }
   if (detail > 0.001 && F && F.kind === 'node') drawDetail(view, detail, now);
 }
@@ -729,9 +744,82 @@ function markIndex() {
   const on = document.querySelector('#i-body .row.on'); if (on) on.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
 }
 
+// ---------------------------------------------------------------- local mode: the Village door and the dive
+// The toolbar. Public: one more button, Village, a link to the public village in a new tab (greyed until it has an
+// address). Local: Graph · Globe · Village. The archive maps get no Village.
+function setupViews() {
+  if (!ECO) return;
+  const gb = $('graph-btn');
+  if (!LOCAL) { const a = document.createElement('a'); a.className = 'btn'; a.id = 'village-btn'; a.target = '_blank'; a.rel = 'noopener'; a.textContent = 'Village ↗'; gb.after(a); syncVillage(); return; }
+  gb.textContent = 'Graph'; gb.classList.add('view');
+  const here = document.createElement('span'); here.className = 'btn view on'; here.textContent = 'Globe';
+  const v = document.createElement('button'); v.className = 'btn view'; v.id = 'village-btn'; v.textContent = 'Village';
+  v.title = 'Into the focused continent\'s village (or zoom on past DETAIL)'; v.onclick = () => diveIn(); gb.after(here, v);
+  syncVillage();
+}
+function villageDistrict() {                                    // the dive's district: the focused continent, or the focused island's
+  const F = live.focus; if (!LOCAL || !ECO || !F) return null;
+  return F.kind === 'continent' ? F.c.id : F.n === M.pole ? 'pole' : F.n.cont?.id ?? null;
+}
+function syncVillage() {
+  const v = $('village-btn'); if (!v) return;
+  if (LOCAL) { v.disabled = !villageDistrict(); return; }
+  const F = live.focus, href = window.villageHref(ECO, F ? (F.kind === 'continent' ? F.c.id : F.n.cont?.id) : null);
+  if (href) { v.href = href; v.removeAttribute('aria-disabled'); v.title = 'The village, in a new tab'; }
+  else { v.removeAttribute('href'); v.setAttribute('aria-disabled', 'true'); v.title = 'The village opens on Max\'s Mac'; }
+}
+// The dive: one continuous push into the focus (the globe scales up toward it while the page washes to white), then the
+// village of that district fades in over the white in a full-page layer. Esc, or pinching on out once the village is at its
+// overview, plays it backwards onto the globe exactly as it was: the dive never touches zoom, spin or focus. While the village is
+// up the globe draws nothing (one renderer at a time).
+let dive = null;
+// The motion runs as compositor animations (transform and opacity), so the village building itself behind the white on the
+// same thread cannot stutter the push.
+const play = (el, frames, duration, easing) => el.animate(frames, { duration, easing, fill: 'forwards' }).finished;
+const globeLayers = () => [renderer.domElement, hud];
+const villageUp = fr => new Promise(res => { const t0 = performance.now();      // the village drew a few frames (or 10 s passed)
+  (function poll() { let up = false; try { up = (fr.contentWindow.__villageState?.()?.frames || 0) > 2; } catch (e) {} if (up || performance.now() - t0 > 10000) res(); else setTimeout(poll, 60); })(); });
+async function diveIn() {
+  const district = villageDistrict(); if (dive || !district) return;
+  const F = live.focus, mid = { x: lay.band.x + lay.band.w / 2, y: lay.band.y + lay.band.h / 2 };
+  const at = F.kind === 'node' && live.z > 2.4 ? detailPos.get(F.n.id) || mid : proj(F.p, currentView());
+  live.zoom = live.settle = live.drag = live.pinch = null; live.pointers.clear();
+  const el = document.createElement('div'), fr = document.createElement('iframe'); el.id = 'village-layer'; fr.title = 'Village';
+  fr.src = window.villageHref(ECO, district); el.append(fr); document.body.append(el);
+  dive = { state: 'in', el, fr };
+  globeLayers().forEach(c => { c.style.transformOrigin = `${at.x}px ${at.y}px`; });
+  const up = villageUp(fr);                                     // the village loads behind the push
+  await Promise.all([...globeLayers().map(c => play(c, [{ transform: 'scale(1)' }, { transform: 'scale(7)' }], 900, 'cubic-bezier(.6,0,.9,.5)')),
+    play(el, [{ opacity: 0 }, { opacity: 0, offset: 0.35 }, { opacity: 1 }], 900, 'ease-in-out')]);
+  await up;
+  dive.state = 'village'; bindVillage(fr);
+  await play(fr, [{ opacity: 0 }, { opacity: 1 }], 450, 'ease');
+  fr.focus();
+}
+async function diveOut() {
+  if (!dive || dive.state !== 'village') return;
+  const { el, fr } = dive; dive.state = 'out';
+  await play(fr, [{ opacity: 1 }, { opacity: 0 }], 300, 'ease');
+  fr.remove();                                                  // stops the village: its feed polls and its renderer
+  await Promise.all([...globeLayers().map(c => play(c, [{ transform: 'scale(7)' }, { transform: 'scale(1)' }], 700, 'cubic-bezier(.1,.5,.4,1)')),
+    play(el, [{ opacity: 1 }, { opacity: 0, offset: 0.65 }, { opacity: 0 }], 700, 'ease-in-out')]);
+  el.remove(); globeLayers().forEach(c => { c.getAnimations().forEach(x => x.cancel()); c.style.transformOrigin = ''; }); dive = null;
+}
+function bindVillage(fr) {                                      // the village's own window: Esc, and zooming on out at its overview
+  const w = fr.contentWindow; let out = 0, outT = 0, gs = 1;
+  const pull = d => { const s = w.__villageState?.(), now = performance.now(); if (!s || s.lod !== 'overview') { out = 0; return; }
+    out = (now - outT < 400 ? out : 0) + d; outT = now; if (out > 0.6) diveOut(); };
+  w.addEventListener('keydown', e => { if (e.key === 'Escape') diveOut(); });
+  w.addEventListener('wheel', e => { if (e.deltaY > 0) pull((e.deltaMode === 1 ? e.deltaY * 16 : e.deltaY) * (e.ctrlKey ? 0.012 : 0.004)); }, { capture: true, passive: true });
+  w.addEventListener('gesturestart', () => { gs = 1; });
+  w.addEventListener('gesturechange', e => { if (e.scale < gs) pull(Math.log2(gs / e.scale) * 1.6); gs = e.scale; });
+}
+
 // ---------------------------------------------------------------- frame
+let frames = 0;
 function frameAt(now) {
-  liveTick(now);
+  if (dive && dive.state === 'village') { requestAnimationFrame(frameAt); return; }
+  frames++; liveTick(now);
   const st = posState(live.z), b = lay.band;
   spin.quaternion.copy(live.q);
   cam.position.set(0, -0.08, 1.58 - 0.08 * st.detail); cam.rotation.set(lay.pitch, 0, 0);
@@ -763,6 +851,7 @@ subjects = [...M.continents.map(c => ({ kind: 'continent', c, p: c.p, name: c.na
 const brand = (M.meta && M.meta.brand) || 'HARK · System Map'; $('brand-t').textContent = brand; document.title = brand + ' — Globe';
 $('stats').innerHTML = [[M.nodes.length, 'Nodes'], [M.edges.length, 'Edges'], [M.continents.length, 'Continents'], [M.updated.slice(5).replace('-', '/'), 'Updated']].map(([n, l]) => `<div class="stat"><b>${esc(n)}</b><span>${esc(l)}</span></div>`).join('');
 $('graph-btn').onclick = () => { try { if (slug) localStorage.setItem('hark-current-map-slug', slug); else localStorage.removeItem('hark-current-map-slug'); } catch (e) {} location.href = 'index.html'; };
+setupViews();
 document.querySelectorAll('#tabs .btn').forEach(b => b.onclick = () => document.body.classList.toggle('tab-index', b.dataset.tab === 'index'));
 buildIndex();
 { const mx = await getJSON(`maps/metrics-${slug || 'hark'}.json`); if (mx && mx.nodes) { MX = mx.nodes; MX.__generated = mx.generated; } }
@@ -773,7 +862,9 @@ else { const big = [...M.continents].sort((a, b) => b.members.length - a.members
 $('msg').remove();
 window.__globe = () => ({ z: live.z, q: live.q.toArray(), moving: !!live.motion || !!live.settle || !!live.zoom, focus: live.focus ? (live.focus.kind === 'node' ? live.focus.n.id : live.focus.c.id) : null,
   centred: live.focus ? offCentre(live.focus) < 2e-3 : false,
-  detail: [...detailPos.entries()].map(([id, p]) => ({ id, x: p.x, y: p.y })), edges: M.edges.length, nodes: M.nodes.length });
+  detail: [...detailPos.entries()].map(([id, p]) => ({ id, x: p.x, y: p.y })), edges: M.edges.length, nodes: M.nodes.length,
+  focusKind: live.focus ? live.focus.kind : null, district: villageDistrict(), dive: dive ? dive.state : null,
+  frames, band: { ...lay.band } });
 requestAnimationFrame(frameAt);
 window.__ready = true;
 </script>

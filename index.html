@@ -242,6 +242,7 @@ select.mi { background:#0c1018; cursor:pointer; }
   opacity:0.4; cursor:not-allowed;
 }
 </style>
+<script src="village-link.js"></script>
 </head>
 <body>
 <canvas id="c" oncontextmenu="return false"></canvas>
@@ -257,6 +258,7 @@ select.mi { background:#0c1018; cursor:pointer; }
     <label class="tb-btn" style="cursor:pointer" title="Import JSON file">↑ Import<input type="file" accept=".json" style="display:none" onchange="doImport(event)"></label>
     <button class="tb-btn" onclick="openMapPicker()">Maps</button>
     <button class="tb-btn" title="Open this map as a globe" onclick="location.href='globe.html'+(_currentMapSlug?'?map='+encodeURIComponent(_currentMapSlug):'')">◍ Globe</button>
+    <button class="tb-btn" id="village-btn" title="This ecosystem's village (on the Mac: here; public: a new tab; the archive map has none)" onclick="var e=villageEco(_currentMapSlug),h=villageHref(e);if(h){if(villageLocal)location.href=h;else open(h,'_blank','noopener')}">▦ Village</button>
     <span id="save-indicator">● synced</span>
   </div>
   <div id="stats">
