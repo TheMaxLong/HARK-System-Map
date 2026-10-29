@@ -1,15 +1,15 @@
 {
- "generated": "2026-10-28T22:11Z",
+ "generated": "2026-10-29T01:11Z",
  "source": "NOEMA project index + git log on the maintainer's Mac — aggregates only (dates, counts, a 12-week sparkline)",
  "matched": 45,
  "nodes": {
   "cannamax": {
    "firstCommit": "2026-05-10",
    "lastCommit": "2026-10-28",
-   "commits": 176,
-   "commits7": 2,
-   "commits30": 3,
-   "commits90": 36,
+   "commits": 178,
+   "commits7": 4,
+   "commits30": 5,
+   "commits90": 38,
    "contributors": 2,
    "weeks": [
     1,
@@ -23,9 +23,9 @@
     0,
     1,
     0,
-    2
+    4
    ],
-   "branch": "main",
+   "branch": "other",
    "dirty": 3,
    "ahead": 0,
    "behind": 0,
@@ -150,11 +150,11 @@
   },
   "fluxuum": {
    "firstCommit": "2026-03-30",
-   "lastCommit": "2026-10-26",
-   "commits": 345,
-   "commits7": 3,
-   "commits30": 3,
-   "commits90": 31,
+   "lastCommit": "2026-10-28",
+   "commits": 346,
+   "commits7": 4,
+   "commits30": 4,
+   "commits90": 32,
    "contributors": 4,
    "weeks": [
     1,
@@ -168,13 +168,13 @@
     0,
     0,
     0,
-    3
+    4
    ],
-   "branch": "main",
+   "branch": "other",
    "dirty": 4,
    "ahead": 0,
    "behind": 0,
-   "lastActivity": "2026-10-25",
+   "lastActivity": "2026-10-28",
    "repo": "Fluxuum-Logger_v420"
   },
   "alexandria": {
@@ -354,10 +354,10 @@
   "dead-man": {
    "firstCommit": "2026-05-19",
    "lastCommit": "2026-10-28",
-   "commits": 297,
-   "commits7": 12,
-   "commits30": 21,
-   "commits90": 103,
+   "commits": 299,
+   "commits7": 13,
+   "commits30": 23,
+   "commits90": 105,
    "contributors": 3,
    "weeks": [
     46,
@@ -370,11 +370,11 @@
     2,
     0,
     2,
-    7,
-    12
+    8,
+    13
    ],
    "branch": "main",
-   "dirty": 4,
+   "dirty": 1,
    "ahead": 0,
    "behind": 0,
    "lastActivity": "2026-10-28",
@@ -469,11 +469,11 @@
   },
   "facility-watch": {
    "firstCommit": "2026-03-30",
-   "lastCommit": "2026-10-26",
-   "commits": 345,
-   "commits7": 3,
-   "commits30": 3,
-   "commits90": 31,
+   "lastCommit": "2026-10-28",
+   "commits": 346,
+   "commits7": 4,
+   "commits30": 4,
+   "commits90": 32,
    "contributors": 4,
    "weeks": [
     1,
@@ -487,22 +487,22 @@
     0,
     0,
     0,
-    3
+    4
    ],
-   "branch": "main",
+   "branch": "other",
    "dirty": 4,
    "ahead": 0,
    "behind": 0,
-   "lastActivity": "2026-10-25",
+   "lastActivity": "2026-10-28",
    "repo": "Fluxuum-Logger_v420"
   },
   "fluxuum-anderson-drift": {
    "firstCommit": "2026-03-30",
-   "lastCommit": "2026-10-26",
-   "commits": 345,
-   "commits7": 3,
-   "commits30": 3,
-   "commits90": 31,
+   "lastCommit": "2026-10-28",
+   "commits": 346,
+   "commits7": 4,
+   "commits30": 4,
+   "commits90": 32,
    "contributors": 4,
    "weeks": [
     1,
@@ -516,22 +516,22 @@
     0,
     0,
     0,
-    3
+    4
    ],
-   "branch": "main",
+   "branch": "other",
    "dirty": 4,
    "ahead": 0,
    "behind": 0,
-   "lastActivity": "2026-10-25",
+   "lastActivity": "2026-10-28",
    "repo": "Fluxuum-Logger_v420"
   },
   "lights-on-too-cold": {
    "firstCommit": "2026-03-30",
-   "lastCommit": "2026-10-26",
-   "commits": 345,
-   "commits7": 3,
-   "commits30": 3,
-   "commits90": 31,
+   "lastCommit": "2026-10-28",
+   "commits": 346,
+   "commits7": 4,
+   "commits30": 4,
+   "commits90": 32,
    "contributors": 4,
    "weeks": [
     1,
@@ -545,22 +545,22 @@
     0,
     0,
     0,
-    3
+    4
    ],
-   "branch": "main",
+   "branch": "other",
    "dirty": 4,
    "ahead": 0,
    "behind": 0,
-   "lastActivity": "2026-10-25",
+   "lastActivity": "2026-10-28",
    "repo": "Fluxuum-Logger_v420"
   },
   "fluxuum-poller-shadow": {
    "firstCommit": "2026-03-30",
-   "lastCommit": "2026-10-26",
-   "commits": 345,
-   "commits7": 3,
-   "commits30": 3,
-   "commits90": 31,
+   "lastCommit": "2026-10-28",
+   "commits": 346,
+   "commits7": 4,
+   "commits30": 4,
+   "commits90": 32,
    "contributors": 4,
    "weeks": [
     1,
@@ -574,13 +574,13 @@
     0,
     0,
     0,
-    3
+    4
    ],
-   "branch": "main",
+   "branch": "other",
    "dirty": 4,
    "ahead": 0,
    "behind": 0,
-   "lastActivity": "2026-10-25",
+   "lastActivity": "2026-10-28",
    "repo": "Fluxuum-Logger_v420"
   },
   "flux-widget-mac": {
@@ -624,8 +624,8 @@
     0,
     0,
     44,
-    5,
-    22,
+    19,
+    8,
     17,
     3,
     23,
@@ -643,11 +643,11 @@
   },
   "harvest-dossier": {
    "firstCommit": "2026-06-15",
-   "lastCommit": "2026-10-27",
-   "commits": 43,
-   "commits7": 3,
-   "commits30": 17,
-   "commits90": 40,
+   "lastCommit": "2026-10-28",
+   "commits": 45,
+   "commits7": 5,
+   "commits30": 19,
+   "commits90": 42,
    "contributors": 1,
    "weeks": [
     8,
@@ -661,13 +661,13 @@
     7,
     1,
     6,
-    3
+    5
    ],
    "branch": "other",
    "dirty": 0,
    "ahead": 0,
    "behind": 0,
-   "lastActivity": "2026-10-27",
+   "lastActivity": "2026-10-28",
    "repo": "harvest-dossier"
   },
   "broken-pump": {
@@ -875,10 +875,10 @@
   "offsite-archive-backup": {
    "firstCommit": "2026-05-19",
    "lastCommit": "2026-10-28",
-   "commits": 297,
-   "commits7": 12,
-   "commits30": 21,
-   "commits90": 103,
+   "commits": 299,
+   "commits7": 13,
+   "commits30": 23,
+   "commits90": 105,
    "contributors": 3,
    "weeks": [
     46,
@@ -891,11 +891,11 @@
     2,
     0,
     2,
-    7,
-    12
+    8,
+    13
    ],
    "branch": "main",
-   "dirty": 4,
+   "dirty": 1,
    "ahead": 0,
    "behind": 0,
    "lastActivity": "2026-10-28",
@@ -997,7 +997,7 @@
    "commits90": 133,
    "contributors": 3,
    "weeks": [
-    118,
+    94,
     1,
     1,
     1,
@@ -1077,10 +1077,10 @@
   "failover-watcher": {
    "firstCommit": "2026-05-19",
    "lastCommit": "2026-10-28",
-   "commits": 297,
-   "commits7": 12,
-   "commits30": 21,
-   "commits90": 103,
+   "commits": 299,
+   "commits7": 13,
+   "commits30": 23,
+   "commits90": 105,
    "contributors": 3,
    "weeks": [
     46,
@@ -1093,11 +1093,11 @@
     2,
     0,
     2,
-    7,
-    12
+    8,
+    13
    ],
    "branch": "main",
-   "dirty": 4,
+   "dirty": 1,
    "ahead": 0,
    "behind": 0,
    "lastActivity": "2026-10-28",

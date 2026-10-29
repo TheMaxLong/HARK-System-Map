@@ -1,15 +1,15 @@
 {
- "generated": "2026-10-28T21:22Z",
+ "generated": "2026-10-29T01:11Z",
  "source": "NOEMA project index + git log on the maintainer's Mac — aggregates only (dates, counts, a 12-week sparkline)",
  "matched": 11,
  "nodes": {
   "cannamax": {
    "firstCommit": "2026-05-10",
    "lastCommit": "2026-10-28",
-   "commits": 176,
-   "commits7": 2,
-   "commits30": 3,
-   "commits90": 36,
+   "commits": 178,
+   "commits7": 4,
+   "commits30": 5,
+   "commits90": 38,
    "contributors": 2,
    "weeks": [
     1,
@@ -23,9 +23,9 @@
     0,
     1,
     0,
-    2
+    4
    ],
-   "branch": "main",
+   "branch": "other",
    "dirty": 3,
    "ahead": 0,
    "behind": 0,
