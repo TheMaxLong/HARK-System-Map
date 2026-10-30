@@ -1,5 +1,5 @@
 {
- "generated": "2026-10-30T07:15Z",
+ "generated": "2026-10-30T10:15Z",
  "source": "NOEMA project index + git log on the maintainer's Mac — aggregates only (dates, counts, a 12-week sparkline)",
  "matched": 45,
  "nodes": {
@@ -12,7 +12,7 @@
    "commits90": 34,
    "contributors": 2,
    "weeks": [
-    1,
+    0,
     0,
     3,
     4,
@@ -38,10 +38,10 @@
    "commits": 283,
    "commits7": 13,
    "commits30": 28,
-   "commits90": 51,
+   "commits90": 50,
    "contributors": 5,
    "weeks": [
-    1,
+    0,
     0,
     3,
     1,
@@ -67,10 +67,10 @@
    "commits": 211,
    "commits7": 6,
    "commits30": 19,
-   "commits90": 77,
+   "commits90": 74,
    "contributors": 2,
    "weeks": [
-    3,
+    2,
     1,
     17,
     1,
@@ -154,10 +154,10 @@
    "commits": 346,
    "commits7": 4,
    "commits30": 4,
-   "commits90": 29,
+   "commits90": 28,
    "contributors": 4,
    "weeks": [
-    1,
+    0,
     0,
     2,
     1,
@@ -183,10 +183,10 @@
    "commits": 81,
    "commits7": 0,
    "commits30": 1,
-   "commits90": 42,
+   "commits90": 33,
    "contributors": 1,
    "weeks": [
-    8,
+    6,
     13,
     0,
     1,
@@ -215,7 +215,7 @@
    "commits90": 17,
    "contributors": 4,
    "weeks": [
-    1,
+    0,
     0,
     0,
     6,
@@ -302,7 +302,7 @@
    "commits90": 4,
    "contributors": 1,
    "weeks": [
-    1,
+    0,
     0,
     0,
     1,
@@ -331,7 +331,7 @@
    "commits90": 4,
    "contributors": 1,
    "weeks": [
-    1,
+    0,
     0,
     0,
     1,
@@ -354,10 +354,10 @@
   "dead-man": {
    "firstCommit": "2026-05-19",
    "lastCommit": "2026-10-30",
-   "commits": 312,
-   "commits7": 24,
-   "commits30": 36,
-   "commits90": 118,
+   "commits": 313,
+   "commits7": 25,
+   "commits30": 37,
+   "commits90": 119,
    "contributors": 3,
    "weeks": [
     46,
@@ -371,13 +371,13 @@
     0,
     5,
     7,
-    24
+    25
    ],
    "branch": "main",
    "dirty": 1,
    "ahead": 0,
    "behind": 0,
-   "lastActivity": "2026-10-29",
+   "lastActivity": "2026-10-30",
    "repo": "HARK-System-Map"
   },
   "project-seaman": {
@@ -389,7 +389,7 @@
    "commits90": 25,
    "contributors": 1,
    "weeks": [
-    1,
+    0,
     0,
     0,
     1,
@@ -473,10 +473,10 @@
    "commits": 346,
    "commits7": 4,
    "commits30": 4,
-   "commits90": 29,
+   "commits90": 28,
    "contributors": 4,
    "weeks": [
-    1,
+    0,
     0,
     2,
     1,
@@ -502,10 +502,10 @@
    "commits": 346,
    "commits7": 4,
    "commits30": 4,
-   "commits90": 29,
+   "commits90": 28,
    "contributors": 4,
    "weeks": [
-    1,
+    0,
     0,
     2,
     1,
@@ -531,10 +531,10 @@
    "commits": 346,
    "commits7": 4,
    "commits30": 4,
-   "commits90": 29,
+   "commits90": 28,
    "contributors": 4,
    "weeks": [
-    1,
+    0,
     0,
     2,
     1,
@@ -560,10 +560,10 @@
    "commits": 346,
    "commits7": 4,
    "commits30": 4,
-   "commits90": 29,
+   "commits90": 28,
    "contributors": 4,
    "weeks": [
-    1,
+    0,
     0,
     2,
     1,
@@ -676,10 +676,10 @@
    "commits": 211,
    "commits7": 6,
    "commits30": 19,
-   "commits90": 77,
+   "commits90": 74,
    "contributors": 2,
    "weeks": [
-    3,
+    2,
     1,
     17,
     1,
@@ -705,10 +705,10 @@
    "commits": 211,
    "commits7": 6,
    "commits30": 19,
-   "commits90": 77,
+   "commits90": 74,
    "contributors": 2,
    "weeks": [
-    3,
+    2,
     1,
     17,
     1,
@@ -763,10 +763,10 @@
    "commits": 211,
    "commits7": 6,
    "commits30": 19,
-   "commits90": 77,
+   "commits90": 74,
    "contributors": 2,
    "weeks": [
-    3,
+    2,
     1,
     17,
     1,
@@ -792,7 +792,7 @@
    "commits": 26,
    "commits7": 0,
    "commits30": 0,
-   "commits90": 5,
+   "commits90": 4,
    "contributors": 1,
    "weeks": [
     0,
@@ -824,7 +824,7 @@
    "commits90": 4,
    "contributors": 1,
    "weeks": [
-    1,
+    0,
     1,
     0,
     1,
@@ -853,7 +853,7 @@
    "commits90": 2,
    "contributors": 1,
    "weeks": [
-    1,
+    0,
     0,
     0,
     0,
@@ -875,10 +875,10 @@
   "offsite-archive-backup": {
    "firstCommit": "2026-05-19",
    "lastCommit": "2026-10-30",
-   "commits": 312,
-   "commits7": 24,
-   "commits30": 36,
-   "commits90": 118,
+   "commits": 313,
+   "commits7": 25,
+   "commits30": 37,
+   "commits90": 119,
    "contributors": 3,
    "weeks": [
     46,
@@ -892,13 +892,13 @@
     0,
     5,
     7,
-    24
+    25
    ],
    "branch": "main",
    "dirty": 1,
    "ahead": 0,
    "behind": 0,
-   "lastActivity": "2026-10-29",
+   "lastActivity": "2026-10-30",
    "repo": "HARK-System-Map"
   },
   "hark-box": {
@@ -907,11 +907,11 @@
    "commits": 495,
    "commits7": 0,
    "commits30": 1,
-   "commits90": 395,
+   "commits90": 392,
    "contributors": 2,
    "weeks": [
-    156,
-    54,
+    152,
+    53,
     1,
     48,
     49,
@@ -936,11 +936,11 @@
    "commits": 495,
    "commits7": 0,
    "commits30": 1,
-   "commits90": 395,
+   "commits90": 392,
    "contributors": 2,
    "weeks": [
-    156,
-    54,
+    152,
+    53,
     1,
     48,
     49,
@@ -965,11 +965,11 @@
    "commits": 495,
    "commits7": 0,
    "commits30": 1,
-   "commits90": 395,
+   "commits90": 392,
    "contributors": 2,
    "weeks": [
-    156,
-    54,
+    152,
+    53,
     1,
     48,
     49,
@@ -997,7 +997,7 @@
    "commits90": 132,
    "contributors": 3,
    "weeks": [
-    16,
+    11,
     0,
     2,
     0,
@@ -1025,7 +1025,7 @@
    "commits90": 11,
    "contributors": 2,
    "weeks": [
-    1,
+    0,
     0,
     0,
     1,
@@ -1077,10 +1077,10 @@
   "failover-watcher": {
    "firstCommit": "2026-05-19",
    "lastCommit": "2026-10-30",
-   "commits": 312,
-   "commits7": 24,
-   "commits30": 36,
-   "commits90": 118,
+   "commits": 313,
+   "commits7": 25,
+   "commits30": 37,
+   "commits90": 119,
    "contributors": 3,
    "weeks": [
     46,
@@ -1094,13 +1094,13 @@
     0,
     5,
     7,
-    24
+    25
    ],
    "branch": "main",
    "dirty": 1,
    "ahead": 0,
    "behind": 0,
-   "lastActivity": "2026-10-29",
+   "lastActivity": "2026-10-30",
    "repo": "HARK-System-Map"
   },
   "sentinel-surface": {

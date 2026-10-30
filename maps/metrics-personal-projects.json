@@ -1,5 +1,5 @@
 {
- "generated": "2026-10-30T07:15Z",
+ "generated": "2026-10-30T10:15Z",
  "source": "NOEMA project index + git log on the maintainer's Mac — aggregates only (dates, counts, a 12-week sparkline)",
  "matched": 11,
  "nodes": {
@@ -12,7 +12,7 @@
    "commits90": 34,
    "contributors": 2,
    "weeks": [
-    1,
+    0,
     0,
     3,
     4,
@@ -37,10 +37,10 @@
    "commits": 283,
    "commits7": 13,
    "commits30": 28,
-   "commits90": 51,
+   "commits90": 50,
    "contributors": 5,
    "weeks": [
-    1,
+    0,
     0,
     3,
     1,
@@ -65,10 +65,10 @@
    "commits": 211,
    "commits7": 6,
    "commits30": 19,
-   "commits90": 77,
+   "commits90": 74,
    "contributors": 2,
    "weeks": [
-    3,
+    2,
     1,
     17,
     1,
@@ -149,10 +149,10 @@
    "commits": 81,
    "commits7": 0,
    "commits30": 1,
-   "commits90": 42,
+   "commits90": 33,
    "contributors": 1,
    "weeks": [
-    8,
+    6,
     13,
     0,
     1,
@@ -180,7 +180,7 @@
    "commits90": 17,
    "contributors": 4,
    "weeks": [
-    1,
+    0,
     0,
     0,
     6,
@@ -264,7 +264,7 @@
    "commits90": 4,
    "contributors": 1,
    "weeks": [
-    1,
+    0,
     0,
     0,
     1,
@@ -292,7 +292,7 @@
    "commits90": 4,
    "contributors": 1,
    "weeks": [
-    1,
+    0,
     0,
     0,
     1,
