@@ -1,15 +1,15 @@
 {
- "generated": "2026-10-31T07:16Z",
+ "generated": "2026-10-31T10:16Z",
  "source": "NOEMA project index + git log on the maintainer's Mac — aggregates only (dates, counts, a 12-week sparkline)",
  "matched": 23,
  "nodes": {
   "anim-kit": {
    "firstCommit": "2026-10-12",
    "lastCommit": "2026-10-31",
-   "commits": 343,
-   "commits7": 193,
-   "commits30": 343,
-   "commits90": 343,
+   "commits": 368,
+   "commits7": 218,
+   "commits30": 368,
+   "commits90": 368,
    "contributors": 1,
    "weeks": [
     0,
@@ -21,15 +21,15 @@
     0,
     0,
     0,
-    56,
-    94,
-    193
+    60,
+    90,
+    218
    ],
    "branch": "main",
-   "dirty": 25,
+   "dirty": 56,
    "ahead": 0,
    "behind": 0,
-   "lastActivity": "2026-10-30",
+   "lastActivity": "2026-10-31",
    "repo": "anim-kit"
   },
   "blender-mcp": {
@@ -356,7 +356,7 @@
    "lastCommit": "2026-10-01",
    "commits": 39,
    "commits7": 0,
-   "commits30": 3,
+   "commits30": 0,
    "commits90": 39,
    "contributors": 1,
    "weeks": [
@@ -432,7 +432,7 @@
     79
    ],
    "branch": "main",
-   "dirty": 0,
+   "dirty": 2,
    "ahead": null,
    "behind": null,
    "lastActivity": "2026-10-29",
@@ -480,8 +480,8 @@
     0,
     1,
     0,
-    11,
-    3,
+    13,
+    1,
     1,
     0,
     8,
@@ -509,8 +509,8 @@
     0,
     0,
     0,
-    0,
-    4,
+    3,
+    1,
     0,
     0,
     0,
@@ -572,8 +572,8 @@
     1,
     0,
     0,
-    0,
     2,
+    0,
     0
    ],
    "branch": "main",
