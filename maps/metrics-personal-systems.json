@@ -1,15 +1,15 @@
 {
- "generated": "2026-10-31T13:16Z",
+ "generated": "2026-10-31T16:16Z",
  "source": "NOEMA project index + git log on the maintainer's Mac — aggregates only (dates, counts, a 12-week sparkline)",
  "matched": 23,
  "nodes": {
   "anim-kit": {
    "firstCommit": "2026-10-12",
    "lastCommit": "2026-10-31",
-   "commits": 412,
-   "commits7": 262,
-   "commits30": 412,
-   "commits90": 412,
+   "commits": 416,
+   "commits7": 266,
+   "commits30": 416,
+   "commits90": 416,
    "contributors": 1,
    "weeks": [
     0,
@@ -21,12 +21,12 @@
     0,
     0,
     0,
-    73,
-    77,
-    262
+    86,
+    64,
+    266
    ],
    "branch": "main",
-   "dirty": 60,
+   "dirty": 68,
    "ahead": 0,
    "behind": 0,
    "lastActivity": "2026-10-31",
@@ -63,11 +63,11 @@
   },
   "trip-world": {
    "firstCommit": "2026-10-04",
-   "lastCommit": "2026-10-29",
-   "commits": 236,
-   "commits7": 30,
-   "commits30": 236,
-   "commits90": 236,
+   "lastCommit": "2026-10-31",
+   "commits": 237,
+   "commits7": 31,
+   "commits30": 237,
+   "commits90": 237,
    "contributors": 1,
    "weeks": [
     0,
@@ -81,13 +81,13 @@
     160,
     0,
     46,
-    30
+    31
    ],
    "branch": "main",
    "dirty": 6,
    "ahead": null,
    "behind": null,
-   "lastActivity": "2026-10-29",
+   "lastActivity": "2026-10-31",
    "repo": "the-world"
   },
   "the-gallery": {
@@ -107,8 +107,8 @@
     0,
     0,
     83,
-    2,
-    33,
+    9,
+    26,
     6,
     1
    ],
@@ -412,10 +412,10 @@
   "duncan": {
    "firstCommit": "2026-10-26",
    "lastCommit": "2026-10-31",
-   "commits": 84,
-   "commits7": 84,
-   "commits30": 84,
-   "commits90": 84,
+   "commits": 87,
+   "commits7": 87,
+   "commits30": 87,
+   "commits90": 87,
    "contributors": 1,
    "weeks": [
     0,
@@ -429,10 +429,10 @@
     0,
     0,
     0,
-    84
+    87
    ],
    "branch": "main",
-   "dirty": 2,
+   "dirty": 5,
    "ahead": null,
    "behind": null,
    "lastActivity": "2026-10-31",
@@ -483,8 +483,8 @@
     14,
     0,
     1,
-    0,
-    8,
+    4,
+    4,
     0,
     0,
     0
