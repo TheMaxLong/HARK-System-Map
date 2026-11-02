@@ -1,5 +1,5 @@
 {
- "generated": "2026-11-02T07:50Z",
+ "generated": "2026-11-02T10:50Z",
  "source": "NOEMA project index + git log on the maintainer's Mac — aggregates only (dates, counts, a 12-week sparkline)",
  "matched": 45,
  "nodes": {
@@ -66,7 +66,7 @@
    "lastCommit": "2026-10-27",
    "commits": 211,
    "commits7": 2,
-   "commits30": 12,
+   "commits30": 6,
    "commits90": 66,
    "contributors": 2,
    "weeks": [
@@ -354,13 +354,13 @@
   "dead-man": {
    "firstCommit": "2026-05-19",
    "lastCommit": "2026-11-02",
-   "commits": 335,
-   "commits7": 47,
-   "commits30": 59,
-   "commits90": 135,
+   "commits": 336,
+   "commits7": 48,
+   "commits30": 60,
+   "commits90": 136,
    "contributors": 3,
    "weeks": [
-    21,
+    0,
     4,
     12,
     2,
@@ -371,7 +371,7 @@
     2,
     5,
     5,
-    47
+    48
    ],
    "branch": "main",
    "dirty": 1,
@@ -675,7 +675,7 @@
    "lastCommit": "2026-10-27",
    "commits": 211,
    "commits7": 2,
-   "commits30": 12,
+   "commits30": 6,
    "commits90": 66,
    "contributors": 2,
    "weeks": [
@@ -704,7 +704,7 @@
    "lastCommit": "2026-10-27",
    "commits": 211,
    "commits7": 2,
-   "commits30": 12,
+   "commits30": 6,
    "commits90": 66,
    "contributors": 2,
    "weeks": [
@@ -762,7 +762,7 @@
    "lastCommit": "2026-10-27",
    "commits": 211,
    "commits7": 2,
-   "commits30": 12,
+   "commits30": 6,
    "commits90": 66,
    "contributors": 2,
    "weeks": [
@@ -875,13 +875,13 @@
   "offsite-archive-backup": {
    "firstCommit": "2026-05-19",
    "lastCommit": "2026-11-02",
-   "commits": 335,
-   "commits7": 47,
-   "commits30": 59,
-   "commits90": 135,
+   "commits": 336,
+   "commits7": 48,
+   "commits30": 60,
+   "commits90": 136,
    "contributors": 3,
    "weeks": [
-    21,
+    0,
     4,
     12,
     2,
@@ -892,7 +892,7 @@
     2,
     5,
     5,
-    47
+    48
    ],
    "branch": "main",
    "dirty": 1,
@@ -910,7 +910,7 @@
    "commits90": 354,
    "contributors": 2,
    "weeks": [
-    74,
+    70,
     24,
     34,
     32,
@@ -939,7 +939,7 @@
    "commits90": 354,
    "contributors": 2,
    "weeks": [
-    74,
+    70,
     24,
     34,
     32,
@@ -968,7 +968,7 @@
    "commits90": 354,
    "contributors": 2,
    "weeks": [
-    74,
+    70,
     24,
     34,
     32,
@@ -1077,13 +1077,13 @@
   "failover-watcher": {
    "firstCommit": "2026-05-19",
    "lastCommit": "2026-11-02",
-   "commits": 335,
-   "commits7": 47,
-   "commits30": 59,
-   "commits90": 135,
+   "commits": 336,
+   "commits7": 48,
+   "commits30": 60,
+   "commits90": 136,
    "contributors": 3,
    "weeks": [
-    21,
+    0,
     4,
     12,
     2,
@@ -1094,7 +1094,7 @@
     2,
     5,
     5,
-    47
+    48
    ],
    "branch": "main",
    "dirty": 1,
