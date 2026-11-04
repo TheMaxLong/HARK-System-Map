@@ -1,5 +1,5 @@
 {
- "generated": "2026-11-04T01:52Z",
+ "generated": "2026-11-04T04:52Z",
  "source": "NOEMA project index + git log on the maintainer's Mac — aggregates only (dates, counts, a 12-week sparkline)",
  "matched": 23,
  "nodes": {
@@ -105,8 +105,8 @@
     0,
     0,
     0,
-    67,
-    16,
+    68,
+    15,
     30,
     5,
     7,
@@ -469,11 +469,11 @@
   },
   "project-seaman": {
    "firstCommit": "2026-05-23",
-   "lastCommit": "2026-10-05",
-   "commits": 33,
-   "commits7": 0,
-   "commits30": 0,
-   "commits90": 25,
+   "lastCommit": "2026-11-04",
+   "commits": 35,
+   "commits7": 2,
+   "commits30": 2,
+   "commits90": 27,
    "contributors": 1,
    "weeks": [
     0,
@@ -487,13 +487,13 @@
     0,
     0,
     0,
-    0
+    2
    ],
    "branch": "other",
    "dirty": 0,
    "ahead": 0,
    "behind": 0,
-   "lastActivity": "2026-10-04",
+   "lastActivity": "2026-11-03",
    "repo": "project-seaman"
   },
   "flycast": {
