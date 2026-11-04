@@ -1,5 +1,5 @@
 {
- "generated": "2026-11-04T10:52Z",
+ "generated": "2026-11-04T13:53Z",
  "source": "NOEMA project index + git log on the maintainer's Mac — aggregates only (dates, counts, a 12-week sparkline)",
  "matched": 45,
  "nodes": {
@@ -7,7 +7,7 @@
    "firstCommit": "2026-05-10",
    "lastCommit": "2026-10-28",
    "commits": 178,
-   "commits7": 4,
+   "commits7": 2,
    "commits30": 5,
    "commits90": 29,
    "contributors": 2,
@@ -22,8 +22,8 @@
     0,
     1,
     0,
-    0,
-    4
+    2,
+    2
    ],
    "branch": "other",
    "dirty": 3,
@@ -71,8 +71,8 @@
    "contributors": 2,
    "weeks": [
     0,
-    17,
-    2,
+    18,
+    1,
     2,
     3,
     15,
@@ -220,8 +220,8 @@
     6,
     0,
     5,
-    0,
-    5,
+    1,
+    4,
     0,
     0,
     0,
@@ -273,8 +273,8 @@
    "commits90": 4,
    "contributors": 2,
    "weeks": [
-    0,
-    2,
+    1,
+    1,
     1,
     0,
     0,
@@ -354,10 +354,10 @@
   "dead-man": {
    "firstCommit": "2026-05-19",
    "lastCommit": "2026-11-04",
-   "commits": 351,
-   "commits7": 63,
-   "commits30": 75,
-   "commits90": 151,
+   "commits": 352,
+   "commits7": 64,
+   "commits30": 76,
+   "commits90": 152,
    "contributors": 3,
    "weeks": [
     0,
@@ -371,13 +371,13 @@
     2,
     5,
     5,
-    63
+    64
    ],
    "branch": "main",
    "dirty": 1,
-   "ahead": 0,
+   "ahead": 1,
    "behind": 0,
-   "lastActivity": "2026-11-03",
+   "lastActivity": "2026-11-04",
    "repo": "HARK-System-Map"
   },
   "project-seaman": {
@@ -418,8 +418,8 @@
    "commits90": 4,
    "contributors": 2,
    "weeks": [
-    0,
-    2,
+    1,
+    1,
     1,
     0,
     0,
@@ -622,8 +622,8 @@
    "contributors": 2,
    "weeks": [
     0,
-    43,
-    4,
+    44,
+    3,
     24,
     17,
     3,
@@ -680,8 +680,8 @@
    "contributors": 2,
    "weeks": [
     0,
-    17,
-    2,
+    18,
+    1,
     2,
     3,
     15,
@@ -709,8 +709,8 @@
    "contributors": 2,
    "weeks": [
     0,
-    17,
-    2,
+    18,
+    1,
     2,
     3,
     15,
@@ -767,8 +767,8 @@
    "contributors": 2,
    "weeks": [
     0,
-    17,
-    2,
+    18,
+    1,
     2,
     3,
     15,
@@ -875,10 +875,10 @@
   "offsite-archive-backup": {
    "firstCommit": "2026-05-19",
    "lastCommit": "2026-11-04",
-   "commits": 351,
-   "commits7": 63,
-   "commits30": 75,
-   "commits90": 151,
+   "commits": 352,
+   "commits7": 64,
+   "commits30": 76,
+   "commits90": 152,
    "contributors": 3,
    "weeks": [
     0,
@@ -892,13 +892,13 @@
     2,
     5,
     5,
-    63
+    64
    ],
    "branch": "main",
    "dirty": 1,
-   "ahead": 0,
+   "ahead": 1,
    "behind": 0,
-   "lastActivity": "2026-11-03",
+   "lastActivity": "2026-11-04",
    "repo": "HARK-System-Map"
   },
   "hark-box": {
@@ -994,7 +994,7 @@
    "commits": 204,
    "commits7": 0,
    "commits30": 0,
-   "commits90": 63,
+   "commits90": 46,
    "contributors": 3,
    "weeks": [
     1,
@@ -1077,10 +1077,10 @@
   "failover-watcher": {
    "firstCommit": "2026-05-19",
    "lastCommit": "2026-11-04",
-   "commits": 351,
-   "commits7": 63,
-   "commits30": 75,
-   "commits90": 151,
+   "commits": 352,
+   "commits7": 64,
+   "commits30": 76,
+   "commits90": 152,
    "contributors": 3,
    "weeks": [
     0,
@@ -1094,13 +1094,13 @@
     2,
     5,
     5,
-    63
+    64
    ],
    "branch": "main",
    "dirty": 1,
-   "ahead": 0,
+   "ahead": 1,
    "behind": 0,
-   "lastActivity": "2026-11-03",
+   "lastActivity": "2026-11-04",
    "repo": "HARK-System-Map"
   },
   "sentinel-surface": {
