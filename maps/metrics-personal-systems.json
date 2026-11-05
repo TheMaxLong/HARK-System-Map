@@ -1,15 +1,15 @@
 {
- "generated": "2026-11-05T13:54Z",
+ "generated": "2026-11-05T16:54Z",
  "source": "NOEMA project index + git log on the maintainer's Mac — aggregates only (dates, counts, a 12-week sparkline)",
  "matched": 23,
  "nodes": {
   "anim-kit": {
    "firstCommit": "2026-10-12",
    "lastCommit": "2026-11-05",
-   "commits": 441,
-   "commits7": 169,
-   "commits30": 441,
-   "commits90": 441,
+   "commits": 442,
+   "commits7": 162,
+   "commits30": 442,
+   "commits90": 442,
    "contributors": 1,
    "weeks": [
     0,
@@ -22,11 +22,11 @@
     0,
     56,
     65,
-    151,
-    169
+    159,
+    162
    ],
    "branch": "main",
-   "dirty": 73,
+   "dirty": 78,
    "ahead": 0,
    "behind": 0,
    "lastActivity": "2026-11-05",
@@ -37,7 +37,7 @@
    "lastCommit": "2026-10-06",
    "commits": 244,
    "commits7": 0,
-   "commits30": 1,
+   "commits30": 0,
    "commits90": 75,
    "contributors": 44,
    "weeks": [
@@ -65,8 +65,8 @@
    "firstCommit": "2026-10-04",
    "lastCommit": "2026-11-01",
    "commits": 241,
-   "commits7": 8,
-   "commits30": 88,
+   "commits7": 5,
+   "commits30": 87,
    "commits90": 241,
    "contributors": 1,
    "weeks": [
@@ -77,11 +77,11 @@
     0,
     0,
     0,
-    154,
-    6,
+    156,
+    4,
     29,
-    44,
-    8
+    47,
+    5
    ],
    "branch": "main",
    "dirty": 6,
@@ -188,8 +188,8 @@
    "weeks": [
     0,
     10,
-    1,
-    2,
+    3,
+    0,
     0,
     1,
     12,
@@ -413,7 +413,7 @@
    "firstCommit": "2026-10-26",
    "lastCommit": "2026-11-04",
    "commits": 93,
-   "commits7": 17,
+   "commits7": 14,
    "commits30": 93,
    "commits90": 93,
    "contributors": 1,
@@ -428,8 +428,8 @@
     0,
     0,
     0,
-    76,
-    17
+    79,
+    14
    ],
    "branch": "main",
    "dirty": 5,
@@ -442,7 +442,7 @@
    "firstCommit": "2026-10-27",
    "lastCommit": "2026-10-29",
    "commits": 8,
-   "commits7": 4,
+   "commits7": 0,
    "commits30": 8,
    "commits90": 8,
    "contributors": 1,
@@ -457,8 +457,8 @@
     0,
     0,
     0,
-    4,
-    4
+    8,
+    0
    ],
    "branch": "main",
    "dirty": 0,
@@ -593,8 +593,8 @@
    "contributors": 9,
    "weeks": [
     0,
-    23,
-    9,
+    24,
+    8,
     5,
     5,
     6,
