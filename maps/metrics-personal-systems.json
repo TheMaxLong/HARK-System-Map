@@ -1,15 +1,15 @@
 {
- "generated": "2026-11-05T10:54Z",
+ "generated": "2026-11-05T13:54Z",
  "source": "NOEMA project index + git log on the maintainer's Mac — aggregates only (dates, counts, a 12-week sparkline)",
  "matched": 23,
  "nodes": {
   "anim-kit": {
    "firstCommit": "2026-10-12",
    "lastCommit": "2026-11-05",
-   "commits": 440,
-   "commits7": 183,
-   "commits30": 440,
-   "commits90": 440,
+   "commits": 441,
+   "commits7": 169,
+   "commits30": 441,
+   "commits90": 441,
    "contributors": 1,
    "weeks": [
     0,
@@ -22,14 +22,14 @@
     0,
     56,
     65,
-    136,
-    183
+    151,
+    169
    ],
    "branch": "main",
-   "dirty": 68,
+   "dirty": 73,
    "ahead": 0,
    "behind": 0,
-   "lastActivity": "2026-11-04",
+   "lastActivity": "2026-11-05",
    "repo": "anim-kit"
   },
   "blender-mcp": {
@@ -65,8 +65,8 @@
    "firstCommit": "2026-10-04",
    "lastCommit": "2026-11-01",
    "commits": 241,
-   "commits7": 9,
-   "commits30": 106,
+   "commits7": 8,
+   "commits30": 88,
    "commits90": 241,
    "contributors": 1,
    "weeks": [
@@ -80,8 +80,8 @@
     154,
     6,
     29,
-    43,
-    9
+    44,
+    8
    ],
    "branch": "main",
    "dirty": 6,
@@ -413,7 +413,7 @@
    "firstCommit": "2026-10-26",
    "lastCommit": "2026-11-04",
    "commits": 93,
-   "commits7": 18,
+   "commits7": 17,
    "commits30": 93,
    "commits90": 93,
    "contributors": 1,
@@ -428,8 +428,8 @@
     0,
     0,
     0,
-    75,
-    18
+    76,
+    17
    ],
    "branch": "main",
    "dirty": 5,
@@ -593,11 +593,11 @@
    "contributors": 9,
    "weeks": [
     0,
-    22,
-    10,
+    23,
+    9,
     5,
-    4,
-    7,
+    5,
+    6,
     0,
     0,
     0,
