@@ -1,5 +1,5 @@
 {
- "generated": "2026-11-06T13:55Z",
+ "generated": "2026-11-06T16:55Z",
  "source": "NOEMA project index + git log on the maintainer's Mac — aggregates only (dates, counts, a 12-week sparkline)",
  "matched": 23,
  "nodes": {
@@ -46,8 +46,8 @@
     10,
     2,
     13,
-    11,
-    11,
+    12,
+    10,
     10,
     0,
     0,
@@ -79,8 +79,8 @@
     0,
     160,
     0,
-    38,
-    38,
+    39,
+    37,
     5
    ],
    "branch": "main",
@@ -187,8 +187,8 @@
    "contributors": 1,
    "weeks": [
     0,
-    10,
-    3,
+    11,
+    2,
     0,
     0,
     1,
@@ -412,10 +412,10 @@
   "duncan": {
    "firstCommit": "2026-10-26",
    "lastCommit": "2026-11-06",
-   "commits": 94,
-   "commits7": 15,
-   "commits30": 94,
-   "commits90": 94,
+   "commits": 95,
+   "commits7": 16,
+   "commits30": 95,
+   "commits90": 95,
    "contributors": 1,
    "weeks": [
     0,
@@ -429,13 +429,13 @@
     0,
     0,
     79,
-    15
+    16
    ],
    "branch": "main",
-   "dirty": 5,
+   "dirty": 6,
    "ahead": null,
    "behind": null,
-   "lastActivity": "2026-11-05",
+   "lastActivity": "2026-11-06",
    "repo": "duncan"
   },
   "duncan-pixel": {
@@ -477,8 +477,8 @@
    "contributors": 1,
    "weeks": [
     0,
-    0,
     1,
+    0,
     11,
     3,
     1,
@@ -564,8 +564,8 @@
    "contributors": 1,
    "weeks": [
     0,
-    0,
     1,
+    0,
     0,
     0,
     1,
