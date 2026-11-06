@@ -1,5 +1,5 @@
 {
- "generated": "2026-11-05T22:55Z",
+ "generated": "2026-11-06T01:55Z",
  "source": "NOEMA project index + git log on the maintainer's Mac — aggregates only (dates, counts, a 12-week sparkline)",
  "matched": 45,
  "nodes": {
@@ -354,10 +354,10 @@
   "dead-man": {
    "firstCommit": "2026-05-19",
    "lastCommit": "2026-11-05",
-   "commits": 363,
+   "commits": 364,
    "commits7": 53,
-   "commits30": 87,
-   "commits90": 163,
+   "commits30": 88,
+   "commits90": 164,
    "contributors": 3,
    "weeks": [
     3,
@@ -370,7 +370,7 @@
     0,
     5,
     7,
-    22,
+    23,
     53
    ],
    "branch": "main",
@@ -624,8 +624,8 @@
     0,
     44,
     24,
-    9,
-    11,
+    13,
+    7,
     18,
     8,
     6,
@@ -875,10 +875,10 @@
   "offsite-archive-backup": {
    "firstCommit": "2026-05-19",
    "lastCommit": "2026-11-05",
-   "commits": 363,
+   "commits": 364,
    "commits7": 53,
-   "commits30": 87,
-   "commits90": 163,
+   "commits30": 88,
+   "commits90": 164,
    "contributors": 3,
    "weeks": [
     3,
@@ -891,7 +891,7 @@
     0,
     5,
     7,
-    22,
+    23,
     53
    ],
    "branch": "main",
@@ -910,7 +910,7 @@
    "commits90": 297,
    "contributors": 2,
    "weeks": [
-    65,
+    61,
     1,
     48,
     49,
@@ -939,7 +939,7 @@
    "commits90": 297,
    "contributors": 2,
    "weeks": [
-    65,
+    61,
     1,
     48,
     49,
@@ -968,7 +968,7 @@
    "commits90": 297,
    "contributors": 2,
    "weeks": [
-    65,
+    61,
     1,
     48,
     49,
@@ -997,7 +997,7 @@
    "commits90": 7,
    "contributors": 3,
    "weeks": [
-    1,
+    0,
     2,
     0,
     1,
@@ -1077,10 +1077,10 @@
   "failover-watcher": {
    "firstCommit": "2026-05-19",
    "lastCommit": "2026-11-05",
-   "commits": 363,
+   "commits": 364,
    "commits7": 53,
-   "commits30": 87,
-   "commits90": 163,
+   "commits30": 88,
+   "commits90": 164,
    "contributors": 3,
    "weeks": [
     3,
@@ -1093,7 +1093,7 @@
     0,
     5,
     7,
-    22,
+    23,
     53
    ],
    "branch": "main",
