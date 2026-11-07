@@ -1,5 +1,5 @@
 {
- "generated": "2026-11-07T04:56Z",
+ "generated": "2026-11-07T07:56Z",
  "source": "NOEMA project index + git log on the maintainer's Mac — aggregates only (dates, counts, a 12-week sparkline)",
  "matched": 11,
  "nodes": {
@@ -33,11 +33,11 @@
   },
   "facility-tracker": {
    "firstCommit": "2026-03-20",
-   "lastCommit": "2026-10-25",
-   "commits": 283,
-   "commits7": 0,
-   "commits30": 27,
-   "commits90": 47,
+   "lastCommit": "2026-11-07",
+   "commits": 284,
+   "commits7": 1,
+   "commits30": 28,
+   "commits90": 48,
    "contributors": 5,
    "weeks": [
     0,
@@ -51,41 +51,41 @@
     12,
     1,
     13,
-    0
+    1
    ],
    "branch": "master",
    "dirty": 1,
    "ahead": 0,
    "behind": 0,
-   "lastActivity": "2026-10-25"
+   "lastActivity": "2026-11-06"
   },
   "recipe-book": {
    "firstCommit": "2026-05-04",
-   "lastCommit": "2026-10-27",
-   "commits": 211,
-   "commits7": 0,
-   "commits30": 6,
-   "commits90": 65,
+   "lastCommit": "2026-11-03",
+   "commits": 213,
+   "commits7": 2,
+   "commits30": 8,
+   "commits90": 67,
    "contributors": 2,
    "weeks": [
-    1,
-    18,
+    2,
+    17,
     0,
     5,
-    11,
-    9,
-    0,
-    13,
+    15,
+    5,
+    7,
+    6,
     0,
     0,
     6,
-    0
+    2
    ],
    "branch": "main",
-   "dirty": 10,
+   "dirty": 8,
    "ahead": 0,
-   "behind": 2,
-   "lastActivity": "2026-10-27"
+   "behind": 0,
+   "lastActivity": "2026-11-02"
   },
   "trellis": {
    "firstCommit": "2026-05-16",
@@ -173,11 +173,11 @@
   },
   "flower-room": {
    "firstCommit": "2026-04-10",
-   "lastCommit": "2026-11-01",
-   "commits": 112,
-   "commits7": 1,
-   "commits30": 9,
-   "commits90": 25,
+   "lastCommit": "2026-11-07",
+   "commits": 115,
+   "commits7": 4,
+   "commits30": 12,
+   "commits90": 28,
    "contributors": 4,
    "weeks": [
     0,
@@ -191,13 +191,13 @@
     0,
     0,
     8,
-    1
+    4
    ],
    "branch": "main",
    "dirty": 0,
    "ahead": 0,
    "behind": 0,
-   "lastActivity": "2026-11-01"
+   "lastActivity": "2026-11-06"
   },
   "flux-widget": {
    "firstCommit": "2026-04-23",
