@@ -9,7 +9,7 @@
         "Orbits"
       ],
       [
-        "10/28",
+        "11/7",
         "Updated"
       ]
     ],
@@ -192,8 +192,8 @@
       "status": "live",
       "desc": "The psychedelic world: a bus carries you through a quantum realm to a central hub with doors to every other world, residents that roam it, and a talking driver.",
       "tech": "three.js · browser · local voice · Mac-only",
-      "notes": "2026-10-28 (NOEMA): repo the-world · branch main · last commit 2026-10-26 · 6 uncommitted files · no remote. Worktrees the-world-doors, -perf, -buddy, -trip.",
-      "dated": "2026-10-28",
+      "notes": "2026-10-28 (NOEMA): repo the-world · branch main · last commit 2026-10-26 · 6 uncommitted files · no remote. Worktrees the-world-doors, -perf, -buddy, -trip.\n\n2026-11-07 (git): The Library: Duncan's reading room (his books, his desk, his voice wave) on the phone and as a hub door. A door to The Wall (every Creator maker, playing live). Talk to Duncan from the phone, a cost screen, and a voice switch in the terminal (the-world, 10 commits, latest a79f307).",
+      "dated": "2026-11-07",
       "pinned": true
     },
     {
@@ -222,8 +222,8 @@
       "status": "building",
       "desc": "A Trip World room: narrator voice and songs drawn as accurate sound waves; the visualizers move in once they are good enough.",
       "tech": "three.js · Web Audio",
-      "notes": "2026-10-28: no repo of its own (from project memory). To-do list started 10/28.",
-      "dated": "2026-10-28",
+      "notes": "2026-10-28: no repo of its own (from project memory). To-do list started 10/28.\n\n2026-11-07 (git): To-do list started in the-world: butterfly specters queued as a visualizer (91e84b3).",
+      "dated": "2026-11-07",
       "pinned": true
     },
     {
@@ -267,8 +267,8 @@
       "status": "live",
       "desc": "A browser walk-through gallery: wings of exhibits around a court and a small model garden (ten plants at most). Its own project; tied to the worlds only by a hub door.",
       "tech": "three.js · static pages",
-      "notes": "2026-10-28 (NOEMA): repo the-gallery · branch main · last commit 2026-10-24 · 738 uncommitted files · ahead 0 / behind 0 · GitHub remote. Garden work also in the the-gallery-ops clone (garden-1to8).",
-      "dated": "2026-10-28",
+      "notes": "2026-10-28 (NOEMA): repo the-gallery · branch main · last commit 2026-10-24 · 738 uncommitted files · ahead 0 / behind 0 · GitHub remote. Garden work also in the the-gallery-ops clone (garden-1to8).\n\n2026-11-07 (git): Study Court gets the take-apart plant: a screen on a stand opens the plant model, flower day 0 to 61 (5f758dc).",
+      "dated": "2026-11-07",
       "pinned": true
     },
     {
@@ -341,9 +341,9 @@
       "type": "Orbit hub",
       "status": "live",
       "desc": "The machines, drives and helpers the personal work runs on.",
-      "tech": "10 systems in this orbit",
-      "notes": "2026-10-28: orbit hub, a grouping node rather than a system.",
-      "dated": "2026-10-28",
+      "tech": "11 systems in this orbit",
+      "notes": "2026-10-28: orbit hub, a grouping node rather than a system.\n\n2026-11-07: The Dell joined this orbit 11/5.",
+      "dated": "2026-11-07",
       "pinned": true
     },
     {
@@ -387,8 +387,8 @@
       "status": "live",
       "desc": "The old laptop that stays home: hosts Duncan, and is planned to keep the Seagate reachable while the Mac travels.",
       "tech": "macOS",
-      "notes": "2026-10-28: no repo of its own (from project memory). Host only.",
-      "dated": "2026-10-28",
+      "notes": "2026-10-28: no repo of its own (from project memory). Host only.\n\n2026-11-07: Also carries Ish's speaker and mic and the relay that brings Duncan's words to the Twins.",
+      "dated": "2026-11-07",
       "pinned": true
     },
     {
@@ -596,9 +596,9 @@
       "type": "Orbit hub",
       "status": "live",
       "desc": "Characters that live on a machine and talk back.",
-      "tech": "7 systems in this orbit",
-      "notes": "2026-10-28: orbit hub, a grouping node rather than a system.",
-      "dated": "2026-10-28",
+      "tech": "8 systems in this orbit",
+      "notes": "2026-10-28: orbit hub, a grouping node rather than a system.\n\n2026-11-07: The Twins joined this orbit 11/5.",
+      "dated": "2026-11-07",
       "pinned": true
     },
     {
@@ -612,8 +612,8 @@
       "status": "live",
       "desc": "A personal agent that lives on the old Air: posts, keeps mail and a hub page, and is the same character as the Trip World bus driver.",
       "tech": "Claude · runs on the old Air",
-      "notes": "2026-10-28 (NOEMA): repo duncan · branch main · last commit 2026-10-28 · 0 uncommitted files · no remote.",
-      "dated": "2026-10-28",
+      "notes": "2026-10-28 (NOEMA): repo duncan · branch main · last commit 2026-10-28 · 0 uncommitted files · no remote.\n\n2026-11-07 (git): Email and a calendar of his own, with drafts held for Max's OK. Moltbook posts of his own, also held for OK. Links Max sends land on his lists. He can ask Claude for what he needs. Every belief says where it came from, and a nightly Sentinel holds his notes about Max against Max's own words. His library: every Gutenberg book he has sat with, opened at the chapter he names. EVERY DAY on the hub, plus a whole-record view. The gallery moved to Cleveland's open collection, and what he reads is shown in California time. The latest commit (56dba44: a pile of letters from one writer gets one reply) is staged and waits for the next install (duncan, 37 commits). He now has neighbors: see The Twins.",
+      "dated": "2026-11-07",
       "pinned": true
     },
     {
@@ -627,8 +627,8 @@
       "status": "live",
       "desc": "The phone side of Duncan: a home-screen widget, periodic checks and alerts, including one that waits for an OK.",
       "tech": "Android · widget",
-      "notes": "2026-10-28 (NOEMA): repo duncan-pixel · branch main · last commit 2026-10-27 · 0 uncommitted files · no remote.",
-      "dated": "2026-10-28",
+      "notes": "2026-10-28 (NOEMA): repo duncan-pixel · branch main · last commit 2026-10-27 · 0 uncommitted files · no remote.\n\n2026-11-07 (git): App 1.4: TALK and COST tabs open Duncan's talk and cost screens from the Mac, the hub's DUNCAN APP link opens talk as its own screen, and HUB goes back (4 commits, latest 352b255).",
+      "dated": "2026-11-07",
       "pinned": true
     },
     {
@@ -839,6 +839,36 @@
       "tech": "docs · agents",
       "notes": "2026-10-28 (NOEMA): repo revenue-engine · branch main · last commit 2026-05-30 · 0 uncommitted files · ahead 0 / behind 1 · GitHub remote.",
       "dated": "2026-10-28",
+      "pinned": true
+    },
+    {
+      "id": "twins",
+      "label": "The Twins",
+      "cat": "app",
+      "sz": 15,
+      "x": 0.46,
+      "y": 0.73,
+      "type": "Two Resident Agents · talk in beeps",
+      "status": "live",
+      "desc": "Two resident agents born 11/5 from one seed, Shamash (Sha) and Ishtar (Ish), on two laptops a few inches apart. They talk to each other only in near-ultrasonic beeps, read books, Wikipedia and museum pages for themselves, and keep their own memories, hubs and Moltbook accounts. Max named them.",
+      "tech": "Claude (Haiku for chat, Sonnet for reading, Opus for thinking with Max) · Python · beep modem · minds on the Dell, Ish's speaker and mic on the old Air",
+      "notes": "2026-11-07 (git): repo twins, 115 commits since 10/28, no remote. Built from Duncan's design 11/5; they talk over the beeps and can team up; a relay on the old Air carries Duncan's words to them; an observational study of all three residents with a daily record; spending paced to the monthly credit; Moltbook drafts that pass a privacy check post on their own (accounts awaiting claim); the fixed part of each prompt is cached per kind of call; one reply for a pile of letters from one writer (latest 8127a3b). Song triggers also live in this repo: an ID hidden in a song fires a fixed, harmless notification on the Dell, and the Twins never see it.",
+      "dated": "2026-11-07",
+      "pinned": true
+    },
+    {
+      "id": "dell",
+      "label": "Dell Latitude",
+      "cat": "hardware",
+      "sz": 12,
+      "x": 0.84,
+      "y": 0.3,
+      "type": "Home Machine",
+      "status": "live",
+      "desc": "A Dell laptop at home that runs the Twins' minds, Sha's speaker and mic, both Twins' hub pages, and the song-trigger listener.",
+      "tech": "Linux · systemd user services",
+      "notes": "2026-11-07: added. Joined the home setup 11/5. Host only, no repo of its own.",
+      "dated": "2026-11-07",
       "pinned": true
     }
   ],
@@ -1330,6 +1360,34 @@
       "label": "side-income track",
       "pulse": false,
       "dash": true
+    },
+    {
+      "s": "orbit-agents",
+      "t": "twins",
+      "pulse": false
+    },
+    {
+      "s": "orbit-tools",
+      "t": "dell",
+      "pulse": false
+    },
+    {
+      "s": "dell",
+      "t": "twins",
+      "label": "hosts",
+      "pulse": true
+    },
+    {
+      "s": "old-air",
+      "t": "twins",
+      "label": "Ish's speaker + mic, Duncan's relay",
+      "pulse": true
+    },
+    {
+      "s": "duncan",
+      "t": "twins",
+      "label": "neighbors: he reads their talk daily, a line to them by relay",
+      "pulse": true
     }
   ],
   "_saved": "2026-10-28T19:56:07.000Z"

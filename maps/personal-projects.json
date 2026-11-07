@@ -692,6 +692,13 @@
       "t": "hub-backup",
       "label": "mesh node",
       "pulse": false
+    },
+    {
+      "s": "room-builder-mpcycpd9",
+      "t": "facility-tracker",
+      "label": "rooms it would build from",
+      "pulse": false,
+      "dash": true
     }
   ],
   "_saved": "2026-05-23T06:34:53.172Z"
