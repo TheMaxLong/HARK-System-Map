@@ -1,5 +1,5 @@
 {
- "generated": "2026-11-08T07:58Z",
+ "generated": "2026-11-08T10:58Z",
  "source": "NOEMA project index + git log on the maintainer's Mac — aggregates only (dates, counts, a 12-week sparkline)",
  "matched": 45,
  "nodes": {
@@ -50,8 +50,8 @@
     1,
     11,
     2,
-    1,
-    13,
+    8,
+    6,
     1
    ],
    "branch": "master",
@@ -208,11 +208,11 @@
   },
   "flower-room": {
    "firstCommit": "2026-04-10",
-   "lastCommit": "2026-11-07",
-   "commits": 117,
-   "commits7": 6,
-   "commits30": 14,
-   "commits90": 30,
+   "lastCommit": "2026-11-08",
+   "commits": 119,
+   "commits7": 8,
+   "commits30": 16,
+   "commits90": 32,
    "contributors": 4,
    "weeks": [
     0,
@@ -226,13 +226,13 @@
     0,
     0,
     8,
-    6
+    8
    ],
    "branch": "main",
    "dirty": 0,
    "ahead": 0,
    "behind": 0,
-   "lastActivity": "2026-11-07",
+   "lastActivity": "2026-11-08",
    "repo": "Flower-Room-Display"
   },
   "flux-widget": {
@@ -354,10 +354,10 @@
   "dead-man": {
    "firstCommit": "2026-05-19",
    "lastCommit": "2026-11-08",
-   "commits": 382,
+   "commits": 383,
    "commits7": 53,
-   "commits30": 106,
-   "commits90": 157,
+   "commits30": 107,
+   "commits90": 137,
    "contributors": 3,
    "weeks": [
     4,
@@ -370,7 +370,7 @@
     2,
     4,
     6,
-    41,
+    42,
     53
    ],
    "branch": "main",
@@ -395,8 +395,8 @@
     14,
     0,
     1,
-    4,
-    4,
+    6,
+    2,
     0,
     0,
     0,
@@ -659,8 +659,8 @@
     7,
     1,
     2,
-    4,
     5,
+    4,
     2
    ],
    "branch": "other",
@@ -730,11 +730,11 @@
   },
   "pm-backfill": {
    "firstCommit": "2026-06-26",
-   "lastCommit": "2026-11-07",
-   "commits": 36,
-   "commits7": 4,
-   "commits30": 4,
-   "commits90": 20,
+   "lastCommit": "2026-11-08",
+   "commits": 38,
+   "commits7": 6,
+   "commits30": 6,
+   "commits90": 22,
    "contributors": 1,
    "weeks": [
     0,
@@ -748,13 +748,13 @@
     0,
     0,
     0,
-    4
+    6
    ],
    "branch": "main",
    "dirty": 1,
    "ahead": 0,
    "behind": 0,
-   "lastActivity": "2026-11-07",
+   "lastActivity": "2026-11-08",
    "repo": "Flower-Room-Display-Backfill"
   },
   "drench-library": {
@@ -875,10 +875,10 @@
   "offsite-archive-backup": {
    "firstCommit": "2026-05-19",
    "lastCommit": "2026-11-08",
-   "commits": 382,
+   "commits": 383,
    "commits7": 53,
-   "commits30": 106,
-   "commits90": 157,
+   "commits30": 107,
+   "commits90": 137,
    "contributors": 3,
    "weeks": [
     4,
@@ -891,7 +891,7 @@
     2,
     4,
     6,
-    41,
+    42,
     53
    ],
    "branch": "main",
@@ -907,7 +907,7 @@
    "commits": 495,
    "commits7": 0,
    "commits30": 1,
-   "commits90": 213,
+   "commits90": 209,
    "contributors": 2,
    "weeks": [
     27,
@@ -936,7 +936,7 @@
    "commits": 495,
    "commits7": 0,
    "commits30": 1,
-   "commits90": 213,
+   "commits90": 209,
    "contributors": 2,
    "weeks": [
     27,
@@ -965,7 +965,7 @@
    "commits": 495,
    "commits7": 0,
    "commits30": 1,
-   "commits90": 213,
+   "commits90": 209,
    "contributors": 2,
    "weeks": [
     27,
@@ -1077,10 +1077,10 @@
   "failover-watcher": {
    "firstCommit": "2026-05-19",
    "lastCommit": "2026-11-08",
-   "commits": 382,
+   "commits": 383,
    "commits7": 53,
-   "commits30": 106,
-   "commits90": 157,
+   "commits30": 107,
+   "commits90": 137,
    "contributors": 3,
    "weeks": [
     4,
@@ -1093,7 +1093,7 @@
     2,
     4,
     6,
-    41,
+    42,
     53
    ],
    "branch": "main",

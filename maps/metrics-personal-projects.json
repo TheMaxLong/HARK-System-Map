@@ -1,5 +1,5 @@
 {
- "generated": "2026-11-08T07:58Z",
+ "generated": "2026-11-08T10:58Z",
  "source": "NOEMA project index + git log on the maintainer's Mac — aggregates only (dates, counts, a 12-week sparkline)",
  "matched": 11,
  "nodes": {
@@ -49,8 +49,8 @@
     1,
     11,
     2,
-    1,
-    13,
+    8,
+    6,
     1
    ],
    "branch": "master",
@@ -173,11 +173,11 @@
   },
   "flower-room": {
    "firstCommit": "2026-04-10",
-   "lastCommit": "2026-11-07",
-   "commits": 117,
-   "commits7": 6,
-   "commits30": 14,
-   "commits90": 30,
+   "lastCommit": "2026-11-08",
+   "commits": 119,
+   "commits7": 8,
+   "commits30": 16,
+   "commits90": 32,
    "contributors": 4,
    "weeks": [
     0,
@@ -191,13 +191,13 @@
     0,
     0,
     8,
-    6
+    8
    ],
    "branch": "main",
    "dirty": 0,
    "ahead": 0,
    "behind": 0,
-   "lastActivity": "2026-11-07"
+   "lastActivity": "2026-11-08"
   },
   "flux-widget": {
    "firstCommit": "2026-04-23",
