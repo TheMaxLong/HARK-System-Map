@@ -1,15 +1,15 @@
 {
- "generated": "2026-11-10T14:00Z",
+ "generated": "2026-11-10T17:01Z",
  "source": "NOEMA project index + git log on the maintainer's Mac — aggregates only (dates, counts, a 12-week sparkline)",
  "matched": 24,
  "nodes": {
   "anim-kit": {
    "firstCommit": "2026-10-12",
-   "lastCommit": "2026-11-07",
-   "commits": 447,
-   "commits7": 21,
-   "commits30": 447,
-   "commits90": 447,
+   "lastCommit": "2026-11-10",
+   "commits": 450,
+   "commits7": 24,
+   "commits30": 450,
+   "commits90": 450,
    "contributors": 1,
    "weeks": [
     0,
@@ -20,16 +20,16 @@
     0,
     0,
     56,
-    55,
-    76,
+    57,
+    74,
     239,
-    21
+    24
    ],
    "branch": "main",
    "dirty": 76,
    "ahead": 0,
    "behind": 0,
-   "lastActivity": "2026-11-06",
+   "lastActivity": "2026-11-10",
    "repo": "anim-kit"
   },
   "blender-mcp": {
@@ -42,13 +42,13 @@
    "contributors": 44,
    "weeks": [
     8,
-    6,
-    7,
+    9,
+    4,
     10,
     9,
     7,
-    18,
-    1,
+    19,
+    0,
     0,
     0,
     0,
@@ -76,8 +76,8 @@
     0,
     0,
     0,
-    153,
-    7,
+    154,
+    6,
     29,
     42,
     10,
@@ -92,11 +92,11 @@
   },
   "the-gallery": {
    "firstCommit": "2026-09-27",
-   "lastCommit": "2026-11-01",
-   "commits": 126,
-   "commits7": 0,
-   "commits30": 13,
-   "commits90": 126,
+   "lastCommit": "2026-11-10",
+   "commits": 127,
+   "commits7": 1,
+   "commits30": 14,
+   "commits90": 127,
    "contributors": 1,
    "weeks": [
     0,
@@ -104,19 +104,19 @@
     0,
     0,
     0,
-    53,
-    30,
+    57,
+    26,
     30,
     5,
     7,
     1,
-    0
+    1
    ],
    "branch": "main",
    "dirty": 738,
    "ahead": 0,
    "behind": 0,
-   "lastActivity": "2026-11-01",
+   "lastActivity": "2026-11-10",
    "repo": "the-gallery"
   },
   "mosaic-grove": {
@@ -594,8 +594,8 @@
    "weeks": [
     14,
     17,
-    5,
-    3,
+    6,
+    2,
     9,
     0,
     0,
@@ -672,11 +672,11 @@
   },
   "twins": {
    "firstCommit": "2026-10-26",
-   "lastCommit": "2026-11-07",
-   "commits": 178,
-   "commits7": 87,
-   "commits30": 178,
-   "commits90": 178,
+   "lastCommit": "2026-11-10",
+   "commits": 179,
+   "commits7": 88,
+   "commits30": 179,
+   "commits90": 179,
    "contributors": 1,
    "weeks": [
     0,
@@ -690,13 +690,13 @@
     0,
     62,
     29,
-    87
+    88
    ],
    "branch": "main",
    "dirty": 1,
    "ahead": null,
    "behind": null,
-   "lastActivity": "2026-11-07",
+   "lastActivity": "2026-11-10",
    "repo": "twins"
   }
  }
