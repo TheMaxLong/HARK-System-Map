@@ -1,5 +1,5 @@
 {
- "generated": "2026-11-13T05:04Z",
+ "generated": "2026-11-13T08:04Z",
  "source": "NOEMA project index + git log on the maintainer's Mac — aggregates only (dates, counts, a 12-week sparkline)",
  "matched": 24,
  "nodes": {
@@ -21,8 +21,8 @@
     0,
     56,
     66,
-    185,
-    136,
+    189,
+    132,
     7
    ],
    "branch": "main",
@@ -413,7 +413,7 @@
    "firstCommit": "2026-10-26",
    "lastCommit": "2026-11-09",
    "commits": 100,
-   "commits7": 7,
+   "commits7": 6,
    "commits30": 100,
    "commits90": 100,
    "contributors": 1,
@@ -428,8 +428,8 @@
     0,
     0,
     79,
-    14,
-    7
+    15,
+    6
    ],
    "branch": "main",
    "dirty": 6,
@@ -674,7 +674,7 @@
    "firstCommit": "2026-10-26",
    "lastCommit": "2026-11-12",
    "commits": 180,
-   "commits7": 56,
+   "commits7": 51,
    "commits30": 180,
    "commits90": 180,
    "contributors": 1,
@@ -689,8 +689,8 @@
     0,
     0,
     79,
-    45,
-    56
+    50,
+    51
    ],
    "branch": "main",
    "dirty": 1,
