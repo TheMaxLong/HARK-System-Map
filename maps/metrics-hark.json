@@ -1,5 +1,5 @@
 {
- "generated": "2026-11-16T05:08Z",
+ "generated": "2026-11-16T08:08Z",
  "source": "NOEMA project index + git log on the maintainer's Mac — aggregates only (dates, counts, a 12-week sparkline)",
  "matched": 45,
  "nodes": {
@@ -354,10 +354,10 @@
   "dead-man": {
    "firstCommit": "2026-05-19",
    "lastCommit": "2026-11-16",
-   "commits": 443,
+   "commits": 444,
    "commits7": 53,
-   "commits30": 162,
-   "commits90": 197,
+   "commits30": 163,
+   "commits90": 198,
    "contributors": 3,
    "weeks": [
     12,
@@ -369,7 +369,7 @@
     2,
     5,
     5,
-    47,
+    48,
     55,
     53
    ],
@@ -621,7 +621,7 @@
    "commits90": 131,
    "contributors": 2,
    "weeks": [
-    8,
+    4,
     24,
     17,
     3,
@@ -737,7 +737,7 @@
    "commits90": 23,
    "contributors": 1,
    "weeks": [
-    5,
+    1,
     4,
     0,
     0,
@@ -875,10 +875,10 @@
   "offsite-archive-backup": {
    "firstCommit": "2026-05-19",
    "lastCommit": "2026-11-16",
-   "commits": 443,
+   "commits": 444,
    "commits7": 53,
-   "commits30": 162,
-   "commits90": 197,
+   "commits30": 163,
+   "commits90": 198,
    "contributors": 3,
    "weeks": [
     12,
@@ -890,7 +890,7 @@
     2,
     5,
     5,
-    47,
+    48,
     55,
     53
    ],
@@ -911,8 +911,8 @@
    "contributors": 2,
    "weeks": [
     34,
-    30,
-    37,
+    32,
+    35,
     13,
     0,
     0,
@@ -940,8 +940,8 @@
    "contributors": 2,
    "weeks": [
     34,
-    30,
-    37,
+    32,
+    35,
     13,
     0,
     0,
@@ -969,8 +969,8 @@
    "contributors": 2,
    "weeks": [
     34,
-    30,
-    37,
+    32,
+    35,
     13,
     0,
     0,
@@ -1077,10 +1077,10 @@
   "failover-watcher": {
    "firstCommit": "2026-05-19",
    "lastCommit": "2026-11-16",
-   "commits": 443,
+   "commits": 444,
    "commits7": 53,
-   "commits30": 162,
-   "commits90": 197,
+   "commits30": 163,
+   "commits90": 198,
    "contributors": 3,
    "weeks": [
     12,
@@ -1092,7 +1092,7 @@
     2,
     5,
     5,
-    47,
+    48,
     55,
     53
    ],
