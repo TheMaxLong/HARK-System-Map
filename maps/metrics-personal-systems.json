@@ -1,5 +1,5 @@
 {
- "generated": "2026-11-16T23:09Z",
+ "generated": "2026-11-17T02:09Z",
  "source": "NOEMA project index + git log on the maintainer's Mac — aggregates only (dates, counts, a 12-week sparkline)",
  "matched": 24,
  "nodes": {
@@ -75,10 +75,10 @@
     0,
     0,
     0,
-    77,
-    83,
-    9,
-    62,
+    81,
+    79,
+    10,
+    61,
     10,
     0,
     0
@@ -103,8 +103,8 @@
     0,
     0,
     0,
-    46,
-    37,
+    48,
+    35,
     30,
     5,
     7,
@@ -411,11 +411,11 @@
   },
   "duncan": {
    "firstCommit": "2026-10-26",
-   "lastCommit": "2026-11-09",
-   "commits": 100,
-   "commits7": 0,
-   "commits30": 100,
-   "commits90": 100,
+   "lastCommit": "2026-11-17",
+   "commits": 101,
+   "commits7": 1,
+   "commits30": 101,
+   "commits90": 101,
    "contributors": 1,
    "weeks": [
     0,
@@ -429,13 +429,13 @@
     45,
     46,
     9,
-    0
+    1
    ],
    "branch": "main",
-   "dirty": 6,
+   "dirty": 7,
    "ahead": null,
    "behind": null,
-   "lastActivity": "2026-11-08",
+   "lastActivity": "2026-11-16",
    "repo": "duncan"
   },
   "duncan-pixel": {
@@ -592,8 +592,8 @@
    "commits90": 48,
    "contributors": 9,
    "weeks": [
-    18,
-    5,
+    21,
+    2,
     6,
     9,
     0,
@@ -672,11 +672,11 @@
   },
   "twins": {
    "firstCommit": "2026-10-26",
-   "lastCommit": "2026-11-12",
-   "commits": 180,
-   "commits7": 2,
-   "commits30": 180,
-   "commits90": 180,
+   "lastCommit": "2026-11-17",
+   "commits": 186,
+   "commits7": 8,
+   "commits30": 186,
+   "commits90": 186,
    "contributors": 1,
    "weeks": [
     0,
@@ -690,13 +690,13 @@
     45,
     46,
     87,
-    2
+    8
    ],
    "branch": "main",
-   "dirty": 1,
+   "dirty": 2,
    "ahead": null,
    "behind": null,
-   "lastActivity": "2026-11-12",
+   "lastActivity": "2026-11-16",
    "repo": "twins"
   }
  }
