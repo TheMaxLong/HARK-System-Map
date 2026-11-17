@@ -1,5 +1,5 @@
 {
- "generated": "2026-11-17T02:09Z",
+ "generated": "2026-11-17T05:09Z",
  "source": "NOEMA project index + git log on the maintainer's Mac — aggregates only (dates, counts, a 12-week sparkline)",
  "matched": 45,
  "nodes": {
@@ -79,8 +79,8 @@
     0,
     0,
     4,
-    2,
-    2,
+    3,
+    1,
     0
    ],
    "branch": "main",
@@ -353,11 +353,11 @@
   },
   "dead-man": {
    "firstCommit": "2026-05-19",
-   "lastCommit": "2026-11-16",
-   "commits": 450,
-   "commits7": 53,
-   "commits30": 168,
-   "commits90": 204,
+   "lastCommit": "2026-11-17",
+   "commits": 451,
+   "commits7": 54,
+   "commits30": 169,
+   "commits90": 205,
    "contributors": 3,
    "weeks": [
     11,
@@ -371,7 +371,7 @@
     5,
     54,
     55,
-    53
+    54
    ],
    "branch": "main",
    "dirty": 1,
@@ -688,8 +688,8 @@
     0,
     0,
     4,
-    2,
-    2,
+    3,
+    1,
     0
    ],
    "branch": "main",
@@ -717,8 +717,8 @@
     0,
     0,
     4,
-    2,
-    2,
+    3,
+    1,
     0
    ],
    "branch": "main",
@@ -775,8 +775,8 @@
     0,
     0,
     4,
-    2,
-    2,
+    3,
+    1,
     0
    ],
    "branch": "main",
@@ -874,11 +874,11 @@
   },
   "offsite-archive-backup": {
    "firstCommit": "2026-05-19",
-   "lastCommit": "2026-11-16",
-   "commits": 450,
-   "commits7": 53,
-   "commits30": 168,
-   "commits90": 204,
+   "lastCommit": "2026-11-17",
+   "commits": 451,
+   "commits7": 54,
+   "commits30": 169,
+   "commits90": 205,
    "contributors": 3,
    "weeks": [
     11,
@@ -892,7 +892,7 @@
     5,
     54,
     55,
-    53
+    54
    ],
    "branch": "main",
    "dirty": 1,
@@ -1076,11 +1076,11 @@
   },
   "failover-watcher": {
    "firstCommit": "2026-05-19",
-   "lastCommit": "2026-11-16",
-   "commits": 450,
-   "commits7": 53,
-   "commits30": 168,
-   "commits90": 204,
+   "lastCommit": "2026-11-17",
+   "commits": 451,
+   "commits7": 54,
+   "commits30": 169,
+   "commits90": 205,
    "contributors": 3,
    "weeks": [
     11,
@@ -1094,7 +1094,7 @@
     5,
     54,
     55,
-    53
+    54
    ],
    "branch": "main",
    "dirty": 1,
