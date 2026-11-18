@@ -1,5 +1,5 @@
 {
- "generated": "2026-11-18T02:10Z",
+ "generated": "2026-11-18T05:10Z",
  "source": "NOEMA project index + git log on the maintainer's Mac — aggregates only (dates, counts, a 12-week sparkline)",
  "matched": 45,
  "nodes": {
@@ -353,11 +353,11 @@
   },
   "dead-man": {
    "firstCommit": "2026-05-19",
-   "lastCommit": "2026-11-17",
-   "commits": 458,
-   "commits7": 54,
-   "commits30": 175,
-   "commits90": 212,
+   "lastCommit": "2026-11-18",
+   "commits": 459,
+   "commits7": 55,
+   "commits30": 176,
+   "commits90": 213,
    "contributors": 3,
    "weeks": [
     11,
@@ -369,9 +369,9 @@
     2,
     5,
     5,
-    61,
-    55,
-    54
+    62,
+    54,
+    55
    ],
    "branch": "main",
    "dirty": 1,
@@ -398,8 +398,8 @@
     0,
     0,
     0,
-    0,
-    4,
+    2,
+    2,
     0
    ],
    "branch": "other",
@@ -874,11 +874,11 @@
   },
   "offsite-archive-backup": {
    "firstCommit": "2026-05-19",
-   "lastCommit": "2026-11-17",
-   "commits": 458,
-   "commits7": 54,
-   "commits30": 175,
-   "commits90": 212,
+   "lastCommit": "2026-11-18",
+   "commits": 459,
+   "commits7": 55,
+   "commits30": 176,
+   "commits90": 213,
    "contributors": 3,
    "weeks": [
     11,
@@ -890,9 +890,9 @@
     2,
     5,
     5,
-    61,
-    55,
-    54
+    62,
+    54,
+    55
    ],
    "branch": "main",
    "dirty": 1,
@@ -1076,11 +1076,11 @@
   },
   "failover-watcher": {
    "firstCommit": "2026-05-19",
-   "lastCommit": "2026-11-17",
-   "commits": 458,
-   "commits7": 54,
-   "commits30": 175,
-   "commits90": 212,
+   "lastCommit": "2026-11-18",
+   "commits": 459,
+   "commits7": 55,
+   "commits30": 176,
+   "commits90": 213,
    "contributors": 3,
    "weeks": [
     11,
@@ -1092,9 +1092,9 @@
     2,
     5,
     5,
-    61,
-    55,
-    54
+    62,
+    54,
+    55
    ],
    "branch": "main",
    "dirty": 1,
