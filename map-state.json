@@ -39,8 +39,8 @@
    "status": "live",
    "desc": "Grow recipe hub. Cycle tracking, arc charts, drift detection, field notes. Scrapes live controller data.",
    "tech": "Python · Flask · SQLite · WebSocket · OpenAI (optional)",
-   "notes": "2026-05-30: env program update — photoperiod widened (00:00-11:50 main, +5min UC), D14-42 = 1150W (new tier above 1000W), W7 split (D42 still 1150W, D43 steps down to 1000W). Pi recipe-book is plain-copied files (NOT a git checkout) — edits go via scp + service restart. 2026-06-01-02: HydroZ campus-wide trial complete; Hydro z stub (id=30) consolidated into canonical HydroZ (id=16, GH port 11 / AB port 15 / EF port 16). 29→13 canonical ingredients — Drip A NPK 15-0-0 confirmed, shared name_normalize.py ingester, 9 unit tests. 2026-06-03-04: Drip vendor sheets live for A/B/C/D — ingredient modal restructured into 'Our Program' + 'Vendor Sheet' tabs. 2026-06-04: Day 0 = Load day fixed (removed +1 offset from cycle_day calc). Controller-drift UI removed (room cards + modal banner + 'Actually Running'). Collapsible changelog — day-based grouping, single-open accordion. Deployed to both apsu + apsu-backup via redeploy.sh. 2026-06-12: scraper sweep merged (PR #1, TheMaxLong/scraper-sweep-2026-06-12) — hardware relabels + recipe + irrigation snapshots. 2026-06-14: AB7 phantom-runoff purged + guarded (DB trigger guard_runoff_scope); manual.html font deploy + Today's-Panel day off-by-one fix. Recipe Book is treated as a vendor API by downstream tools — READ-ONLY, never migrated. Now also a read source for Observatory + harvest-dossier (runoff reports). 2026-06-25: AB/EF/GH pump-relabel consolidation (broken pumps relabeled, ingredients moved to working ports; library 16→11 canonical cards, Athena Balance #2 retired/hidden) + broken-pump auto-reconcile detector now armed in FacilityCheck (read-only, see broken-pump node). 2026-06-23: program display now reads controller_recipe directly (dropped the +1 shortcut); transition rooms show the loaded program. 2026-06-21: FacilityCheck harvest-forecast off-by-one fixed. 2026-06-24: both-Pi app.py parity drift closed (sha256 904a35d1). 2026-06-26: runoff scope gate WIDENED 12→24 — PM rooms now allowed; a hidden guard_runoff_scope trigger (not in source control) had been silently deleting PM runoff; verified + backed up. 2026-06-28: env_programs document the AB 56-day CO₂ split. 2026-06-29: new harvest LAW per Max's Numbers sheet — AB = 56-day, EF & GH = 63-day (was 55/61) + new FLOWER log format. 2026-06-30: env_programs/anderson_flower_2026-06-30.json committed (confirmed 6-30 flower law). Also gained a new Drench tab (skeleton, branch only — see Drench Library node). 2026-07-15/16: AB7 phantom-runoff cleared again, 23 readings restored (b5f6e8d); the automated runoff re-send path fixed so stale re-sends stop overwriting real runoff (f1b0fdd); EF v7 ledger reconciled (3ade741); GH powder->liquid drip switch landed (4cfd587, 1c7349e); changelog UI widened to full history with Version History moved below Peak Dose and Key Differences rebuilt from live controller data (363e526, 5908104, 2628907).\n\n2026-08-01 (git, through 04:00 PT): TheMaxLong/recipe-book @ main 63029f5 (2026-07-22) — 9 commits since 2026-07-29, NONE of them on main. Six sit on wip/broken-pump-acknowledge (07-31) and three on feat/loaddate-sync-from-cannamax (08-01). The load-date branch keeps Recipe Book load dates in step with Cannamax; sends the FacilityCheck ingest to BOTH Pis instead of apsu only, which is why apsu-backup carried a standing has-not-received-an-ingest alarm that was false; and releases the journal link before deleting a phase, so a removed phase no longer refuses to delete and reject its whole diff file — the AB changes of 2026-06-28 had sat unrecorded for five weeks erroring nightly, and the stuck file now ingests its 9 changes cleanly (16 tests pass, verified against a copy of the live database). The wip branch finished controller_stale, rebuilt the test schema from init_db() instead of a hand-written copy, and fixed the last three test failures, all of which were bugs in the tests. Work committed after 04:00 is deliberately not captured here.\n\n2026-08-01 (git, 04:00-12:00 PT): TheMaxLong/recipe-book @ feat/sentinel-recipe-book 423dbff — 6 commits, not merged to main and not deployed. Recipe Book got its own SENTINEL guard: 13 promises covering parity, delivery, the ingest paths, the alias migration and three hotspot files. Twelve held on the first run; the thirteenth, pi-runs-the-same-code, failed on four files — database.py, scraper.py, facility_hardware_scraper.py and recipe_drift/doctor.py. All four were deployed to both Pis at 04:49 and the promise is now proven, 13 of 13 (re-verified 2026-08-01 12:07 by md5 of each file on each Pi against the branch — all eight match). ⛔ The trap it caught is the lasting lesson: three of the four files had the Mac ahead, but scraper.py had the PI ahead, carrying a 2026-07-16 change that existed in no mainline commit. A plain rsync from the Mac would have deleted it and restored a false DRIFT REVIEW MANUALLY warning on every flower room. It was merged, not overwritten (036eec5), from the preserve/scraper-live-gaphide-2026-07-16 branch someone had kept for exactly this. The parity checker now fetches the differing files and says which side is ahead, which is how the Pi-ahead case was caught: a 2026-07-16 gap-hide fix lives only on the Pis and a plain rsync from the Mac would have erased it. Every promise was tested to fail on a throwaway copy and pass again; the suite runs 208 passed, 2 skipped, 1 xfailed.\n\n2026-08-14+: Veg→flower carry-over LIVE on apsu — a LINK not a copy (preserves both cycle-days). Veg LOAD auto-attach PROVEN by Max 2026-08-19; picker proposes, Max confirms. Harvest dossier carries veg_runoff stream; feat/veg-runoff-stream MERGED to main. 2026-08-22/23: Anderson-hub tree rescued (branch rescue/apsu-2026-08-22) and MERGED to GitHub main (cd24d23); checkout now UNDER GIT (146 files, DB deliberately untracked -- hand edits logged in DB-CHANGES.md). CONFIRMED two separate recipe books: apsu-backup runs its own on :5050 with its own DB, does NOT replicate from apsu -- edits must be re-applied per Pi.\n\n2026-08-27: runoff verdict made BAND-AWARE. database.py computed ec_verdict from a flat, day-blind ladder in which on-target only started at 3.3, so a room sitting exactly on the 3.2 band floor read Low -- 6 of the 8 rooms on the panel. A panel that cries wolf on six of eight rooms is a panel people stop reading. Replaced with the full band table mirroring ec-bands.js (on-target lo..hi; low from lo-0.3 up to lo; danger below lo-0.3, reserved for likely pumper failure; slightly-high and high above hi) and no band for the day returns unknown, never a guessed verdict -- keep the two tables in step. Verified live after restart: 7 on-target / 1 low, was 7 low / 1 on-target; EF4 at 3.0 is genuinely under the 3.2 floor and correctly stayed low. The panel is deliberately scoped to D14-42, but the full table went in so widening it later needs no further change. The restart was held until :15 so recipe-book.service was not bounced inside the irrigation capture window. Backup database.py.bak-20260827-ecbands; shows as modified in git, NOT committed. 2026-08-26: the anti-clutter version safeguards were confirmed to be real, working code in recipe_drift/classifier.py. Only six STRUCTURAL rules cut a version (ingredient added, removed, swapped; phase added, removed, renamed). dose_tweak, dial_change and control_type_change NEVER bump -- changing how much of something is dosed does not create a version, only changing what is in the program or which phases exist does. apply_cap() allows ONE bump per recipe per scrape, so a session with twenty structural edits produces one version, not twenty. Every change is journaled either way, so a dose tweak stays fully visible without manufacturing a version. That is why AB v11 / EF v11 / GH v9 sit far above archives at v1-v3 -- the system working, not a fault. /api/buildings and /api/recipe/* are now proxied same-origin over https, which is the only reason Observatory Chemistry works at all. 2026-10-03: a motion-and-visual makeover shipped and went live on both hubs (main 3818e2f) -- same tabs and functions kept, with a new Drench tab and a HARK front-door strip added. The Compare tab and the Ingredient Library's building-discrepancy view now read each building's current flower recipe off the controller instead of typed-in HTML (fa0377a), and the runoff column was removed across every page. 2026-10-11: controller credentials and addresses moved out of the scraper source code (d4b98e1). 2026-10-25: watering moved from a set volume per run to a set run time around 10/21, so the scraper now reads what actually ends each run (time or volume) and flags a watering-method change; deployed to both Pis (d27c313). Motion pieces live on both hubs: rooms near harvest breathe, the nutrient arc condenses from particles, a Play-cycle walk, and Evolution shows every version for each building, drawing a full recipe only where it was proven against controller snapshots. The Mac copy and the Observatory cache were made identical to both hubs and a daily parity check now compares all four copies. Two spellings of the same cal-mag line were merged on both hubs (old name hidden, history untouched).\n\n2026-11-07 (git): New controller programs reach the Recipe Book with their pump lines. Two building-scoped liquid aliases retired once that building went back to dry salts (recipe-book 32ee90c).",
-   "dated": "2026-11-07"
+   "notes": "2026-05-30: env program update — photoperiod widened (00:00-11:50 main, +5min UC), D14-42 = 1150W (new tier above 1000W), W7 split (D42 still 1150W, D43 steps down to 1000W). Pi recipe-book is plain-copied files (NOT a git checkout) — edits go via scp + service restart. 2026-06-01-02: HydroZ campus-wide trial complete; Hydro z stub (id=30) consolidated into canonical HydroZ (id=16, GH port 11 / AB port 15 / EF port 16). 29→13 canonical ingredients — Drip A NPK 15-0-0 confirmed, shared name_normalize.py ingester, 9 unit tests. 2026-06-03-04: Drip vendor sheets live for A/B/C/D — ingredient modal restructured into 'Our Program' + 'Vendor Sheet' tabs. 2026-06-04: Day 0 = Load day fixed (removed +1 offset from cycle_day calc). Controller-drift UI removed (room cards + modal banner + 'Actually Running'). Collapsible changelog — day-based grouping, single-open accordion. Deployed to both apsu + apsu-backup via redeploy.sh. 2026-06-12: scraper sweep merged (PR #1, TheMaxLong/scraper-sweep-2026-06-12) — hardware relabels + recipe + irrigation snapshots. 2026-06-14: AB7 phantom-runoff purged + guarded (DB trigger guard_runoff_scope); manual.html font deploy + Today's-Panel day off-by-one fix. Recipe Book is treated as a vendor API by downstream tools — READ-ONLY, never migrated. Now also a read source for Observatory + harvest-dossier (runoff reports). 2026-06-25: AB/EF/GH pump-relabel consolidation (broken pumps relabeled, ingredients moved to working ports; library 16→11 canonical cards, Athena Balance #2 retired/hidden) + broken-pump auto-reconcile detector now armed in FacilityCheck (read-only, see broken-pump node). 2026-06-23: program display now reads controller_recipe directly (dropped the +1 shortcut); transition rooms show the loaded program. 2026-06-21: FacilityCheck harvest-forecast off-by-one fixed. 2026-06-24: both-Pi app.py parity drift closed (sha256 904a35d1). 2026-06-26: runoff scope gate WIDENED 12→24 — PM rooms now allowed; a hidden guard_runoff_scope trigger (not in source control) had been silently deleting PM runoff; verified + backed up. 2026-06-28: env_programs document the AB 56-day CO₂ split. 2026-06-29: new harvest LAW per Max's Numbers sheet — AB = 56-day, EF & GH = 63-day (was 55/61) + new FLOWER log format. 2026-06-30: env_programs/anderson_flower_2026-06-30.json committed (confirmed 6-30 flower law). Also gained a new Drench tab (skeleton, branch only — see Drench Library node). 2026-07-15/16: AB7 phantom-runoff cleared again, 23 readings restored (b5f6e8d); the automated runoff re-send path fixed so stale re-sends stop overwriting real runoff (f1b0fdd); EF v7 ledger reconciled (3ade741); GH powder->liquid drip switch landed (4cfd587, 1c7349e); changelog UI widened to full history with Version History moved below Peak Dose and Key Differences rebuilt from live controller data (363e526, 5908104, 2628907).\n\n2026-08-01 (git, through 04:00 PT): TheMaxLong/recipe-book @ main 63029f5 (2026-07-22) — 9 commits since 2026-07-29, NONE of them on main. Six sit on wip/broken-pump-acknowledge (07-31) and three on feat/loaddate-sync-from-cannamax (08-01). The load-date branch keeps Recipe Book load dates in step with Cannamax; sends the FacilityCheck ingest to BOTH Pis instead of apsu only, which is why apsu-backup carried a standing has-not-received-an-ingest alarm that was false; and releases the journal link before deleting a phase, so a removed phase no longer refuses to delete and reject its whole diff file — the AB changes of 2026-06-28 had sat unrecorded for five weeks erroring nightly, and the stuck file now ingests its 9 changes cleanly (16 tests pass, verified against a copy of the live database). The wip branch finished controller_stale, rebuilt the test schema from init_db() instead of a hand-written copy, and fixed the last three test failures, all of which were bugs in the tests. Work committed after 04:00 is deliberately not captured here.\n\n2026-08-01 (git, 04:00-12:00 PT): TheMaxLong/recipe-book @ feat/sentinel-recipe-book 423dbff — 6 commits, not merged to main and not deployed. Recipe Book got its own SENTINEL guard: 13 promises covering parity, delivery, the ingest paths, the alias migration and three hotspot files. Twelve held on the first run; the thirteenth, pi-runs-the-same-code, failed on four files — database.py, scraper.py, facility_hardware_scraper.py and recipe_drift/doctor.py. All four were deployed to both Pis at 04:49 and the promise is now proven, 13 of 13 (re-verified 2026-08-01 12:07 by md5 of each file on each Pi against the branch — all eight match). ⛔ The trap it caught is the lasting lesson: three of the four files had the Mac ahead, but scraper.py had the PI ahead, carrying a 2026-07-16 change that existed in no mainline commit. A plain rsync from the Mac would have deleted it and restored a false DRIFT REVIEW MANUALLY warning on every flower room. It was merged, not overwritten (036eec5), from the preserve/scraper-live-gaphide-2026-07-16 branch someone had kept for exactly this. The parity checker now fetches the differing files and says which side is ahead, which is how the Pi-ahead case was caught: a 2026-07-16 gap-hide fix lives only on the Pis and a plain rsync from the Mac would have erased it. Every promise was tested to fail on a throwaway copy and pass again; the suite runs 208 passed, 2 skipped, 1 xfailed.\n\n2026-08-14+: Veg→flower carry-over LIVE on apsu — a LINK not a copy (preserves both cycle-days). Veg LOAD auto-attach PROVEN by Max 2026-08-19; picker proposes, Max confirms. Harvest dossier carries veg_runoff stream; feat/veg-runoff-stream MERGED to main. 2026-08-22/23: Anderson-hub tree rescued (branch rescue/apsu-2026-08-22) and MERGED to GitHub main (cd24d23); checkout now UNDER GIT (146 files, DB deliberately untracked -- hand edits logged in DB-CHANGES.md). CONFIRMED two separate recipe books: apsu-backup runs its own on :5050 with its own DB, does NOT replicate from apsu -- edits must be re-applied per Pi.\n\n2026-08-27: runoff verdict made BAND-AWARE. database.py computed ec_verdict from a flat, day-blind ladder in which on-target only started at 3.3, so a room sitting exactly on the 3.2 band floor read Low -- 6 of the 8 rooms on the panel. A panel that cries wolf on six of eight rooms is a panel people stop reading. Replaced with the full band table mirroring ec-bands.js (on-target lo..hi; low from lo-0.3 up to lo; danger below lo-0.3, reserved for likely pumper failure; slightly-high and high above hi) and no band for the day returns unknown, never a guessed verdict -- keep the two tables in step. Verified live after restart: 7 on-target / 1 low, was 7 low / 1 on-target; EF4 at 3.0 is genuinely under the 3.2 floor and correctly stayed low. The panel is deliberately scoped to D14-42, but the full table went in so widening it later needs no further change. The restart was held until :15 so recipe-book.service was not bounced inside the irrigation capture window. Backup database.py.bak-20260827-ecbands; shows as modified in git, NOT committed. 2026-08-26: the anti-clutter version safeguards were confirmed to be real, working code in recipe_drift/classifier.py. Only six STRUCTURAL rules cut a version (ingredient added, removed, swapped; phase added, removed, renamed). dose_tweak, dial_change and control_type_change NEVER bump -- changing how much of something is dosed does not create a version, only changing what is in the program or which phases exist does. apply_cap() allows ONE bump per recipe per scrape, so a session with twenty structural edits produces one version, not twenty. Every change is journaled either way, so a dose tweak stays fully visible without manufacturing a version. That is why AB v11 / EF v11 / GH v9 sit far above archives at v1-v3 -- the system working, not a fault. /api/buildings and /api/recipe/* are now proxied same-origin over https, which is the only reason Observatory Chemistry works at all. 2026-10-03: a motion-and-visual makeover shipped and went live on both hubs (main 3818e2f) -- same tabs and functions kept, with a new Drench tab and a HARK front-door strip added. The Compare tab and the Ingredient Library's building-discrepancy view now read each building's current flower recipe off the controller instead of typed-in HTML (fa0377a), and the runoff column was removed across every page. 2026-10-11: controller credentials and addresses moved out of the scraper source code (d4b98e1). 2026-10-25: watering moved from a set volume per run to a set run time around 10/21, so the scraper now reads what actually ends each run (time or volume) and flags a watering-method change; deployed to both Pis (d27c313). Motion pieces live on both hubs: rooms near harvest breathe, the nutrient arc condenses from particles, a Play-cycle walk, and Evolution shows every version for each building, drawing a full recipe only where it was proven against controller snapshots. The Mac copy and the Observatory cache were made identical to both hubs and a daily parity check now compares all four copies. Two spellings of the same cal-mag line were merged on both hubs (old name hidden, history untouched).\n\n2026-11-07 (git): New controller programs reach the Recipe Book with their pump lines. Two building-scoped liquid aliases retired once that building went back to dry salts (recipe-book 32ee90c).\n2026-11-18: all three buildings on Drip salts (Drip A, B, C, D). Two buildings kept their old controller labels, so the book filed them as liquid; fixed on all four copies and the label lookups corrected.",
+   "dated": "2026-11-18"
   },
   {
    "id": "trellis",
@@ -53,7 +53,8 @@
    "status": "live",
    "desc": "Room builder. Runoff monitoring dashboard. OpenAPI-first codegen. Proprietary + Themes Pack tier.",
    "tech": "React 19 · Express 5 · PostgreSQL · Drizzle · Orval codegen · pnpm monorepo",
-   "notes": "2026-08-01 (git): repo TheMaxLong/Trellis @ main 7699432 as of 04:00 PT — last commit 2026-06-01, no new work in this window."
+   "notes": "2026-08-01 (git): repo TheMaxLong/Trellis @ main 7699432 as of 04:00 PT — last commit 2026-06-01, no new work in this window.\n2026-11-18: System Rounds found no running copy on either Pi or the Mac.",
+   "dated": "2026-11-18"
   },
   {
    "id": "hark-site",
@@ -66,8 +67,8 @@
    "status": "live",
    "desc": "Public marketing site. Gumroad shop live. Grow Journal $18. SSL on Vercel.",
    "tech": "Vercel · SSL · Gumroad",
-   "notes": "2026-08-01 (git): repo TheMaxLong/hark-equipment @ redesign/platform-prelaunch e514664 as of 04:00 PT — last commit 2026-07-25, no new work in this window. The live development branch is redesign/platform-prelaunch, not main (main sits older at c756bec), and the local clone is behind the remote at 47116f1.\n\n2026-09-15: looked at as a home for the facility front door, and NOT used. Two reasons, and the second is the one that decided it.\n\nThe domain is registered and pointed at a static host that answers 404 — nothing is published on it, and every subdomain is caught by a wildcard pointing at the same place. So it is genuinely free.\n\n⛔ BUT IT IS THE PRODUCT'S DOMAIN AND THE FRONT DOOR IS THE FACILITY'S. Putting facility tools on it crosses the one line this whole map holds — no commercial surface touching the facility side, to the point where the script that edits this map refuses to draw an edge between them. Max parked it.\n\nAlso worth keeping: the private mesh proves it is itself and nothing else. A browser asking for another name gets a certificate for a name that does not match and refuses, so a custom name cannot simply be pointed at it — something has to stand in front and answer for that name, which is a new thing in the path and a new place for the traffic to be seen.",
-   "dated": "2026-09-15"
+   "notes": "2026-08-01 (git): repo TheMaxLong/hark-equipment @ redesign/platform-prelaunch e514664 as of 04:00 PT — last commit 2026-07-25, no new work in this window. The live development branch is redesign/platform-prelaunch, not main (main sits older at c756bec), and the local clone is behind the remote at 47116f1.\n\n2026-09-15: looked at as a home for the facility front door, and NOT used. Two reasons, and the second is the one that decided it.\n\nThe domain is registered and pointed at a static host that answers 404 — nothing is published on it, and every subdomain is caught by a wildcard pointing at the same place. So it is genuinely free.\n\n⛔ BUT IT IS THE PRODUCT'S DOMAIN AND THE FRONT DOOR IS THE FACILITY'S. Putting facility tools on it crosses the one line this whole map holds — no commercial surface touching the facility side, to the point where the script that edits this map refuses to draw an edge between them. Max parked it.\n\nAlso worth keeping: the private mesh proves it is itself and nothing else. A browser asking for another name gets a certificate for a name that does not match and refuses, so a custom name cannot simply be pointed at it — something has to stand in front and answer for that name, which is a new thing in the path and a new place for the traffic to be seen.\n2026-11-18: DOWN. The domain answers GitHub Site not found since the site repo went private. Decision pending: public repo or paid plan.",
+   "dated": "2026-11-18"
   },
   {
    "id": "fluxuum",
@@ -162,7 +163,8 @@
    "status": "live",
    "desc": "Where it started. First Pi monitor. Flask + SQLite + WebSocket. Proved the concept. Everything grew from here.",
    "tech": "Python · Flask · SQLite · Chart.js · systemd · Raspberry Pi 5",
-   "notes": "2026-08-01 (git): repo TheMaxLong/Project_Panopticon @ main 0c6c50c as of 04:00 PT — last commit 2026-05-27, no new work in this window."
+   "notes": "2026-08-01 (git): repo TheMaxLong/Project_Panopticon @ main 0c6c50c as of 04:00 PT — last commit 2026-05-27, no new work in this window.\n2026-11-18: System Rounds found no running copy on either Pi or the Mac.",
+   "dated": "2026-11-18"
   },
   {
    "id": "pi",
@@ -225,10 +227,11 @@
    "x": 0.26252424988989315,
    "y": 0.8390730178848066,
    "type": "Watchdog",
-   "status": "live",
+   "status": "disarmed",
    "desc": "Mac→Pi health monitor. Polls every 5 minutes. Fires ntfy push to phone if Pi goes dark.",
    "tech": "~/bin/apsu-backup-watcher · launchd com.max.apsu-backup-watcher · ntfy.sh (repointed from apsu 2026-05-27)",
-   "notes": "2026-07-29: this watcher is only a 'the Pi went dark' alarm, and that is why the outage went unnoticed for an hour — apsu stopped COLLECTING at 11:02:53 and kept answering the network until 12:05, so nothing here could have fired. ⛔ The missing guard is a readings-staleness alarm (no new readings in N minutes). It does not exist on either Pi yet.\nDifferent thing from the on-Pi Failover Watcher, which spent 2026-07-29 restart-looping every 30 seconds and is now deliberately left disarmed.\n\n2026-08-01 (git, through 04:00 PT): TheMaxLong/HARK-System-Map @ claude/apsu-failover-txsvqe 66d4087 — 2 commits since 2026-07-29, not merged to main. watch-pi-health.sh now watches the two Pis separately. Its HTTP probe was never repointed after apsu resumed primary on 2026-05-28, so for two months it reported apsu-backup's health under apsu's name; each host now has its own probe, service checks, throttle keys and alerts. Replayed against the 2026-07-29 outage, the old script never once fired Pi unreachable while apsu was off the network for eight hours."
+   "notes": "2026-07-29: this watcher is only a 'the Pi went dark' alarm, and that is why the outage went unnoticed for an hour — apsu stopped COLLECTING at 11:02:53 and kept answering the network until 12:05, so nothing here could have fired. ⛔ The missing guard is a readings-staleness alarm (no new readings in N minutes). It does not exist on either Pi yet.\nDifferent thing from the on-Pi Failover Watcher, which spent 2026-07-29 restart-looping every 30 seconds and is now deliberately left disarmed.\n\n2026-08-01 (git, through 04:00 PT): TheMaxLong/HARK-System-Map @ claude/apsu-failover-txsvqe 66d4087 — 2 commits since 2026-07-29, not merged to main. watch-pi-health.sh now watches the two Pis separately. Its HTTP probe was never repointed after apsu resumed primary on 2026-05-28, so for two months it reported apsu-backup's health under apsu's name; each host now has its own probe, service checks, throttle keys and alerts. Replayed against the 2026-07-29 outage, the old script never once fired Pi unreachable while apsu was off the network for eight hours.\n2026-11-18: off on purpose. The Mac no longer pages; the Pi-side health scanner and failover watcher took over. System Rounds verifies it stays off.",
+   "dated": "2026-11-18"
   },
   {
    "id": "anderson",
@@ -423,11 +426,11 @@
    "x": 0.722196034585474,
    "y": 0.43954854025416124,
    "type": "Env Alerting Subsystem",
-   "status": "live",
+   "status": "disarmed",
    "desc": "Env smoke alarm inside Cannamax. 30s tick, 24 rooms, 2 detectors (high_temp 90°F, high_co2 3000ppm). Fires events to /events page + ntfy push. Lives on apsu.",
    "tech": "TypeScript · Drizzle · Postgres facility_events table · pure-function detectors · ntfy.sh push",
-   "notes": "2026-05-28: enabled (was silently off via systemd override). Fire+clear path verified end-to-end with AB6 test. Source mirrored from apsu-backup back to git (commit 912818c) — was hand-edited on Pi with no version tracking. Master switch: FACILITY_WATCH=on in /home/pi/cannamax/demo/runoff-loader/.env. Push topic: gacx-power-y2k7q9pmx3. 2026-06-01: lights_out_inferred + lights_on_too_cold stripped from all 24 rooms (Cannamax commit aa7e424). Only high_temp + high_co2 remain active. lights_on_too_cold lives as standalone detector node. 2026-06-19: startFacilityWatch() call restored in server.ts (its absence had broken ALL room temp/CO2 alerts since 6/17); 24 rooms, 90°F/3000ppm, ntfy gacx-power-y2k7q9pmx3 — confirmed live 2026-06-25.\n\n2026-08-01 (git): lives in TheMaxLong/Fluxuum-Logger_v420 @ main ad7f6d7 as of 04:00 PT — the repo moved 12 commits since 2026-07-22 but none of them touched the detectors or the ntfy path. 2026-10-26: this watcher fires on minute-polled temperature only and never reads the controller's own high-temp latch, so a spike between polls can trip the controller with no page. That gap is now covered by the High-Temp Latch Alert node.",
-   "dated": "2026-10-26"
+   "notes": "2026-05-28: enabled (was silently off via systemd override). Fire+clear path verified end-to-end with AB6 test. Source mirrored from apsu-backup back to git (commit 912818c) — was hand-edited on Pi with no version tracking. Master switch: FACILITY_WATCH=on in /home/pi/cannamax/demo/runoff-loader/.env. Push topic: gacx-power-y2k7q9pmx3. 2026-06-01: lights_out_inferred + lights_on_too_cold stripped from all 24 rooms (Cannamax commit aa7e424). Only high_temp + high_co2 remain active. lights_on_too_cold lives as standalone detector node. 2026-06-19: startFacilityWatch() call restored in server.ts (its absence had broken ALL room temp/CO2 alerts since 6/17); 24 rooms, 90°F/3000ppm, ntfy gacx-power-y2k7q9pmx3 — confirmed live 2026-06-25.\n\n2026-08-01 (git): lives in TheMaxLong/Fluxuum-Logger_v420 @ main ad7f6d7 as of 04:00 PT — the repo moved 12 commits since 2026-07-22 but none of them touched the detectors or the ntfy path. 2026-10-26: this watcher fires on minute-polled temperature only and never reads the controller's own high-temp latch, so a spike between polls can trip the controller with no page. That gap is now covered by the High-Temp Latch Alert node.\n2026-11-18: off on purpose; the two 90F watchers are the deliberate pair.",
+   "dated": "2026-11-18"
   },
   {
    "id": "ntfy",
@@ -588,8 +591,8 @@
    "status": "live",
    "desc": "5-step facility sweep on the Mac (recipe-defs scrape, irrigation audit, recipe-drift ingest, Pi sync, hardware scrape) plus the broken-pump detector. Runs via launchd (~15 min) or on-demand when a phone publishes to the trigger topic. Result digest — changes / flagged-for-review, 7-day forecast (harvests + phase changes), broken-pump — is pushed back to the recipe tripwire topic.",
    "tech": "zsh FacilityCheck() (~/.zshrc) · facility-check-listener.sh (launchd) · facility-digest.py · ntfy (trigger: hark-facility-check-… / result: recipe tripwire)",
-   "notes": "2026-06-25: wired the Pixel-10 Termux 'FacilityCheck' button (was a no-op — the shortcut backgrounded its curl and Termux:Widget reaped it before it sent; now publishes synchronously). Listener now pushes a section-accurate result digest to the recipe tripwire topic, forwarding FacilityCheck's own section titles + forecast dates verbatim (fixed an early 'HARVEST TODAY' mislabel of 7-day-forecast data). 2026-06-25: phone button now triggers FacilityCheckPeek (READ-ONLY) — scrapes the controllers and shows the week's changes (program progressions, doses, hardware) but saves/ingests/syncs NOTHING, so it never consumes the Mac's diff baseline. The Mac's full FacilityCheck stays the single authoritative audit that captures + journals. Verified: peek wrote nothing (hash-identical before/after). 2026-10-25: every run now prints each room's latest recipe step, so a stage change is visible without opening the Recipe Book (e1c4bba).",
-   "dated": "2026-10-25"
+   "notes": "2026-06-25: wired the Pixel-10 Termux 'FacilityCheck' button (was a no-op — the shortcut backgrounded its curl and Termux:Widget reaped it before it sent; now publishes synchronously). Listener now pushes a section-accurate result digest to the recipe tripwire topic, forwarding FacilityCheck's own section titles + forecast dates verbatim (fixed an early 'HARVEST TODAY' mislabel of 7-day-forecast data). 2026-06-25: phone button now triggers FacilityCheckPeek (READ-ONLY) — scrapes the controllers and shows the week's changes (program progressions, doses, hardware) but saves/ingests/syncs NOTHING, so it never consumes the Mac's diff baseline. The Mac's full FacilityCheck stays the single authoritative audit that captures + journals. Verified: peek wrote nothing (hash-identical before/after). 2026-10-25: every run now prints each room's latest recipe step, so a stage change is visible without opening the Recipe Book (e1c4bba).\n2026-11-18: a product switch that keeps its controller label (same name, new tank) is now caught by System Rounds: one read touching a port in 8 or more programs.",
+   "dated": "2026-11-18"
   },
   {
    "id": "recipe-tripwire",
@@ -734,10 +737,11 @@
    "x": 0.13193415492857902,
    "y": 0.7581914560458465,
    "type": "Off-Site Backup · launchd (Mac)",
-   "status": "live",
+   "status": "disarmed",
    "desc": "Daily 03:00 launchd job on the Mac (com.max.facility-archive-backup) -- pg_dump of apsu-backup fluxuum DB streamed over SSH (never written to the SD card) to the Mac + Google Drive, 30-day retention, gzip-t + row-floor verified before the Drive copy.",
    "tech": "launchd · pg_dump over SSH · gzip · Google Drive",
-   "notes": "2026-07-20: built + live-tested -- 12M, 471420 readings rows, span 2026-05-19 to 07-20, local + Drive both ok. Closes the single-SD-card gap in the hot-primary / deep-archive split (apsu-backup held May19-Jun20 nowhere else). Pull model (no cron or credentials on the Pi); atomic tmp then mv so Drive never syncs a half file; local copy verified FIRST. NOTE neon_sync is NOT a backup (aggregated fluxuum_runs only, 10-day rolling DELETE). NOT yet covered: apsu own fluxuum/cannamax DBs (a one-line add when wanted).\n\n2026-07-29: WAS DEAD SINCE JUL 26 — now fixed and proven. Root cause was NOT the sudo fault first suspected: launchd could not create its own log files under ~/Documents (macOS protects that folder), so the job died at spawn (exit 78) before the script ever ran. Fix = point only StandardOutPath/StandardErrorPath at ~/Library/Logs. No Full Disk Access needed.\nFresh dump 21:02 — 17MB, all 20 tables (catalog says 20, so complete), readings 320,675 + readings_archive 232,648 = 553,323 rows, local + Google Drive.\n✅ The May 19 - Jun 20 deep archive is PROVEN INTACT in that dump; the earlier 'unproven' caveat is closed.\n21:35: the script no longer uses sudo at all — pg_read_all_data granted to the fluxuum role on BOTH Pis, and the connection string is resolved on the Pi so no password ever touches a command line. Note the two boxes differ in sudo config: apsu has no stored sudo password yet sudo -u postgres works passwordless there.\nCompleteness bar hardened: the dump's table count must equal the live count, readings_archive must be present, total history must be at least 400k rows, and it never overwrites an existing file.\n✅ New daily 09:00 staleness alarm (com.max.facility-archive-staleness) pushes to ntfy if the newest archive is over 36h old, or the folder is empty or missing. Facts only.\n🐛 Three traps found writing this, all worth remembering: grep -q under pipefail sends SIGPIPE upstream so the pipeline 'fails' even though the pattern MATCHED (it rejected a good backup — use grep -c); a remote pg_dump | gzip over ssh has NO pipefail by default, so a dying pg_dump still exits 0 and a TRUNCATED dump reads as success (prepend set -o pipefail to the remote command); and an [ -n VAR ] guard around a check silently SKIPS the check when the metadata query fails — log a warning, never skip quietly.\n\n2026-08-01 (git, through 04:00 PT): TheMaxLong/HARK-System-Map @ claude/apsu-failover-txsvqe d02f685 — 1 commit since 2026-07-20, not merged to main. The archive got a manifest of twenty promises checked daily with five verdict states including blocked, and eight drills that sabotage something and assert the alarm fires before the prover runs. Adds a monthly restore drill (gzip -t plus a restore validation), treats an unplugged external drive as standby rather than failure, has the widget read the verdicts instead of deriving its own, and raises a 36-hour staleness alarm at 09:00. The ntfy topic moved out of the scripts into ~/.config/facility-assurance/ntfy-topic at mode 600."
+   "notes": "2026-07-20: built + live-tested -- 12M, 471420 readings rows, span 2026-05-19 to 07-20, local + Drive both ok. Closes the single-SD-card gap in the hot-primary / deep-archive split (apsu-backup held May19-Jun20 nowhere else). Pull model (no cron or credentials on the Pi); atomic tmp then mv so Drive never syncs a half file; local copy verified FIRST. NOTE neon_sync is NOT a backup (aggregated fluxuum_runs only, 10-day rolling DELETE). NOT yet covered: apsu own fluxuum/cannamax DBs (a one-line add when wanted).\n\n2026-07-29: WAS DEAD SINCE JUL 26 — now fixed and proven. Root cause was NOT the sudo fault first suspected: launchd could not create its own log files under ~/Documents (macOS protects that folder), so the job died at spawn (exit 78) before the script ever ran. Fix = point only StandardOutPath/StandardErrorPath at ~/Library/Logs. No Full Disk Access needed.\nFresh dump 21:02 — 17MB, all 20 tables (catalog says 20, so complete), readings 320,675 + readings_archive 232,648 = 553,323 rows, local + Google Drive.\n✅ The May 19 - Jun 20 deep archive is PROVEN INTACT in that dump; the earlier 'unproven' caveat is closed.\n21:35: the script no longer uses sudo at all — pg_read_all_data granted to the fluxuum role on BOTH Pis, and the connection string is resolved on the Pi so no password ever touches a command line. Note the two boxes differ in sudo config: apsu has no stored sudo password yet sudo -u postgres works passwordless there.\nCompleteness bar hardened: the dump's table count must equal the live count, readings_archive must be present, total history must be at least 400k rows, and it never overwrites an existing file.\n✅ New daily 09:00 staleness alarm (com.max.facility-archive-staleness) pushes to ntfy if the newest archive is over 36h old, or the folder is empty or missing. Facts only.\n🐛 Three traps found writing this, all worth remembering: grep -q under pipefail sends SIGPIPE upstream so the pipeline 'fails' even though the pattern MATCHED (it rejected a good backup — use grep -c); a remote pg_dump | gzip over ssh has NO pipefail by default, so a dying pg_dump still exits 0 and a TRUNCATED dump reads as success (prepend set -o pipefail to the remote command); and an [ -n VAR ] guard around a check silently SKIPS the check when the metadata query fails — log a warning, never skip quietly.\n\n2026-08-01 (git, through 04:00 PT): TheMaxLong/HARK-System-Map @ claude/apsu-failover-txsvqe d02f685 — 1 commit since 2026-07-20, not merged to main. The archive got a manifest of twenty promises checked daily with five verdict states including blocked, and eight drills that sabotage something and assert the alarm fires before the prover runs. Adds a monthly restore drill (gzip -t plus a restore validation), treats an unplugged external drive as standby rather than failure, has the widget read the verdicts instead of deriving its own, and raises a 36-hour staleness alarm at 09:00. The ntfy topic moved out of the scripts into ~/.config/facility-assurance/ntfy-topic at mode 600.\n2026-11-18: off on purpose. The Mac-side backup jobs are disabled; the Pi database dumps now land on the Seagate archive whenever the drive is plugged in.",
+   "dated": "2026-11-18"
   },
   {
    "id": "lms-watchdog",
@@ -888,8 +892,8 @@
    "status": "live",
    "desc": "The screen that shows what SENTINEL found. One backend serves the same status to a Mac desktop widget and a phone page, so a promise that broke is visible without opening a terminal.",
    "tech": "Node · Ubersicht widget · phone HTML · read-only probes · ~/sentinel-surface (local repo, no remote)",
-   "notes": "2026-08-01: first commit. Running on the Mac right now — a node process is listening on :3060 and two launchd jobs (com.max.sentinel-scan, com.max.sentinel-digest-sync) are loaded. It checks seven things: controllers being watched, the irrigation poller running, the two Pis running identical code, services up, readings still flowing, Pi temperature, and disk space. Every check is read-only, and it keeps blocked (tried to look, could not) separate from failed (looked, found something bad) — five verdict states in all. A systemd unit for /home/pi/sentinel-surface exists in the repo, but whether it is installed on either Pi is NOT confirmed here. The repo is local only with no remote, so its history is not backed up anywhere.\n\n2026-08-03+: Sentinel fence gained every-harvest-captured — checks CannaMax cycles table against archive files, finds dossiers never written. Probe piped over ssh, writes nothing. Runs daily 7am scan. Fence now 10/10 proven.\n\n2026-08-27: the box tree sentinel s1-tree-* went RED after the nav patches, and the red was CORRECT -- it verifies each tree against a HARK-MANIFEST.json recorded at deploy time, and the trees genuinely differed from the last deploy. Re-baselined all four with the box own tools/make-tree-manifest.ts, Max approved, using the convention already present on three of them: commit rebaselined rather than a real commit. ⚠️ sentinel/probes/every-harvest-captured.py was already modified by another session and is still uncommitted -- not mine, not pushed. 2026-10-27: the 7am scan now brings each Mac repo copy up to GitHub before checking it, which ends the weekly false reds for code the Pi runs but the Mac copy had not pulled, and it records new harvests in the dossier ledger on its own (~/bin 00c47fd).\n\n2026-11-07 (git): The Hardware group shows both Pis by name with free disk, and a toggle switches between them on the widget and the phone page; the widget refreshes every 5 minutes. The toggle tests compare against each Pi's live reading, not fixed numbers (4 commits, latest dee628d).",
-   "dated": "2026-11-07"
+   "notes": "2026-08-01: first commit. Running on the Mac right now — a node process is listening on :3060 and two launchd jobs (com.max.sentinel-scan, com.max.sentinel-digest-sync) are loaded. It checks seven things: controllers being watched, the irrigation poller running, the two Pis running identical code, services up, readings still flowing, Pi temperature, and disk space. Every check is read-only, and it keeps blocked (tried to look, could not) separate from failed (looked, found something bad) — five verdict states in all. A systemd unit for /home/pi/sentinel-surface exists in the repo, but whether it is installed on either Pi is NOT confirmed here. The repo is local only with no remote, so its history is not backed up anywhere.\n\n2026-08-03+: Sentinel fence gained every-harvest-captured — checks CannaMax cycles table against archive files, finds dossiers never written. Probe piped over ssh, writes nothing. Runs daily 7am scan. Fence now 10/10 proven.\n\n2026-08-27: the box tree sentinel s1-tree-* went RED after the nav patches, and the red was CORRECT -- it verifies each tree against a HARK-MANIFEST.json recorded at deploy time, and the trees genuinely differed from the last deploy. Re-baselined all four with the box own tools/make-tree-manifest.ts, Max approved, using the convention already present on three of them: commit rebaselined rather than a real commit. ⚠️ sentinel/probes/every-harvest-captured.py was already modified by another session and is still uncommitted -- not mine, not pushed. 2026-10-27: the 7am scan now brings each Mac repo copy up to GitHub before checking it, which ends the weekly false reds for code the Pi runs but the Mac copy had not pulled, and it records new harvests in the dossier ledger on its own (~/bin 00c47fd).\n\n2026-11-07 (git): The Hardware group shows both Pis by name with free disk, and a toggle switches between them on the widget and the phone page; the widget refreshes every 5 minutes. The toggle tests compare against each Pi's live reading, not fixed numbers (4 commits, latest dee628d).\n2026-11-18: System Rounds reads its scan freshness every 30 min.",
+   "dated": "2026-11-18"
   },
   {
    "id": "facility-ops-bin",
@@ -1010,11 +1014,11 @@
    "x": 0.72,
    "y": 0.88,
    "type": "Watchdog · Finds Unasked Problems",
-   "status": "live",
+   "status": "disarmed",
    "desc": "Read-only daily 13:47 Mac sweep for what nobody asks about: silently failing launchd jobs, a Pi down, stale or corrupt backups, unapplied migrations. At most one ntfy push per run, plus a Sunday all-clear.",
    "tech": "launchd com.max.hark-sweep · ~/bin/hark-sweep.sh · read-only",
-   "notes": "2026-08-20: LIVE. Runs daily at 13:47, deliberately inside the :45-:00 safe band so it never queries a Pi mid-irrigation, and off the :00/:30 marks every other job piles onto. Checks: launchd jobs with a non-zero last exit, both Pis reachable, backups fresh AND readable (gzip -t on the last 8, present is not the same as valid), surviving-Pi health (disk, temp, get_throttled, dmesg), the LANDMINE check (.sql files in recipe-book migrations with no _migrations row, which a bare apply.py would fire), and that data is still arriving. Read-only, changes nothing anywhere. On its first run 2026-08-20 00:41 it reproduced all three of the prior night manual findings by itself (the eight failing launchd jobs, apsu-backup unreachable, and one unapplied migration) and correctly stayed quiet about the healthy things. BLIND SPOT it exposed: it derives its job list from ~/Library/LaunchAgents plists, so it never sees crontab jobs like the 70-day-dead lake sync.",
-   "dated": "2026-08-20"
+   "notes": "2026-08-20: LIVE. Runs daily at 13:47, deliberately inside the :45-:00 safe band so it never queries a Pi mid-irrigation, and off the :00/:30 marks every other job piles onto. Checks: launchd jobs with a non-zero last exit, both Pis reachable, backups fresh AND readable (gzip -t on the last 8, present is not the same as valid), surviving-Pi health (disk, temp, get_throttled, dmesg), the LANDMINE check (.sql files in recipe-book migrations with no _migrations row, which a bare apply.py would fire), and that data is still arriving. Read-only, changes nothing anywhere. On its first run 2026-08-20 00:41 it reproduced all three of the prior night manual findings by itself (the eight failing launchd jobs, apsu-backup unreachable, and one unapplied migration) and correctly stayed quiet about the healthy things. BLIND SPOT it exposed: it derives its job list from ~/Library/LaunchAgents plists, so it never sees crontab jobs like the 70-day-dead lake sync.\n2026-11-18: off on purpose (disabled with the Mac pagers; last ran 8/28). Replaced by System Rounds.",
+   "dated": "2026-11-18"
   },
   {
    "id": "carel-cpco",
@@ -1308,6 +1312,90 @@
    "tech": "Python · cron every minute · reads the tracker's controller feed already on the Pi, no extra controller traffic · ntfy",
    "notes": "2026-10-25: built after a controller latched its high-temp alert on three rooms and no page went out; both 90°F watchers read minute-polled temperature, never the latch. Unscheduled the same night on a misread of 'no extra pulling' (it pulls nothing from the controllers). 2026-10-26: back on for good, covering every room, and a room already latched on one channel now also pages when the other channel latches. Standing rule: this alert is never switched off.\n\n2026-11-07 (git): The latches it pages on now also show as markers on the Observatory's Cycle Env page (Observatory-Pages ba30f5c).",
    "dated": "2026-11-07"
+  },
+  {
+   "id": "system-rounds",
+   "label": "System\nRounds",
+   "cat": "infra",
+   "sz": 16,
+   "x": 0.35683129198018465,
+   "y": 0.9292944763917983,
+   "type": "Health check",
+   "status": "live",
+   "desc": "One read-only pass over every part of this map, every 30 minutes: services and pages on both Pis, Mac jobs, public links, backups, the Recipe Book copies, and controller reads that look like a product switch. A check that goes quiet shows up red, never green. Every Claude session opens on the red list and owns it.",
+   "tech": "Python stdlib · launchd every 30 min · one read-only ssh per Pi per round · page + SessionStart notice · 25-case self-check",
+   "notes": "2026-11-18: live. First rounds found five checks that had gone silent since August and a public site down.",
+   "dated": "2026-11-18"
+  },
+  {
+   "id": "live-camera",
+   "label": "Live\nCamera",
+   "cat": "display",
+   "sz": 11,
+   "x": 0.6630301671560566,
+   "y": 0.07,
+   "type": "Capture",
+   "status": "live",
+   "desc": "Phone camera page on both hubs for runoff sheets: crop, magnifier, row reader and rotate before the picture goes to OCR.",
+   "tech": "nginx · single page · both hubs",
+   "notes": "2026-11-18: added to the map; live since 2026-11-06.",
+   "dated": "2026-11-18"
+  },
+  {
+   "id": "the-gallery",
+   "label": "The\nGallery",
+   "cat": "display",
+   "sz": 12,
+   "x": 0.5181064110215561,
+   "y": 0.4425213573964617,
+   "type": "Exhibit",
+   "status": "live",
+   "desc": "A walk-through gallery of every ingredient in the Recipe Book: real product photos, label art on the jug, chemistry notes. Rebuilds itself when the book changes.",
+   "tech": "Python build · Blender · Mac app · nightly + on drive mount",
+   "notes": "2026-11-18: added to the map. Fixed: a missing label picture no longer stops a rebuild, and the job now also runs when the archive drive is plugged in.",
+   "dated": "2026-11-18"
+  },
+  {
+   "id": "seagate-archive",
+   "label": "Seagate\nArchive",
+   "cat": "infra",
+   "sz": 11,
+   "x": 0.181934154928579,
+   "y": 0.7981914560458465,
+   "type": "Backup",
+   "status": "live",
+   "desc": "Portable drive that holds the daily Pi database dumps and the Gallery sources. Pulls run whenever it is plugged in.",
+   "tech": "launchd StartOnMount · rsync add-only",
+   "notes": "2026-11-18: added to the map. System Rounds shows whether it is plugged in and the age of the newest dump.",
+   "dated": "2026-11-18"
+  },
+  {
+   "id": "claude-station",
+   "label": "Claude\nStation",
+   "cat": "infra",
+   "sz": 10,
+   "x": 0.41683129198018465,
+   "y": 0.8892944763917983,
+   "type": "Remote control",
+   "status": "live",
+   "desc": "Claude Code remote control running on the Mac, so a session can be started from the Claude app.",
+   "tech": "launchd · claude remote-control",
+   "notes": "2026-11-18: added to the map.",
+   "dated": "2026-11-18"
+  },
+  {
+   "id": "env-trends",
+   "label": "Env\nTrends",
+   "cat": "data",
+   "sz": 11,
+   "x": 0.7923386754051669,
+   "y": 0.6886670598908587,
+   "type": "Data pull",
+   "status": "live",
+   "desc": "Hourly pull of every flower room climate trend, baked per crop cycle with blackout periods marked, for the room pages and Room Compare.",
+   "tech": "Python · cron hourly + every 15 min",
+   "notes": "2026-11-18: added to the map.",
+   "dated": "2026-11-18"
   }
  ],
  "edges": [
@@ -2902,7 +2990,72 @@
    "t": "observatory",
    "label": "latch markers on Cycle Env",
    "pulse": false
+  },
+  {
+   "s": "system-rounds",
+   "t": "pi",
+   "label": "watches"
+  },
+  {
+   "s": "system-rounds",
+   "t": "apsu-backup",
+   "label": "watches"
+  },
+  {
+   "s": "system-rounds",
+   "t": "recipe-book",
+   "label": "4-copy parity"
+  },
+  {
+   "s": "system-rounds",
+   "t": "facility-check",
+   "label": "reads every sweep"
+  },
+  {
+   "s": "system-rounds",
+   "t": "sentinel-surface",
+   "label": "checks freshness"
+  },
+  {
+   "s": "system-rounds",
+   "t": "data-endpoint-guard",
+   "label": "checks the checker"
+  },
+  {
+   "s": "system-rounds",
+   "t": "seagate-archive",
+   "label": "dump age"
+  },
+  {
+   "s": "hark-sweep",
+   "t": "system-rounds",
+   "label": "replaced by"
+  },
+  {
+   "s": "claude-station",
+   "t": "system-rounds",
+   "label": "sessions read the reds"
+  },
+  {
+   "s": "live-camera",
+   "t": "flower-room",
+   "label": "sheet photos"
+  },
+  {
+   "s": "recipe-book",
+   "t": "the-gallery",
+   "label": "ingredients"
+  },
+  {
+   "s": "apsu-backup",
+   "t": "seagate-archive",
+   "label": "DB dumps"
+  },
+  {
+   "s": "env-trends",
+   "t": "room-compare",
+   "label": "climate per cycle"
   }
  ],
- "_saved": "2026-08-30T01:06:47.118230Z"
+ "_saved": "2026-11-18T13:26:49.954518Z"
 }
