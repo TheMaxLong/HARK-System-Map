@@ -1,5 +1,5 @@
 {
- "generated": "2026-11-18T08:10Z",
+ "generated": "2026-11-18T11:11Z",
  "source": "NOEMA project index + git log on the maintainer's Mac — aggregates only (dates, counts, a 12-week sparkline)",
  "matched": 24,
  "nodes": {
@@ -43,8 +43,8 @@
    "weeks": [
     10,
     2,
-    12,
-    7,
+    13,
+    6,
     15,
     11,
     0,
@@ -617,7 +617,7 @@
    "lastCommit": "2026-10-19",
    "commits": 45,
    "commits7": 0,
-   "commits30": 36,
+   "commits30": 32,
    "commits90": 45,
    "contributors": 1,
    "weeks": [
