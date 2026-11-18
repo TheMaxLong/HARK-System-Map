@@ -1,7 +1,7 @@
 {
- "generated": "2026-11-18T11:11Z",
+ "generated": "2026-11-18T14:11Z",
  "source": "NOEMA project index + git log on the maintainer's Mac — aggregates only (dates, counts, a 12-week sparkline)",
- "matched": 45,
+ "matched": 46,
  "nodes": {
   "cannamax": {
    "firstCommit": "2026-05-10",
@@ -20,8 +20,8 @@
     0,
     1,
     0,
-    0,
-    4,
+    2,
+    2,
     0,
     0
    ],
@@ -63,14 +63,14 @@
   },
   "recipe-book": {
    "firstCommit": "2026-05-04",
-   "lastCommit": "2026-11-03",
-   "commits": 213,
-   "commits7": 0,
-   "commits30": 8,
-   "commits90": 64,
+   "lastCommit": "2026-11-18",
+   "commits": 214,
+   "commits7": 1,
+   "commits30": 9,
+   "commits90": 65,
    "contributors": 2,
    "weeks": [
-    2,
+    1,
     2,
     3,
     15,
@@ -81,13 +81,13 @@
     6,
     2,
     0,
-    0
+    1
    ],
    "branch": "main",
    "dirty": 8,
    "ahead": 0,
    "behind": 0,
-   "lastActivity": "2026-11-02",
+   "lastActivity": "2026-11-18",
    "repo": "recipe-book"
   },
   "trellis": {
@@ -218,8 +218,8 @@
     6,
     0,
     5,
-    0,
-    5,
+    1,
+    4,
     0,
     0,
     0,
@@ -354,10 +354,10 @@
   "dead-man": {
    "firstCommit": "2026-05-19",
    "lastCommit": "2026-11-18",
-   "commits": 461,
-   "commits7": 55,
-   "commits30": 178,
-   "commits90": 212,
+   "commits": 464,
+   "commits7": 57,
+   "commits30": 181,
+   "commits90": 215,
    "contributors": 3,
    "weeks": [
     11,
@@ -369,9 +369,9 @@
     2,
     5,
     5,
-    64,
+    65,
     54,
-    55
+    57
    ],
    "branch": "main",
    "dirty": 1,
@@ -621,7 +621,7 @@
    "commits90": 131,
    "contributors": 2,
    "weeks": [
-    4,
+    3,
     24,
     17,
     3,
@@ -672,14 +672,14 @@
   },
   "broken-pump": {
    "firstCommit": "2026-05-04",
-   "lastCommit": "2026-11-03",
-   "commits": 213,
-   "commits7": 0,
-   "commits30": 8,
-   "commits90": 64,
+   "lastCommit": "2026-11-18",
+   "commits": 214,
+   "commits7": 1,
+   "commits30": 9,
+   "commits90": 65,
    "contributors": 2,
    "weeks": [
-    2,
+    1,
     2,
     3,
     15,
@@ -690,25 +690,25 @@
     6,
     2,
     0,
-    0
+    1
    ],
    "branch": "main",
    "dirty": 8,
    "ahead": 0,
    "behind": 0,
-   "lastActivity": "2026-11-02",
+   "lastActivity": "2026-11-18",
    "repo": "recipe-book"
   },
   "recipe-tripwire": {
    "firstCommit": "2026-05-04",
-   "lastCommit": "2026-11-03",
-   "commits": 213,
-   "commits7": 0,
-   "commits30": 8,
-   "commits90": 64,
+   "lastCommit": "2026-11-18",
+   "commits": 214,
+   "commits7": 1,
+   "commits30": 9,
+   "commits90": 65,
    "contributors": 2,
    "weeks": [
-    2,
+    1,
     2,
     3,
     15,
@@ -719,13 +719,13 @@
     6,
     2,
     0,
-    0
+    1
    ],
    "branch": "main",
    "dirty": 8,
    "ahead": 0,
    "behind": 0,
-   "lastActivity": "2026-11-02",
+   "lastActivity": "2026-11-18",
    "repo": "recipe-book"
   },
   "pm-backfill": {
@@ -759,14 +759,14 @@
   },
   "drench-library": {
    "firstCommit": "2026-05-04",
-   "lastCommit": "2026-11-03",
-   "commits": 213,
-   "commits7": 0,
-   "commits30": 8,
-   "commits90": 64,
+   "lastCommit": "2026-11-18",
+   "commits": 214,
+   "commits7": 1,
+   "commits30": 9,
+   "commits90": 65,
    "contributors": 2,
    "weeks": [
-    2,
+    1,
     2,
     3,
     15,
@@ -777,13 +777,13 @@
     6,
     2,
     0,
-    0
+    1
    ],
    "branch": "main",
    "dirty": 8,
    "ahead": 0,
    "behind": 0,
-   "lastActivity": "2026-11-02",
+   "lastActivity": "2026-11-18",
    "repo": "recipe-book"
   },
   "facility-health-scanner": {
@@ -875,10 +875,10 @@
   "offsite-archive-backup": {
    "firstCommit": "2026-05-19",
    "lastCommit": "2026-11-18",
-   "commits": 461,
-   "commits7": 55,
-   "commits30": 178,
-   "commits90": 212,
+   "commits": 464,
+   "commits7": 57,
+   "commits30": 181,
+   "commits90": 215,
    "contributors": 3,
    "weeks": [
     11,
@@ -890,9 +890,9 @@
     2,
     5,
     5,
-    64,
+    65,
     54,
-    55
+    57
    ],
    "branch": "main",
    "dirty": 1,
@@ -1077,10 +1077,10 @@
   "failover-watcher": {
    "firstCommit": "2026-05-19",
    "lastCommit": "2026-11-18",
-   "commits": 461,
-   "commits7": 55,
-   "commits30": 178,
-   "commits90": 212,
+   "commits": 464,
+   "commits7": 57,
+   "commits30": 181,
+   "commits90": 215,
    "contributors": 3,
    "weeks": [
     11,
@@ -1092,9 +1092,9 @@
     2,
     5,
     5,
-    64,
+    65,
     54,
-    55
+    57
    ],
    "branch": "main",
    "dirty": 1,
@@ -1300,6 +1300,34 @@
    "ahead": 0,
    "behind": 0,
    "lastActivity": "2026-10-06"
+  },
+  "the-gallery": {
+   "firstCommit": "2026-09-27",
+   "lastCommit": "2026-11-18",
+   "commits": 128,
+   "commits7": 1,
+   "commits30": 10,
+   "commits90": 128,
+   "contributors": 1,
+   "weeks": [
+    0,
+    0,
+    0,
+    0,
+    68,
+    15,
+    30,
+    5,
+    7,
+    1,
+    1,
+    1
+   ],
+   "branch": "main",
+   "dirty": 738,
+   "ahead": 0,
+   "behind": 0,
+   "lastActivity": "2026-11-18"
   }
  }
 }
