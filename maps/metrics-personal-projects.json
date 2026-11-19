@@ -1,5 +1,5 @@
 {
- "generated": "2026-11-19T02:11Z",
+ "generated": "2026-11-19T11:12Z",
  "source": "NOEMA project index + git log on the maintainer's Mac — aggregates only (dates, counts, a 12-week sparkline)",
  "matched": 11,
  "nodes": {
@@ -47,8 +47,8 @@
     0,
     1,
     13,
-    0,
-    14,
+    1,
+    13,
     0,
     1,
     0
@@ -61,11 +61,11 @@
   },
   "recipe-book": {
    "firstCommit": "2026-05-04",
-   "lastCommit": "2026-11-18",
-   "commits": 214,
-   "commits7": 1,
-   "commits30": 9,
-   "commits90": 65,
+   "lastCommit": "2026-11-19",
+   "commits": 215,
+   "commits7": 2,
+   "commits30": 10,
+   "commits90": 66,
    "contributors": 2,
    "weeks": [
     1,
@@ -79,13 +79,13 @@
     6,
     2,
     0,
-    1
+    2
    ],
    "branch": "main",
-   "dirty": 8,
+   "dirty": 0,
    "ahead": 0,
    "behind": 0,
-   "lastActivity": "2026-11-18"
+   "lastActivity": "2026-11-19"
   },
   "trellis": {
    "firstCommit": "2026-05-16",
@@ -154,8 +154,8 @@
    "weeks": [
     1,
     0,
-    0,
-    4,
+    1,
+    3,
     0,
     0,
     0,
@@ -267,8 +267,8 @@
     1,
     0,
     0,
-    1,
-    1,
+    2,
+    0,
     0,
     0,
     0,
@@ -295,8 +295,8 @@
     1,
     0,
     0,
-    1,
-    1,
+    2,
+    0,
     0,
     0,
     0,
