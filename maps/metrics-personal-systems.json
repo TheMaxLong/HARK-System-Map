@@ -1,5 +1,5 @@
 {
- "generated": "2026-11-22T20:49Z",
+ "generated": "2026-11-22T23:49Z",
  "source": "NOEMA project index + git log on the maintainer's Mac — aggregates only (dates, counts, a 12-week sparkline)",
  "matched": 24,
  "nodes": {
@@ -74,8 +74,8 @@
     0,
     0,
     0,
-    0,
-    160,
+    2,
+    158,
     0,
     50,
     31,
@@ -102,8 +102,8 @@
     0,
     0,
     0,
-    8,
-    75,
+    19,
+    64,
     30,
     5,
     7,
@@ -238,10 +238,10 @@
   "govee-vibes": {
    "firstCommit": "2026-09-29",
    "lastCommit": "2026-11-22",
-   "commits": 21,
-   "commits7": 4,
-   "commits30": 4,
-   "commits90": 21,
+   "commits": 24,
+   "commits7": 7,
+   "commits30": 7,
+   "commits90": 24,
    "contributors": 1,
    "weeks": [
     0,
@@ -255,7 +255,7 @@
     0,
     0,
     0,
-    4
+    7
    ],
    "branch": "main",
    "dirty": 0,
@@ -589,7 +589,7 @@
    "commits": 87,
    "commits7": 0,
    "commits30": 0,
-   "commits90": 39,
+   "commits90": 38,
    "contributors": 9,
    "weeks": [
     5,
