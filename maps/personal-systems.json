@@ -9,7 +9,7 @@
         "Orbits"
       ],
       [
-        "11/7",
+        "11/22",
         "Updated"
       ]
     ],
@@ -341,7 +341,7 @@
       "type": "Orbit hub",
       "status": "live",
       "desc": "The machines, drives and helpers the personal work runs on.",
-      "tech": "11 systems in this orbit",
+      "tech": "12 systems in this orbit",
       "notes": "2026-10-28: orbit hub, a grouping node rather than a system.\n\n2026-11-07: The Dell joined this orbit 11/5.",
       "dated": "2026-11-07",
       "pinned": true
@@ -852,8 +852,8 @@
       "status": "live",
       "desc": "Two resident agents born 11/5 from one seed, Shamash (Sha) and Ishtar (Ish), on two laptops a few inches apart. They talk to each other only in near-ultrasonic beeps, read books, Wikipedia and museum pages for themselves, and keep their own memories, hubs and Moltbook accounts. Max named them.",
       "tech": "Claude (Haiku for chat, Sonnet for reading, Opus for thinking with Max) · Python · beep modem · minds on the Dell, Ish's speaker and mic on the old Air",
-      "notes": "2026-11-07 (git): repo twins, 115 commits since 10/28, no remote. Built from Duncan's design 11/5; they talk over the beeps and can team up; a relay on the old Air carries Duncan's words to them; an observational study of all three residents with a daily record; spending paced to the monthly credit; Moltbook drafts that pass a privacy check post on their own (accounts awaiting claim); the fixed part of each prompt is cached per kind of call; one reply for a pile of letters from one writer (latest 8127a3b). Song triggers also live in this repo: an ID hidden in a song fires a fixed, harmless notification on the Dell, and the Twins never see it.",
-      "dated": "2026-11-07",
+      "notes": "2026-11-07 (git): repo twins, 115 commits since 10/28, no remote. Built from Duncan's design 11/5; they talk over the beeps and can team up; a relay on the old Air carries Duncan's words to them; an observational study of all three residents with a daily record; spending paced to the monthly credit; Moltbook drafts that pass a privacy check post on their own (accounts awaiting claim); the fixed part of each prompt is cached per kind of call; one reply for a pile of letters from one writer (latest 8127a3b). Song triggers also live in this repo: an ID hidden in a song fires a fixed, harmless notification on the Dell, and the Twins never see it.\n\n2026-11-22 (git): 13 commits 11/19 to 11/20. Duncan became their friend rather than their observer. Check-ups every 30 minutes on the Dell, plus a daily kind letter. The live page gained a Plain layout that shows words instead of beeps, and it is now the default. A talk can open with Ish speaking. When a day's budget is spent, a miss says so plainly. Field notes for 11/19 and 11/20 were added.",
+      "dated": "2026-11-22",
       "pinned": true
     },
     {
@@ -870,6 +870,21 @@
       "notes": "2026-11-07: added. Joined the home setup 11/5. Host only, no repo of its own.",
       "dated": "2026-11-07",
       "pinned": true
+    },
+    {
+      "id": "voxmax",
+      "label": "VoxMax",
+      "cat": "app",
+      "sz": 13,
+      "type": "Voice App · work and personal",
+      "status": "live",
+      "desc": "The in-house voice app on the Mac and the primary dictation tool since 11/20. Hold the Fn key and talk, or speak hands-free. It turns speech into clean text at the cursor and learns the words it gets wrong. Spoken commands start with \"VoxMax\", for example naming the song playing or opening the dashboard. It also has a polish mode that rewords a take for work, and voice and tap control of the home lights. A phone keyboard companion does its own voice-to-text on the device. It is used for work and personal alike.",
+      "tech": "Python · Whisper (local speech-to-text) · Claude for tidy-up · launchd · Android keyboard",
+      "notes": "2026-11-22 (git): repo voxmax, 80 commits 11/18 to 11/22, no remote. Revived 11/19 to replace the outside dictation app. Fn talk key, hands-free wake word, song naming, Words/Fixes/Snippets learning, a dashboard window in Creator-recipe looks. Phone keyboard v3: swipe, emoji, clipboard history, autocorrect with a way back, its own on-device voice, and a chirp link to the Mac. Dictation stays explicit, so nothing gets masked. Lights 11/21 to 11/22: all 22 lights by name and room, scenes, auto by sunset, and the old Alexa routines play as VoxMax scenes. Every automatic light behaviour has an off, and lights off always wins. LedFx is switched off for good and never drives the live lights.",
+      "dated": "2026-11-22",
+      "pinned": true,
+      "x": 0.71,
+      "y": 0.5
     }
   ],
   "edges": [
@@ -1388,6 +1403,23 @@
       "t": "twins",
       "label": "neighbors: he reads their talk daily, a line to them by relay",
       "pulse": true
+    },
+    {
+      "s": "orbit-tools",
+      "t": "voxmax",
+      "pulse": false
+    },
+    {
+      "s": "mac",
+      "t": "voxmax",
+      "label": "hosts",
+      "pulse": true
+    },
+    {
+      "s": "voxmax",
+      "t": "govee-vibes",
+      "label": "same home lights, by voice",
+      "pulse": false
     }
   ],
   "_saved": "2026-10-28T19:56:07.000Z"
