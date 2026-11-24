@@ -1,5 +1,5 @@
 {
- "generated": "2026-11-24T02:51Z",
+ "generated": "2026-11-24T05:51Z",
  "source": "NOEMA project index + git log on the maintainer's Mac — aggregates only (dates, counts, a 12-week sparkline)",
  "matched": 46,
  "nodes": {
@@ -78,8 +78,8 @@
     0,
     0,
     4,
-    2,
-    2,
+    3,
+    1,
     0,
     4
    ],
@@ -353,11 +353,11 @@
   },
   "dead-man": {
    "firstCommit": "2026-05-19",
-   "lastCommit": "2026-11-23",
-   "commits": 506,
+   "lastCommit": "2026-11-24",
+   "commits": 507,
    "commits7": 55,
-   "commits30": 218,
-   "commits90": 255,
+   "commits30": 219,
+   "commits90": 256,
    "contributors": 3,
    "weeks": [
     2,
@@ -370,7 +370,7 @@
     5,
     54,
     55,
-    54,
+    55,
     55
    ],
    "branch": "main",
@@ -687,8 +687,8 @@
     0,
     0,
     4,
-    2,
-    2,
+    3,
+    1,
     0,
     4
    ],
@@ -716,8 +716,8 @@
     0,
     0,
     4,
-    2,
-    2,
+    3,
+    1,
     0,
     4
    ],
@@ -774,8 +774,8 @@
     0,
     0,
     4,
-    2,
-    2,
+    3,
+    1,
     0,
     4
    ],
@@ -874,11 +874,11 @@
   },
   "offsite-archive-backup": {
    "firstCommit": "2026-05-19",
-   "lastCommit": "2026-11-23",
-   "commits": 506,
+   "lastCommit": "2026-11-24",
+   "commits": 507,
    "commits7": 55,
-   "commits30": 218,
-   "commits90": 255,
+   "commits30": 219,
+   "commits90": 256,
    "contributors": 3,
    "weeks": [
     2,
@@ -891,7 +891,7 @@
     5,
     54,
     55,
-    54,
+    55,
     55
    ],
    "branch": "main",
@@ -1076,11 +1076,11 @@
   },
   "failover-watcher": {
    "firstCommit": "2026-05-19",
-   "lastCommit": "2026-11-23",
-   "commits": 506,
+   "lastCommit": "2026-11-24",
+   "commits": 507,
    "commits7": 55,
-   "commits30": 218,
-   "commits90": 255,
+   "commits30": 219,
+   "commits90": 256,
    "contributors": 3,
    "weeks": [
     2,
@@ -1093,7 +1093,7 @@
     5,
     54,
     55,
-    54,
+    55,
     55
    ],
    "branch": "main",
@@ -1313,8 +1313,8 @@
     0,
     0,
     0,
-    48,
-    35,
+    51,
+    32,
     30,
     5,
     7,
