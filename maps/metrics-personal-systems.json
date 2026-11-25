@@ -1,5 +1,5 @@
 {
- "generated": "2026-11-25T05:52Z",
+ "generated": "2026-11-25T08:52Z",
  "source": "NOEMA project index + git log on the maintainer's Mac — aggregates only (dates, counts, a 12-week sparkline)",
  "matched": 25,
  "nodes": {
@@ -41,11 +41,11 @@
    "commits90": 57,
    "contributors": 44,
    "weeks": [
-    4,
+    2,
     12,
     7,
-    9,
-    17,
+    15,
+    11,
     0,
     0,
     0,
@@ -589,7 +589,7 @@
    "commits": 87,
    "commits7": 0,
    "commits30": 0,
-   "commits90": 27,
+   "commits90": 26,
    "contributors": 9,
    "weeks": [
     6,
@@ -672,11 +672,11 @@
   },
   "twins": {
    "firstCommit": "2026-10-26",
-   "lastCommit": "2026-11-23",
-   "commits": 257,
-   "commits7": 71,
-   "commits30": 257,
-   "commits90": 257,
+   "lastCommit": "2026-11-25",
+   "commits": 258,
+   "commits7": 72,
+   "commits30": 258,
+   "commits90": 258,
    "contributors": 1,
    "weeks": [
     0,
@@ -690,22 +690,22 @@
     29,
     88,
     7,
-    71
+    72
    ],
    "branch": "main",
    "dirty": 3,
    "ahead": null,
    "behind": null,
-   "lastActivity": "2026-11-23",
+   "lastActivity": "2026-11-24",
    "repo": "twins"
   },
   "voxmax": {
    "firstCommit": "2026-07-01",
-   "lastCommit": "2026-11-23",
-   "commits": 101,
-   "commits7": 80,
-   "commits30": 80,
-   "commits90": 82,
+   "lastCommit": "2026-11-25",
+   "commits": 103,
+   "commits7": 82,
+   "commits30": 82,
+   "commits90": 84,
    "contributors": 1,
    "weeks": [
     0,
@@ -719,13 +719,13 @@
     0,
     0,
     0,
-    80
+    82
    ],
    "branch": "other",
    "dirty": 0,
    "ahead": null,
    "behind": null,
-   "lastActivity": "2026-11-22",
+   "lastActivity": "2026-11-24",
    "repo": "voxmax"
   }
  }
