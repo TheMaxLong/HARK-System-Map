@@ -1,5 +1,5 @@
 {
- "generated": "2026-11-24T23:52Z",
+ "generated": "2026-11-25T02:52Z",
  "source": "NOEMA project index + git log on the maintainer's Mac — aggregates only (dates, counts, a 12-week sparkline)",
  "matched": 46,
  "nodes": {
@@ -354,10 +354,10 @@
   "dead-man": {
    "firstCommit": "2026-05-19",
    "lastCommit": "2026-11-24",
-   "commits": 512,
+   "commits": 513,
    "commits7": 54,
-   "commits30": 224,
-   "commits90": 261,
+   "commits30": 225,
+   "commits90": 262,
    "contributors": 3,
    "weeks": [
     4,
@@ -368,7 +368,7 @@
     2,
     5,
     5,
-    60,
+    61,
     55,
     55,
     54
@@ -875,10 +875,10 @@
   "offsite-archive-backup": {
    "firstCommit": "2026-05-19",
    "lastCommit": "2026-11-24",
-   "commits": 512,
+   "commits": 513,
    "commits7": 54,
-   "commits30": 224,
-   "commits90": 261,
+   "commits30": 225,
+   "commits90": 262,
    "contributors": 3,
    "weeks": [
     4,
@@ -889,7 +889,7 @@
     2,
     5,
     5,
-    60,
+    61,
     55,
     55,
     54
@@ -1077,10 +1077,10 @@
   "failover-watcher": {
    "firstCommit": "2026-05-19",
    "lastCommit": "2026-11-24",
-   "commits": 512,
+   "commits": 513,
    "commits7": 54,
-   "commits30": 224,
-   "commits90": 261,
+   "commits30": 225,
+   "commits90": 262,
    "contributors": 3,
    "weeks": [
     4,
@@ -1091,7 +1091,7 @@
     2,
     5,
     5,
-    60,
+    61,
     55,
     55,
     54
