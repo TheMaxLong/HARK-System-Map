@@ -1,15 +1,15 @@
 {
- "generated": "2026-11-26T05:55Z",
+ "generated": "2026-11-26T08:56Z",
  "source": "NOEMA project index + git log on the maintainer's Mac — aggregates only (dates, counts, a 12-week sparkline)",
  "matched": 25,
  "nodes": {
   "anim-kit": {
    "firstCommit": "2026-10-12",
    "lastCommit": "2026-11-26",
-   "commits": 481,
-   "commits7": 31,
-   "commits30": 294,
-   "commits90": 481,
+   "commits": 497,
+   "commits7": 47,
+   "commits30": 310,
+   "commits90": 497,
    "contributors": 1,
    "weeks": [
     0,
@@ -23,13 +23,13 @@
     183,
     10,
     0,
-    31
+    47
    ],
    "branch": "main",
-   "dirty": 105,
+   "dirty": 113,
    "ahead": 0,
    "behind": 0,
-   "lastActivity": "2026-11-25",
+   "lastActivity": "2026-11-26",
    "repo": "anim-kit"
   },
   "blender-mcp": {
@@ -63,11 +63,11 @@
   },
   "trip-world": {
    "firstCommit": "2026-10-04",
-   "lastCommit": "2026-11-01",
-   "commits": 241,
-   "commits7": 0,
-   "commits30": 10,
-   "commits90": 241,
+   "lastCommit": "2026-11-24",
+   "commits": 243,
+   "commits7": 2,
+   "commits30": 12,
+   "commits90": 243,
    "contributors": 1,
    "weeks": [
     0,
@@ -81,13 +81,13 @@
     9,
     0,
     0,
-    0
+    2
    ],
    "branch": "main",
    "dirty": 6,
    "ahead": null,
    "behind": null,
-   "lastActivity": "2026-11-01",
+   "lastActivity": "2026-11-24",
    "repo": "the-world"
   },
   "the-gallery": {
@@ -104,8 +104,8 @@
     0,
     83,
     0,
-    31,
-    9,
+    35,
+    5,
     2,
     1,
     1,
@@ -161,8 +161,8 @@
     0,
     0,
     0,
-    0,
     1,
+    0,
     0,
     0,
     0,
@@ -363,8 +363,8 @@
     0,
     0,
     0,
-    35,
-    4,
+    39,
+    0,
     0,
     0,
     0,
@@ -414,7 +414,7 @@
    "lastCommit": "2026-11-17",
    "commits": 101,
    "commits7": 0,
-   "commits30": 53,
+   "commits30": 41,
    "commits90": 101,
    "contributors": 1,
    "weeks": [
@@ -443,7 +443,7 @@
    "lastCommit": "2026-10-29",
    "commits": 8,
    "commits7": 0,
-   "commits30": 8,
+   "commits30": 5,
    "commits90": 8,
    "contributors": 1,
    "weeks": [
@@ -476,8 +476,8 @@
    "commits90": 28,
    "contributors": 1,
    "weeks": [
-    5,
-    9,
+    8,
+    6,
     0,
     1,
     8,
@@ -675,7 +675,7 @@
    "lastCommit": "2026-11-25",
    "commits": 266,
    "commits7": 80,
-   "commits30": 218,
+   "commits30": 206,
    "commits90": 266,
    "contributors": 1,
    "weeks": [
