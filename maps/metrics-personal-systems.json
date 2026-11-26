@@ -1,5 +1,5 @@
 {
- "generated": "2026-11-26T14:56Z",
+ "generated": "2026-11-26T17:57Z",
  "source": "NOEMA project index + git log on the maintainer's Mac — aggregates only (dates, counts, a 12-week sparkline)",
  "matched": 25,
  "nodes": {
@@ -19,9 +19,9 @@
     0,
     56,
     65,
-    153,
-    167,
-    9,
+    166,
+    156,
+    7,
     0,
     49
    ],
@@ -74,11 +74,11 @@
     0,
     0,
     0,
-    154,
-    6,
+    156,
+    4,
     29,
-    46,
-    6,
+    47,
+    5,
     0,
     0,
     2
@@ -183,7 +183,7 @@
    "commits": 27,
    "commits7": 0,
    "commits30": 0,
-   "commits90": 16,
+   "commits90": 15,
    "contributors": 1,
    "weeks": [
     0,
@@ -425,8 +425,8 @@
     0,
     0,
     0,
-    77,
-    16,
+    79,
+    14,
     7,
     1,
     0
@@ -454,8 +454,8 @@
     0,
     0,
     0,
-    6,
-    2,
+    8,
+    0,
     0,
     0,
     0
@@ -473,7 +473,7 @@
    "commits": 37,
    "commits7": 0,
    "commits30": 4,
-   "commits90": 28,
+   "commits90": 27,
    "contributors": 1,
    "weeks": [
     11,
@@ -560,7 +560,7 @@
    "commits": 7,
    "commits7": 0,
    "commits30": 0,
-   "commits90": 4,
+   "commits90": 3,
    "contributors": 1,
    "weeks": [
     0,
@@ -672,11 +672,11 @@
   },
   "twins": {
    "firstCommit": "2026-10-26",
-   "lastCommit": "2026-11-25",
-   "commits": 266,
-   "commits7": 79,
-   "commits30": 204,
-   "commits90": 266,
+   "lastCommit": "2026-11-26",
+   "commits": 268,
+   "commits7": 81,
+   "commits30": 206,
+   "commits90": 268,
    "contributors": 1,
    "weeks": [
     0,
@@ -686,17 +686,17 @@
     0,
     0,
     0,
-    77,
-    16,
-    87,
+    79,
+    15,
+    86,
     7,
-    79
+    81
    ],
    "branch": "main",
    "dirty": 3,
    "ahead": null,
    "behind": null,
-   "lastActivity": "2026-11-25",
+   "lastActivity": "2026-11-26",
    "repo": "twins"
   },
   "voxmax": {
@@ -705,7 +705,7 @@
    "commits": 103,
    "commits7": 79,
    "commits30": 82,
-   "commits90": 84,
+   "commits90": 83,
    "contributors": 1,
    "weeks": [
     0,
