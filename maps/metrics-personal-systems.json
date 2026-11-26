@@ -1,15 +1,15 @@
 {
- "generated": "2026-11-26T02:55Z",
+ "generated": "2026-11-26T05:55Z",
  "source": "NOEMA project index + git log on the maintainer's Mac — aggregates only (dates, counts, a 12-week sparkline)",
  "matched": 25,
  "nodes": {
   "anim-kit": {
    "firstCommit": "2026-10-12",
-   "lastCommit": "2026-11-25",
-   "commits": 469,
-   "commits7": 19,
-   "commits30": 282,
-   "commits90": 469,
+   "lastCommit": "2026-11-26",
+   "commits": 481,
+   "commits7": 31,
+   "commits30": 294,
+   "commits90": 481,
    "contributors": 1,
    "weeks": [
     0,
@@ -18,15 +18,15 @@
     0,
     0,
     56,
-    62,
-    139,
-    182,
-    11,
+    65,
+    136,
+    183,
+    10,
     0,
-    19
+    31
    ],
    "branch": "main",
-   "dirty": 94,
+   "dirty": 105,
    "ahead": 0,
    "behind": 0,
    "lastActivity": "2026-11-25",
@@ -43,8 +43,8 @@
    "weeks": [
     2,
     13,
-    6,
-    16,
+    9,
+    13,
     10,
     0,
     0,
@@ -92,11 +92,11 @@
   },
   "the-gallery": {
    "firstCommit": "2026-09-27",
-   "lastCommit": "2026-11-18",
-   "commits": 128,
-   "commits7": 0,
-   "commits30": 3,
-   "commits90": 128,
+   "lastCommit": "2026-11-26",
+   "commits": 130,
+   "commits7": 2,
+   "commits30": 5,
+   "commits90": 130,
    "contributors": 1,
    "weeks": [
     0,
@@ -104,19 +104,19 @@
     0,
     83,
     0,
-    30,
+    31,
     9,
-    3,
+    2,
     1,
     1,
     1,
-    0
+    2
    ],
    "branch": "main",
    "dirty": 738,
    "ahead": 0,
    "behind": 0,
-   "lastActivity": "2026-11-18",
+   "lastActivity": "2026-11-25",
    "repo": "the-gallery"
   },
   "mosaic-grove": {
@@ -414,7 +414,7 @@
    "lastCommit": "2026-11-17",
    "commits": 101,
    "commits7": 0,
-   "commits30": 56,
+   "commits30": 53,
    "commits90": 101,
    "contributors": 1,
    "weeks": [
@@ -675,7 +675,7 @@
    "lastCommit": "2026-11-25",
    "commits": 266,
    "commits7": 80,
-   "commits30": 221,
+   "commits30": 218,
    "commits90": 266,
    "contributors": 1,
    "weeks": [
